@@ -1,14 +1,14 @@
 package org.fao.amis.export.excel.creation.creator;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.fao.amis.export.configuration.URLGetter;
 import org.fao.amis.export.data.configurations.dataCreator.DataCreator;
 import org.fao.amis.export.data.daoValue.DaoForecastValue;
@@ -47,7 +47,7 @@ public class SheetCreator {
 
     }
 
-    public int createSummary(int rowCounter, HSSFSheet sheet, HSSFWorkbook workbook, DataCreator dataCreator, String commodityLabel) {
+    public int createSummary(int rowCounter, XSSFSheet sheet, XSSFWorkbook workbook, DataCreator dataCreator, String commodityLabel) {
 
 
         //Create Date Last Updated
@@ -67,12 +67,12 @@ public class SheetCreator {
         return rowCounter;
     }
 
-    private int createHeadingRow(int rowCounter, HSSFSheet sheet, HSSFWorkbook workbook, String header, String headerValue) {
-        HSSFRow row = sheet.createRow(rowCounter++);
+    private int createHeadingRow(int rowCounter, XSSFSheet sheet, XSSFWorkbook workbook, String header, String headerValue) {
+        Row row = sheet.createRow(rowCounter++);
         // LOGGER.info("----------- createHeadingRow .... START ");
 
         if (header != null && headerValue == null) {
-            HSSFCell cell = row.createCell((short) 0);
+            Cell cell = row.createCell((short) 0);
             cell.setCellStyle(AmisExcelUtils.getBigBoldTextCellStyle(workbook, null));
             cell.setCellValue(header);
 
@@ -80,7 +80,7 @@ public class SheetCreator {
         } else {
             // LOGGER.info("----------- header  "+header);
 
-            HSSFCell cell = row.createCell((short) 0);
+            Cell cell = row.createCell((short) 0);
             cell.setCellStyle(AmisExcelUtils.getRightAlignmentStyle(workbook));
             cell.setCellValue(header);
 
@@ -94,11 +94,11 @@ public class SheetCreator {
         return rowCounter;
     }
 
-    public int createSheetTitle(int rowCounter, HSSFSheet sheet, HSSFWorkbook workbook) {
-        HSSFRow row = sheet.createRow(rowCounter++);
+    public int createSheetTitle(int rowCounter, XSSFSheet sheet, XSSFWorkbook workbook) {
+        Row row = sheet.createRow(rowCounter++);
         this.cellMappers = new CellMapper();
         String title = "amis commodity balance sheet";
-        HSSFCell cell = row.createCell((short) 0);
+        Cell cell = row.createCell((short) 0);
         cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyle(workbook, null));
         cell.setCellValue(title.toUpperCase());
 
@@ -108,7 +108,7 @@ public class SheetCreator {
     }
 
 
-    public int createHeadersGroup(int rowCounter, HSSFSheet sheet, HSSFWorkbook workbook,
+    public int createHeadersGroup(int rowCounter, XSSFSheet sheet, XSSFWorkbook workbook,
                                   LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> mapGroup, String type) {
 
         String title;
@@ -136,8 +136,8 @@ public class SheetCreator {
 
         int columnNumber = 0;
 
-        HSSFRow row = sheet.createRow(rowCounter++);
-        HSSFCell cell = row.createCell((short) columnNumber);
+        Row row = sheet.createRow(rowCounter++);
+        Cell cell = row.createCell((short) columnNumber);
         cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyle(workbook, null));
         cell.setCellValue(title);
         columnNumber++;
@@ -155,14 +155,13 @@ public class SheetCreator {
         return rowCounter;
     }
 
-    private int createHeadersValues(String date, int columnNumber, HSSFRow row, HSSFWorkbook workbook, HSSFSheet sheet) {
+    private int createHeadersValues(String date, int columnNumber, Row row, XSSFWorkbook workbook, XSSFSheet sheet) {
 
         String flags = "Forecasting Methodology";
         String notes = "Notes";
 
-
         row.setHeight((short) (3*260));
-        HSSFCell cell = row.createCell((short) columnNumber);
+        Cell cell = row.createCell((short) columnNumber);
         cell.setCellStyle(AmisExcelUtils.getBlueCellStyle(workbook));
         cell.setCellValue(date);
         sheet.autoSizeColumn(columnNumber);
@@ -170,7 +169,7 @@ public class SheetCreator {
 
         columnNumber++;
 
-        HSSFCell cell2 = row.createCell((short) columnNumber);
+        Cell cell2 = row.createCell((short) columnNumber);
         cell2.setCellStyle(AmisExcelUtils.getBlueCellStyle(workbook));
         cell2.setCellValue(flags);
         sheet.autoSizeColumn(columnNumber);
@@ -178,7 +177,7 @@ public class SheetCreator {
 
         columnNumber++;
 
-        HSSFCell cell3 = row.createCell((short) columnNumber);
+        Cell cell3 = row.createCell((short) columnNumber);
         cell3.setCellStyle(AmisExcelUtils.getBlueCellStyle(workbook));
         cell3.setCellValue(notes);
         sheet.autoSizeColumn(columnNumber);
@@ -189,7 +188,7 @@ public class SheetCreator {
         return columnNumber;
     }
 
-    public int createDataTableGroup(int rowCounter, HSSFSheet sheet, HSSFWorkbook workbook,
+    public int createDataTableGroup(int rowCounter, XSSFSheet sheet, XSSFWorkbook workbook,
                                     HashMap<Integer, String> elements,
                                     LinkedHashMap<String, LinkedHashMap<String,
                                             DaoForecastValue>> foodBalanceResults) {
@@ -202,9 +201,9 @@ public class SheetCreator {
 
             int columnNumber = 0;
 
-            HSSFRow row = sheet.createRow(rowCounter++);
+            Row row = sheet.createRow(rowCounter++);
 
-            HSSFCell cell = row.createCell((short) columnNumber);
+            Cell cell = row.createCell((short) columnNumber);
             cell.setCellStyle(AmisExcelUtils.getGreyCellStyle(workbook));
             cell.setCellValue(elements.get(code));
             sheet.autoSizeColumn(columnNumber);
@@ -238,8 +237,8 @@ public class SheetCreator {
         return rowCounter;
     }
 
-    private int fillForecastElements(int columnNumber, HSSFRow row, HSSFWorkbook workbook, LinkedHashMap<String,
-            DaoForecastValue> elements, int code, HSSFSheet sheet, String date) {
+    private int fillForecastElements(int columnNumber, Row row, XSSFWorkbook workbook, LinkedHashMap<String,
+            DaoForecastValue> elements, int code, XSSFSheet sheet, String date) {
 
         DaoForecastValue forecast = elements.get("" + code);
 
@@ -247,7 +246,7 @@ public class SheetCreator {
             // value
 
             int value =  (int)forecast.getValue();
-            HSSFCell cell = row.createCell((short) columnNumber);
+            Cell cell = row.createCell((short) columnNumber);
             cell.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
             if(value == -1){
                 cell.setCellValue("");
@@ -260,7 +259,7 @@ public class SheetCreator {
             columnNumber++;
 
             // flags
-            HSSFCell cell1 = row.createCell((short) columnNumber);
+            Cell cell1 = row.createCell((short) columnNumber);
             cell1.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
             cell1.setCellValue(forecast.getFlags());
 
@@ -270,7 +269,7 @@ public class SheetCreator {
             columnNumber++;
 
             // notes
-            HSSFCell cell2 = row.createCell((short) columnNumber);
+            Cell cell2 = row.createCell((short) columnNumber);
             cell2.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
             cell2.setCellValue(forecast.getNotes());
             sheet.autoSizeColumn(columnNumber);
@@ -283,7 +282,7 @@ public class SheetCreator {
         else
         {
 
-            HSSFCell cell = row.createCell((short) columnNumber);
+            Cell cell = row.createCell((short) columnNumber);
             cell.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
             cell.setCellValue("");
 
@@ -293,7 +292,7 @@ public class SheetCreator {
             columnNumber++;
 
             // flags
-            HSSFCell cell1 = row.createCell((short) columnNumber);
+            Cell cell1 = row.createCell((short) columnNumber);
             cell1.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
             cell1.setCellValue("");
 
@@ -303,7 +302,7 @@ public class SheetCreator {
             columnNumber++;
 
             // notes
-            HSSFCell cell2 = row.createCell((short) columnNumber);
+            Cell cell2 = row.createCell((short) columnNumber);
             cell2.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
             cell2.setCellValue("");
 
@@ -318,7 +317,7 @@ public class SheetCreator {
     }
 
 
-    private void handleFormulas(LinkedList<FormulaBean> formulaBeans, HSSFSheet sheet, HSSFWorkbook wb, String date){
+    private void handleFormulas(LinkedList<FormulaBean> formulaBeans, XSSFSheet sheet, XSSFWorkbook wb, String date){
 
         LinkedHashMap<String,String> mapper = cellMappers.getMapCells();
 
@@ -351,7 +350,7 @@ public class SheetCreator {
 
     private void makeFormula(String operandCodeFlags, String operandCodeValue,
                              String operator,  LinkedList<String> addendumsCodes,
-                             HSSFSheet sheet){
+                             XSSFSheet sheet){
 
         LOGGER.info("StartedMAKE FORMULA");
 
@@ -411,7 +410,7 @@ public class SheetCreator {
     }
 
 
-    private boolean checkIfExist(String addendumCode, HSSFSheet sheet){
+    private boolean checkIfExist(String addendumCode, XSSFSheet sheet){
 
         boolean result = true;
 

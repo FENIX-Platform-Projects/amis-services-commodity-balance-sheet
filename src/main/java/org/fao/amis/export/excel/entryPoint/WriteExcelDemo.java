@@ -3,6 +3,7 @@ package org.fao.amis.export.excel.entryPoint;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.fao.amis.export.data.Factory.DataFactory;
 import org.fao.amis.export.data.configurations.dataCreator.DataCreator;
 import org.fao.amis.export.data.daoValue.DaoForecastValue;
@@ -43,24 +44,13 @@ public class WriteExcelDemo extends HttpServlet{
 
        data = new Object[tempDataString.length][];
        for(int i =0, length = tempDataString.length; i<length; i++){
-           System.out.println("dopo il for");
            temp = tempDataString[i].split(",",-1);
-
            data[i] = new Object[temp.length];
-
            for(int j=0; j<temp.length; j++){
-               System.out.println("array");
                data[i][j] = (Object)temp[j];
-
-
            }
        }
 
-        for(int i=0; i< data.length; i++){
-            for(int j=0; j<data[i].length; j++){
-                System.out.println("ARRAY i:"+i+" J:"+j+" data: "+data[i][j]);
-            }
-        }
 
 
         DataFactory dataFactory = new DataFactory( data, season, dataSource,region );
@@ -89,11 +79,11 @@ public class WriteExcelDemo extends HttpServlet{
         LOGGER.debug("forecasts: getFoodBalanceREsults");
 
         HandlerExcelCreation excelController = new HandlerExcelCreation();
-        HSSFWorkbook workbook = excelController.init(forecast,qvo,fakeCostructor);
+        XSSFWorkbook workbook = excelController.init(forecast,qvo,fakeCostructor);
+
 
         response.setContentType("application/vnd.ms-excel");
-
-        response.setHeader("Content-Disposition", "attachment; filename=" + "exportAMIS.xls");
+        response.setHeader("Content-Disposition", "attachment; filename=" + "amisExport.xlsx");
         response.setContentType("application/vnd.openxml");
 
         workbook.write(response.getOutputStream());

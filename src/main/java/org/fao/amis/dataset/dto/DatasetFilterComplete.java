@@ -7,6 +7,7 @@ public class DatasetFilterComplete
     private Integer year;
     private String date;
     private String season;
+    private String datasource;
 
     public String getSeason()
     {
@@ -47,5 +48,13 @@ public class DatasetFilterComplete
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getDatasource() {
+        return datasource;
+    }
+
+    public void setDatasource(String datasource) {
+        this.datasource = datasource;
     }
 }

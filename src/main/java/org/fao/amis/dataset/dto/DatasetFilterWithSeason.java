@@ -6,6 +6,7 @@ public class DatasetFilterWithSeason
     private Integer product;
     private Integer year;
     private String season;
+    private String datasource;
 
     public Integer getRegion()
     {
@@ -38,5 +39,13 @@ public class DatasetFilterWithSeason
 
     public void setSeason(String season) {
         this.season = season;
+    }
+
+    public String getDatasource() {
+        return datasource;
+    }
+
+    public void setDatasource(String datasource) {
+        this.datasource = datasource;
     }
 }

@@ -379,12 +379,7 @@ public class SheetCreator {
             Row tempRow= sheet.getRow(tempReference.getRow());
             Cell tempCell = tempRow.getCell(tempReference.getCol());
 
-           /* if(tempCell.getCellType() == 1){
-                System.out.println("qui!!!");
-                System.out.println(tempCell.getStringCellValue());
-               operandsExist = false;
-               break;
-            }*/
+
 
             formula+=addendumCode;
             if(i != lengthAddendums-1){

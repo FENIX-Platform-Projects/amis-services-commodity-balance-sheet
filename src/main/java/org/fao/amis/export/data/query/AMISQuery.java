@@ -69,9 +69,6 @@ public class AMISQuery {
              InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
              prop.load(inputStream);
 
-             System.out.println("INPUTTT");
-             System.out.println(inputStream);
-
              this.foodBalanceElements = new HashMap<Integer, HashMap<Integer, String>>();
 
 
@@ -98,7 +95,7 @@ public class AMISQuery {
              LOGGER.debug("*****************************************");
              LOGGER.debug("ITY ELEMENTS");
 
-            LOGGER.debug(this.ityElements.toString());
+             LOGGER.debug(this.ityElements.toString());
 
          }
 

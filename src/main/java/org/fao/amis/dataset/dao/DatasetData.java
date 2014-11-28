@@ -25,11 +25,12 @@ public class DatasetData
     private static String queryLoad = "select element_code, units, date, value, flag,  notes from national_forecast where region_code = ? and product_code = ? and year = ?";
     private static String queryLoadNational = "select element_code, units, value, flag from national_population where region_code = ? and element_code = ? and year = ? ";
     private static String queryDelete = "delete from national_forecast where region_code = ? and product_code = ? and year = ? and season = ?";
-    private static String queryDeletePrevYear = "delete from national_forecast where region_code = ? and product_code = ? and year = ? and season = ? and date = ?";
+    private static String queryDeletePrevYear = "delete from national_forecast where region_code = ? and product_code = ? and year = ? and season = ? and date = ? and database =?";
     private static String queryMostRecentDate = "select distinct date from national_forecast where region_code = ? and product_code = ? and year = ? order by date ASC";
-    private static String queryDeleteNational = "delete from national_population where region_code = ? and product_code = ? and year = ?";
+    private static String queryDeleteNational = "delete from national_population where region_code = ? and product_code = ? and year = ? and database =?";
     private static String queryInsert = "insert into national_forecast(region_code, product_code, year,season,database, element_code, units, date, value, flag, notes) values (?,?,?,?,?,?,?,?,?,?,?)";
     private static int[] queryInsertTypes = { Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.VARCHAR,Types.VARCHAR, Types.INTEGER, Types.VARCHAR, Types.VARCHAR, Types.REAL, Types.VARCHAR, Types.VARCHAR };
+
 
     public Iterator<Object[]> getNationalData(DatasetFilter filter) throws Exception {
         Connection connection = this.connectionManager.getConnection();
@@ -96,6 +97,7 @@ public class DatasetData
             statement.setInt(3, data.getFilter().getYear().intValue());
             statement.setString(4, data.getFilter().getSeason());
             statement.setString(5, data.getFilter().getDate());
+            statement.setString(6, data.getFilter().getDatasource());
             statement.executeUpdate();
 
             if (data.getData() != null) {

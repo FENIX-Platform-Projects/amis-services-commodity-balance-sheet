@@ -2,99 +2,100 @@ package org.fao.amis.export.excel.creation.utils;
 
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.xssf.usermodel.*;
-
-import java.util.Map;
+import org.apache.poi.ss.usermodel.*;
 
 /**
  * Created by fabrizio on 11/10/14.
  */
 public class AmisExcelUtils {
 
-    public static XSSFFont boldFont;
-    public static XSSFFont italicFont;
-    public static XSSFFont italicisedSmallFont;
-    public static XSSFFont whiteFont;
-    public static XSSFFont bigBoldFont;
-    public static XSSFFont smallFont;
-    public static XSSFFont boldSmallFont;
+    public static HSSFFont boldFont;
+    public static HSSFFont italicFont;
+    public static HSSFFont italicisedSmallFont;
+    public static HSSFFont whiteFont;
+    public static HSSFFont bigBoldFont;
+    public static HSSFFont smallFont;
+    public static HSSFFont boldSmallFont;
 
-    public static XSSFColor BLUE_CUSTOMIZED;
-    public static XSSFColor GREY_CUSTOMIZED;
-
-
-    public static int createEmptyRow(int rowCounter, XSSFSheet sheet, XSSFWorkbook workbook){
-        XSSFRow row = sheet.createRow(rowCounter++);
+    public static int createEmptyRow(int rowCounter, Sheet sheet, Workbook workbook){
+        Row row = sheet.createRow(rowCounter++);
         row.createCell((short) 0).setCellValue("");
         row.createCell((short) 1).setCellValue("");
 
         return rowCounter;
     }
 
+    public static void setCustomizedPalette(HSSFWorkbook workbook){
 
-    public static void setCustomizedPalette(XSSFWorkbook workbook){
+        HSSFPalette palette;
+        palette = workbook.getCustomPalette();
+        //customized Blue
+        palette.setColorAtIndex(HSSFColor.BLUE.index,
+                (byte) 116,  //RGB red (0-255)
+                (byte) 166,    //RGB green
+                (byte) 189     //RGB blue
+        );
 
-       BLUE_CUSTOMIZED = new XSSFColor((new java.awt.Color(59, 104, 189)));
-       GREY_CUSTOMIZED = new XSSFColor((new java.awt.Color(224, 238, 191)));
+        //customized Grey
+        palette.setColorAtIndex(HSSFColor.GREY_50_PERCENT.index,
+                (byte) 238,  //RGB red (0-255)
+                (byte) 232,    //RGB green
+                (byte) 205     //RGB blue
+        );
 
     }
 
-    public static XSSFCellStyle getRightAlignmentStyle(XSSFWorkbook workbook) {
-        XSSFCellStyle style = workbook.createCellStyle();
-        style.setAlignment(XSSFCellStyle.ALIGN_RIGHT);
+    public static HSSFCellStyle getRightAlignmentStyle(HSSFWorkbook workbook) {
+        HSSFCellStyle style = workbook.createCellStyle();
+        style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
         return style;
     }
 
-    public static XSSFCellStyle getLeftAlignmentStyle(XSSFWorkbook workbook) {
-        XSSFCellStyle style = workbook.createCellStyle();
-        style.setAlignment(XSSFCellStyle.ALIGN_LEFT);
+    public static HSSFCellStyle getLeftAlignmentStyle(HSSFWorkbook workbook) {
+        HSSFCellStyle style = workbook.createCellStyle();
+        style.setAlignment(HSSFCellStyle.ALIGN_LEFT);
         return style;
     }
 
-    public static XSSFCellStyle getRightAlignmentWithBordersStyle(XSSFWorkbook workbook) {
-        XSSFCellStyle style = getBordersStyle(workbook, null);
-        style.setAlignment(XSSFCellStyle.ALIGN_RIGHT);
+    public static HSSFCellStyle getRightAlignmentWithBordersStyle(HSSFWorkbook workbook) {
+        HSSFCellStyle style = getBordersStyle(workbook, null);
+        style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
         return style;
     }
 
-
-    public static XSSFCellStyle getBasicCellStyle(XSSFWorkbook workbook){
-        XSSFCellStyle cellStyle = workbook.createCellStyle();
+    public static HSSFCellStyle getBasicCellStyle(HSSFWorkbook workbook){
+        HSSFCellStyle cellStyle = workbook.createCellStyle();
 
         return cellStyle;
     }
 
-    public static XSSFCellStyle getBlueCellStyle(XSSFWorkbook workbook){
-        XSSFCellStyle cellStyle = workbook.createCellStyle();
-        cellStyle.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND );
-        cellStyle.setFillForegroundColor(BLUE_CUSTOMIZED);
+    public static HSSFCellStyle getBlueCellStyle(HSSFWorkbook workbook){
+        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND );
+        cellStyle.setFillForegroundColor(HSSFColor.BLUE.index);
         getBordersStyle(workbook, cellStyle);
 
         cellStyle.setFont(whiteFont);
 
         cellStyle.setWrapText(true);
 
-        cellStyle.setVerticalAlignment(XSSFCellStyle.VERTICAL_CENTER);
+        cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
 
         return cellStyle;
 
     }
 
-    public static XSSFCellStyle getGreyCellStyle(XSSFWorkbook workbook){
-        XSSFCellStyle cellStyle = workbook.createCellStyle();
-        cellStyle.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND );
-        cellStyle.setFillForegroundColor(GREY_CUSTOMIZED);
+    public static HSSFCellStyle getGreyCellStyle(HSSFWorkbook workbook){
+        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND );
+        cellStyle.setFillForegroundColor(HSSFColor.GREY_50_PERCENT.index);
         getBordersStyle(workbook, cellStyle);
 
         return cellStyle;
 
     }
 
-
-    public static XSSFCellStyle getBigBoldTextCellStyle(XSSFWorkbook workbook, XSSFCellStyle cellStyle){
+    public static HSSFCellStyle getBigBoldTextCellStyle(HSSFWorkbook workbook, HSSFCellStyle cellStyle){
 
         if(cellStyle==null){
             cellStyle = getBasicCellStyle(workbook);
@@ -106,7 +107,7 @@ public class AmisExcelUtils {
 
     }
 
-    public  XSSFCellStyle getSmallTextCellStyle(XSSFWorkbook workbook, XSSFCellStyle cellStyle, Boolean setBold){
+    public static HSSFCellStyle getSmallTextCellStyle(HSSFWorkbook workbook, HSSFCellStyle cellStyle, Boolean setBold){
 
         if(cellStyle==null){
             cellStyle = getBasicCellStyle(workbook);
@@ -122,8 +123,7 @@ public class AmisExcelUtils {
 
     }
 
-
-    public static XSSFCellStyle getBoldTextCellStyle(XSSFWorkbook workbook, XSSFCellStyle cellStyle){
+    public static HSSFCellStyle getBoldTextCellStyle(HSSFWorkbook workbook, HSSFCellStyle cellStyle){
 
         if(cellStyle==null){
             cellStyle = getBasicCellStyle(workbook);
@@ -135,15 +135,14 @@ public class AmisExcelUtils {
 
     }
 
-
-    public static XSSFCellStyle getBordersStyle(XSSFWorkbook workbook, XSSFCellStyle cellStyle){
+    public static HSSFCellStyle getBordersStyle(HSSFWorkbook workbook, HSSFCellStyle cellStyle){
         if(cellStyle==null){
             cellStyle = getBasicCellStyle(workbook) ;
         }
-        cellStyle.setBorderBottom(XSSFCellStyle.BORDER_THIN);
-        cellStyle.setBorderTop(XSSFCellStyle.BORDER_THIN);
-        cellStyle.setBorderLeft(XSSFCellStyle.BORDER_THIN);
-        cellStyle.setBorderRight(XSSFCellStyle.BORDER_THIN);
+        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
         cellStyle.setLeftBorderColor(IndexedColors.BLUE_GREY.getIndex());
         cellStyle.setRightBorderColor(IndexedColors.BLUE_GREY.getIndex());
         cellStyle.setTopBorderColor(IndexedColors.BLUE_GREY.getIndex());
@@ -152,8 +151,7 @@ public class AmisExcelUtils {
         return  cellStyle;
     }
 
-
-    public static void initializeHSSFFontStyles(XSSFWorkbook workbook){
+    public static void initializeHSSFFontStyles(HSSFWorkbook workbook){
         boldFont = workbook.createFont();
         boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
@@ -180,27 +178,26 @@ public class AmisExcelUtils {
 
     }
 
-
-    public  int createNoAvailableDataTable(int rowCounter, XSSFSheet sheet, XSSFWorkbook workbook, String title){
+    public  int createNoAvailableDataTable(int rowCounter, HSSFSheet sheet, HSSFWorkbook workbook, String title){
         rowCounter = createEmptyRow(rowCounter, sheet, workbook);
 
         //Title Row
         rowCounter = createHeadingRow(rowCounter, sheet, workbook, title, null);
 
-        XSSFRow row = sheet.createRow(rowCounter++);
-        XSSFCell cell = row.createCell((short) 0);
+        HSSFRow row = sheet.createRow(rowCounter++);
+        HSSFCell cell = row.createCell((short) 0);
         cell.setCellStyle(getLeftAlignmentStyle(workbook));
         cell.setCellValue("No Data Available");
 
         return rowCounter;
     }
 
-    public  int createHeadingRow(int rowCounter, XSSFSheet sheet,  XSSFWorkbook workbook, String header, String headerValue){
-        XSSFRow row = sheet.createRow(rowCounter++);
+    public static int createHeadingRow(int rowCounter, HSSFSheet sheet,  HSSFWorkbook workbook, String header, String headerValue){
+        HSSFRow row = sheet.createRow(rowCounter++);
         // LOGGER.info("----------- createHeadingRow .... START ");
 
         if(header != null && headerValue==null){
-            XSSFCell cell = row.createCell((short) 0);
+            HSSFCell cell = row.createCell((short) 0);
             cell.setCellStyle(getBigBoldTextCellStyle(workbook, null));
             cell.setCellValue(header);
 
@@ -209,7 +206,7 @@ public class AmisExcelUtils {
         else {
             // LOGGER.info("----------- header  "+header);
 
-            XSSFCell cell = row.createCell((short) 0);
+            HSSFCell cell = row.createCell((short) 0);
             cell.setCellStyle(getRightAlignmentStyle(workbook));
             cell.setCellValue(header);
 

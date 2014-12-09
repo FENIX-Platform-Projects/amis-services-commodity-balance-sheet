@@ -2,10 +2,9 @@ package org.fao.amis.export.excel.creation.handlerCreation;
 
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.fao.amis.export.data.configurations.dataCreator.DataCreator;
 import org.fao.amis.export.data.daoValue.DaoForecastValue;
 import org.fao.amis.export.data.forecast.Forecast;
@@ -34,13 +33,11 @@ public class HandlerExcelCreation {
     }
 
 
-    public XSSFWorkbook init(Forecast forecast, AMISQuery qvo, DataCreator dataModel) {
-
+    public Workbook init(Forecast forecast, AMISQuery qvo, DataCreator dataModel) {
 
         // create the Excel file
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        AmisExcelUtils.setCustomizedPalette(workbook);
-
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        AmisExcelUtils.setCustomizedPalette((HSSFWorkbook) workbook);
 
         //Initialize font
         AmisExcelUtils.initializeHSSFFontStyles(workbook);
@@ -55,7 +52,7 @@ public class HandlerExcelCreation {
 
             String commodityLabel = commParser.getCommodityLabel(commodityString);
 
-            XSSFSheet sheet = workbook.createSheet(commodityLabel);
+            Sheet sheet = workbook.createSheet(commodityLabel);
 
             int rowCounter = 0;
 
@@ -114,7 +111,7 @@ public class HandlerExcelCreation {
 
         try {
             //Write the workbook in file system
-            FileOutputStream out = new FileOutputStream(new File("workbook.xlsx"));
+            FileOutputStream out = new FileOutputStream(new File("amisExport.xls"));
             workbook.write(out);
             out.close();
 

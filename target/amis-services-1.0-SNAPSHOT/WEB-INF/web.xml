@@ -3,7 +3,7 @@
 
     <context-param>
         <param-name>url</param-name>
-        <param-value>jdbc:postgresql://localhost/amis-cbs-v3</param-value>
+        <param-value>jdbc:postgresql://localhost/amis-cbs-v2</param-value>
     </context-param>
     <context-param>
         <param-name>usr</param-name>
@@ -33,12 +33,12 @@
 
     <!-- Servlet -->
     <servlet>
-        <servlet-name>HelloServlet</servlet-name>
+        <servlet-name>ExportServlet</servlet-name>
         <servlet-class>org.fao.amis.export.excel.entryPoint.WriteExcelDemo</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>HelloServlet</servlet-name>
+        <servlet-name>ExportServlet</servlet-name>
         <url-pattern>/dataset/national/export</url-pattern>
     </servlet-mapping>
 

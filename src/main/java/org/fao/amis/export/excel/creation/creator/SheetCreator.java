@@ -1,14 +1,12 @@
 package org.fao.amis.export.excel.creation.creator;
 
 
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-
-import org.apache.log4j.Logger;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.fao.amis.export.configuration.URLGetter;
 import org.fao.amis.export.data.configurations.dataCreator.DataCreator;
 import org.fao.amis.export.data.daoValue.DaoForecastValue;
@@ -16,7 +14,6 @@ import org.fao.amis.export.excel.creation.utils.AmisExcelUtils;
 import org.fao.amis.export.excel.formula.bean.FormulaBean;
 import org.fao.amis.export.excel.formula.configurator.ConfigurationReader;
 import org.fao.amis.export.excel.formula.translator.CellMapper;
-
 
 import java.util.*;
 
@@ -47,7 +44,7 @@ public class SheetCreator {
 
     }
 
-    public int createSummary(int rowCounter, XSSFSheet sheet, XSSFWorkbook workbook, DataCreator dataCreator, String commodityLabel) {
+    public int createSummary(int rowCounter, Sheet sheet, HSSFWorkbook workbook, DataCreator dataCreator, String commodityLabel) {
 
 
         //Create Date Last Updated
@@ -67,7 +64,7 @@ public class SheetCreator {
         return rowCounter;
     }
 
-    private int createHeadingRow(int rowCounter, XSSFSheet sheet, XSSFWorkbook workbook, String header, String headerValue) {
+    private int createHeadingRow(int rowCounter, Sheet sheet, HSSFWorkbook workbook, String header, String headerValue) {
         Row row = sheet.createRow(rowCounter++);
         // LOGGER.info("----------- createHeadingRow .... START ");
 
@@ -94,7 +91,7 @@ public class SheetCreator {
         return rowCounter;
     }
 
-    public int createSheetTitle(int rowCounter, XSSFSheet sheet, XSSFWorkbook workbook) {
+    public int createSheetTitle(int rowCounter, Sheet sheet, HSSFWorkbook workbook) {
         Row row = sheet.createRow(rowCounter++);
         this.cellMappers = new CellMapper();
         String title = "amis commodity balance sheet";
@@ -108,7 +105,7 @@ public class SheetCreator {
     }
 
 
-    public int createHeadersGroup(int rowCounter, XSSFSheet sheet, XSSFWorkbook workbook,
+    public int createHeadersGroup(int rowCounter, Sheet sheet, HSSFWorkbook workbook,
                                   LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> mapGroup, String type) {
 
         String title;
@@ -146,7 +143,7 @@ public class SheetCreator {
 
         for (String date : dates) {
 
-            columnNumber = createHeadersValues(date, columnNumber, row, workbook, sheet);
+            columnNumber = createHeadersValues(date, columnNumber, row, (HSSFWorkbook) workbook, sheet);
             columnNumber++;
         }
 
@@ -155,7 +152,7 @@ public class SheetCreator {
         return rowCounter;
     }
 
-    private int createHeadersValues(String date, int columnNumber, Row row, XSSFWorkbook workbook, XSSFSheet sheet) {
+    private int createHeadersValues(String date, int columnNumber, Row row, HSSFWorkbook workbook, Sheet sheet) {
 
         String flags = "Forecasting Methodology";
         String notes = "Notes";
@@ -188,7 +185,7 @@ public class SheetCreator {
         return columnNumber;
     }
 
-    public int createDataTableGroup(int rowCounter, XSSFSheet sheet, XSSFWorkbook workbook,
+    public int createDataTableGroup(int rowCounter, Sheet sheet, HSSFWorkbook workbook,
                                     HashMap<Integer, String> elements,
                                     LinkedHashMap<String, LinkedHashMap<String,
                                             DaoForecastValue>> foodBalanceResults) {
@@ -237,8 +234,9 @@ public class SheetCreator {
         return rowCounter;
     }
 
-    private int fillForecastElements(int columnNumber, Row row, XSSFWorkbook workbook, LinkedHashMap<String,
-            DaoForecastValue> elements, int code, XSSFSheet sheet, String date) {
+
+    private int fillForecastElements(int columnNumber, Row row, HSSFWorkbook workbook, LinkedHashMap<String,
+            DaoForecastValue> elements, int code, Sheet sheet, String date) {
 
         DaoForecastValue forecast = elements.get("" + code);
 
@@ -317,7 +315,7 @@ public class SheetCreator {
     }
 
 
-    private void handleFormulas(LinkedList<FormulaBean> formulaBeans, XSSFSheet sheet, XSSFWorkbook wb, String date){
+    private void handleFormulas(LinkedList<FormulaBean> formulaBeans, Sheet sheet, HSSFWorkbook wb, String date){
 
         LinkedHashMap<String,String> mapper = cellMappers.getMapCells();
 
@@ -350,7 +348,7 @@ public class SheetCreator {
 
     private void makeFormula(String operandCodeFlags, String operandCodeValue,
                              String operator,  LinkedList<String> addendumsCodes,
-                             XSSFSheet sheet){
+                             Sheet sheet){
 
         LOGGER.info("StartedMAKE FORMULA");
 
@@ -405,7 +403,7 @@ public class SheetCreator {
     }
 
 
-    private boolean checkIfExist(String addendumCode, XSSFSheet sheet){
+    private boolean checkIfExist(String addendumCode, Sheet sheet){
 
         boolean result = true;
 

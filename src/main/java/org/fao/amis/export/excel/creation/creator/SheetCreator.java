@@ -38,6 +38,8 @@ public class SheetCreator {
 
     private URLGetter urlGetter;
 
+    private ArrayList<Integer> firstYearSeason;
+
     public SheetCreator(){
 
         urlGetter = new URLGetter();
@@ -139,12 +141,26 @@ public class SheetCreator {
         cell.setCellValue(title);
         columnNumber++;
 
-        Set<String> dates = mapGroup.keySet();
+        Object[] dates = mapGroup.keySet().toArray();
 
-        for (String date : dates) {
+        firstYearSeason = (ArrayList)createSeasonOrderedArray(dates);
 
-            columnNumber = createHeadersValues(date, columnNumber, row, (HSSFWorkbook) workbook, sheet);
-            columnNumber++;
+
+        for (int i=0; i< dates.length; i++) {
+            String date = dates[i].toString();
+
+            if(Integer.parseInt(date.substring(12,16)) == firstYearSeason.get(0)){
+                columnNumber = createHeadersValuesSimple(date, columnNumber, row, (HSSFWorkbook) workbook, sheet);
+            }
+            else{
+                // if it is the first
+                if(i != dates.length-1 && Integer.parseInt(date.substring(12,16)) ==Integer.parseInt(dates[i+1].toString().substring(12,16)) ){
+                    columnNumber = createHeadersValuesSimple(date, columnNumber, row, (HSSFWorkbook) workbook, sheet);
+                }else{
+                    columnNumber = createHeadersValuesWithFlagsAndComments(date, columnNumber, row, (HSSFWorkbook) workbook, sheet);
+
+                }
+            }
         }
 
         rowCounter++;
@@ -152,10 +168,9 @@ public class SheetCreator {
         return rowCounter;
     }
 
-    private int createHeadersValues(String date, int columnNumber, Row row, HSSFWorkbook workbook, Sheet sheet) {
-
+    private int createHeadersValuesWithFlagsAndComments(String date, int columnNumber, Row row, HSSFWorkbook workbook, Sheet sheet){
         String flags = "Forecasting Methodology";
-        String notes = "Notes";
+        String notes = "Comments";
 
         row.setHeight((short) (3*260));
         Cell cell = row.createCell((short) columnNumber);
@@ -163,8 +178,8 @@ public class SheetCreator {
         cell.setCellValue(date);
         sheet.autoSizeColumn(columnNumber);
 
-
         columnNumber++;
+
 
         Cell cell2 = row.createCell((short) columnNumber);
         cell2.setCellStyle(AmisExcelUtils.getBlueCellStyle(workbook));
@@ -179,8 +194,43 @@ public class SheetCreator {
         cell3.setCellValue(notes);
         sheet.autoSizeColumn(columnNumber);
 
+        columnNumber +=2;
+
+
+        return columnNumber;
+    }
+
+    private int createHeadersValuesSimple(String date, int columnNumber, Row row, HSSFWorkbook workbook, Sheet sheet) {
+
+        String flags = "Forecasting Methodology";
+        String notes = "Notes";
+
+        row.setHeight((short) (3*260));
+        Cell cell = row.createCell((short) columnNumber);
+        cell.setCellStyle(AmisExcelUtils.getBlueCellStyle(workbook));
+        cell.setCellValue(date);
+        sheet.autoSizeColumn(columnNumber);
+
 
         columnNumber++;
+
+        /*
+        Cell cell2 = row.createCell((short) columnNumber);
+        cell2.setCellStyle(AmisExcelUtils.getBlueCellStyle(workbook));
+        cell2.setCellValue(flags);
+        sheet.autoSizeColumn(columnNumber);
+
+
+        columnNumber++;
+
+        Cell cell3 = row.createCell((short) columnNumber);
+        cell3.setCellStyle(AmisExcelUtils.getBlueCellStyle(workbook));
+        cell3.setCellValue(notes);
+        sheet.autoSizeColumn(columnNumber);
+
+
+
+        columnNumber++;*/
 
         return columnNumber;
     }
@@ -207,19 +257,29 @@ public class SheetCreator {
 
             columnNumber++;
 
-            Set<String> dates = foodBalanceResults.keySet();
+            Object[] dates = foodBalanceResults.keySet().toArray();
 
-            int length = dates.size();
-
-            int i=0;
+            int length = dates.length;
 
             datesList = new LinkedList<String>();
 
-            for (String date : dates) {
-                columnNumber = fillForecastElements(columnNumber,row,workbook,foodBalanceResults.get(date),code,sheet,date);
-                columnNumber++;
-                i++;
-                datesList.add(date);
+            for (int j=0; j< length; j++) {
+                String date = dates[j].toString();
+
+                if(Integer.parseInt(date.substring(12,16)) == firstYearSeason.get(0)){
+                    columnNumber = fillForecastElements(columnNumber,row,workbook,foodBalanceResults.get(date),code,sheet,date);
+                    datesList.add(date);
+                }
+                else{
+                    // if it is the first
+                    if(j !=length-1 && Integer.parseInt(date.substring(12,16)) ==Integer.parseInt(dates[j+1].toString().substring(12,16)) ){
+                        columnNumber = fillForecastElements(columnNumber,row,workbook,foodBalanceResults.get(date),code,sheet,date);
+                        datesList.add(date);                    }
+                    else{
+                        columnNumber = fillForecastElementsWithFlagsAndComments(columnNumber,row,workbook,foodBalanceResults.get(date),code,sheet,date);
+                        datesList.add(date);
+                    }
+                }
             }
 
         }
@@ -233,6 +293,93 @@ public class SheetCreator {
 
         return rowCounter;
     }
+
+
+    private int fillForecastElementsWithFlagsAndComments(int columnNumber, Row row, HSSFWorkbook workbook, LinkedHashMap<String,
+            DaoForecastValue> elements, int code, Sheet sheet, String date) {
+        DaoForecastValue forecast = elements.get("" + code);
+
+
+        if(forecast != null) {
+            // value
+
+            int value =  (int)forecast.getValue();
+            Cell cell = row.createCell((short) columnNumber);
+            cell.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
+            if(value == -1){
+                cell.setCellValue("");
+            }else {
+                cell.setCellValue(value);
+            }
+            String indexLetter = CellReference.convertNumToColString(columnNumber) + ""+(cell.getRowIndex()+1);
+            cellMappers.putData(date,""+code,"value",indexLetter);
+
+            columnNumber +=4;
+/*
+            // flags
+            Cell cell1 = row.createCell((short) columnNumber);
+            cell1.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
+            cell1.setCellValue(forecast.getFlags());
+
+            String indexLetter1 = CellReference.convertNumToColString(columnNumber) + ""+(cell.getRowIndex()+1);
+            cellMappers.putData(date, "" + code, "flags", indexLetter1);
+
+            columnNumber++;
+
+            // notes
+            Cell cell2 = row.createCell((short) columnNumber);
+            cell2.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
+            cell2.setCellValue(forecast.getNotes());
+            sheet.autoSizeColumn(columnNumber);
+
+            String indexLetter2 = CellReference.convertNumToColString(columnNumber) + ""+(cell.getRowIndex()+1);
+            cellMappers.putData(date, "" + code, "notes", indexLetter2);
+
+            columnNumber++;
+            */
+        }
+        else
+        {
+
+            Cell cell = row.createCell((short) columnNumber);
+            cell.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
+            cell.setCellValue("");
+
+            String indexLetter = CellReference.convertNumToColString(columnNumber) + ""+(cell.getRowIndex()+1);
+            cellMappers.putData(date, "" + code, "value", indexLetter);
+
+            columnNumber +=4;
+
+            // flags
+            /*
+            Cell cell1 = row.createCell((short) columnNumber);
+            cell1.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
+            cell1.setCellValue("");
+
+            String indexLetter1 = CellReference.convertNumToColString(columnNumber) + ""+(cell.getRowIndex()+1);
+            cellMappers.putData(date, "" + code, "flags", indexLetter1);
+
+            columnNumber++;
+
+
+            // notes
+            Cell cell2 = row.createCell((short) columnNumber);
+            cell2.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
+            cell2.setCellValue("");
+
+            String indexLetter2 = CellReference.convertNumToColString(columnNumber) + ""+(cell.getRowIndex()+1);
+            cellMappers.putData(date, "" + code, "notes", indexLetter2);
+
+            columnNumber++;
+            */
+
+        }
+
+        return columnNumber;
+    }
+
+
+
 
 
     private int fillForecastElements(int columnNumber, Row row, HSSFWorkbook workbook, LinkedHashMap<String,
@@ -255,7 +402,7 @@ public class SheetCreator {
             cellMappers.putData(date,""+code,"value",indexLetter);
 
             columnNumber++;
-
+/*
             // flags
             Cell cell1 = row.createCell((short) columnNumber);
             cell1.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
@@ -276,6 +423,7 @@ public class SheetCreator {
             cellMappers.putData(date, "" + code, "notes", indexLetter2);
 
             columnNumber++;
+            */
         }
         else
         {
@@ -290,6 +438,7 @@ public class SheetCreator {
             columnNumber++;
 
             // flags
+            /*
             Cell cell1 = row.createCell((short) columnNumber);
             cell1.setCellStyle(AmisExcelUtils.getBasicCellStyle(workbook));
             cell1.setCellValue("");
@@ -298,6 +447,7 @@ public class SheetCreator {
             cellMappers.putData(date, "" + code, "flags", indexLetter1);
 
             columnNumber++;
+
 
             // notes
             Cell cell2 = row.createCell((short) columnNumber);
@@ -308,6 +458,7 @@ public class SheetCreator {
             cellMappers.putData(date, "" + code, "notes", indexLetter2);
 
             columnNumber++;
+            */
 
         }
 
@@ -348,7 +499,7 @@ public class SheetCreator {
 
     private void makeFormula(String operandCodeFlags, String operandCodeValue,
                              String operator,  LinkedList<String> addendumsCodes,
-                             Sheet sheet){
+                             Sheet sheet) {
 
         LOGGER.info("StartedMAKE FORMULA");
 
@@ -362,35 +513,34 @@ public class SheetCreator {
             operandCellValue = rowIndex.getCell(referenceValue.getCol());
         }
 
-        String formula="";
+        String formula = "";
 
         int lengthAddendums = addendumsCodes.size();
 
         boolean operandsExist = true;
 
-        int i= 0;
-        for(String addendumCode: addendumsCodes){
+        int i = 0;
+        for (String addendumCode : addendumsCodes) {
 
-            operandsExist = checkIfExist(addendumCode,sheet);
+            operandsExist = checkIfExist(addendumCode, sheet);
 
             CellReference tempReference = new CellReference(operandCodeValue);
-            Row tempRow= sheet.getRow(tempReference.getRow());
+            Row tempRow = sheet.getRow(tempReference.getRow());
             Cell tempCell = tempRow.getCell(tempReference.getCol());
 
 
-
-            formula+=addendumCode;
-            if(i != lengthAddendums-1){
-                formula+=operator;
+            formula += addendumCode;
+            if (i != lengthAddendums - 1) {
+                formula += operator;
             }
             i++;
         }
 
-        if(operandsExist) {
+        if (operandsExist) {
             operandCellValue.setCellFormula(formula);
 
             // set the flag to C
-
+/*
             CellReference referenceFlags = new CellReference(operandCodeFlags);
             Row rowIndexFlag = sheet.getRow(referenceFlags.getRow());
             if (rowIndexFlag != null) {
@@ -399,7 +549,9 @@ public class SheetCreator {
 
             operandCellFlag.setCellValue("C");
         }
+        */
 
+        }
     }
 
 
@@ -417,6 +569,18 @@ public class SheetCreator {
         }
 
         return result;
+    }
+
+
+    private Collection<Integer> createSeasonOrderedArray(Object[] dates){
+
+        Collection<Integer> seasons = new ArrayList<Integer>() ;
+
+        for(Object date : dates)
+            seasons.add(Integer.parseInt(date.toString().substring(12,16)));
+
+        return ((Collection)seasons);
+
     }
 }
 

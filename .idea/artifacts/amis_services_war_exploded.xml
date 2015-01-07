@@ -10,8 +10,23 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="Maven: javax.activation:activation:1.1" />
           <element id="library" level="project" name="Maven: org.fao.fenix:fenix-cross-domain:1.1" />
-          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.13" />
-          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.13" />
+          <element id="library" level="project" name="Maven: org.fao.fenix:fenix-commons-search:1.0.1-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: org.fao.fenix:fenix-commons-utils:1.0.1-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: com.orientechnologies:orientdb-object:1.7.8" />
+          <element id="library" level="project" name="Maven: com.orientechnologies:orientdb-core:1.7.8" />
+          <element id="library" level="project" name="Maven: com.orientechnologies:orient-commons:1.7.8" />
+          <element id="library" level="project" name="Maven: com.orientechnologies:orientdb-nativeos:1.7.8" />
+          <element id="library" level="project" name="Maven: net.java.dev.jna:jna:4.0.0" />
+          <element id="library" level="project" name="Maven: net.java.dev.jna:jna-platform:4.0.0" />
+          <element id="library" level="project" name="Maven: org.xerial.snappy:snappy-java:1.1.0.1" />
+          <element id="library" level="project" name="Maven: com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:1.4" />
+          <element id="library" level="project" name="Maven: org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.0.Final" />
+          <element id="library" level="project" name="Maven: org.javassist:javassist:3.16.1-GA" />
+          <element id="library" level="project" name="Maven: com.orientechnologies:orientdb-client:1.7.8" />
+          <element id="library" level="project" name="Maven: com.orientechnologies:orientdb-enterprise:1.7.8" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.4.3" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.4.3" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.4.3" />
           <element id="library" level="project" name="Maven: org.postgresql:postgresql:9.3-1102-jdbc41" />
           <element id="library" level="project" name="Maven: org.apache.poi:poi-ooxml:3.10.1" />
           <element id="library" level="project" name="Maven: org.apache.poi:poi:3.10.1" />
@@ -38,6 +53,8 @@
           <element id="library" level="project" name="Maven: commons-io:commons-io:2.1" />
           <element id="library" level="project" name="Maven: net.jcip:jcip-annotations:1.0" />
           <element id="library" level="project" name="Maven: org.jboss.resteasy:resteasy-jackson-provider:3.0.6.Final" />
+          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.12" />
+          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.12" />
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-jaxrs:1.9.12" />
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-xc:1.9.12" />
           <element id="library" level="project" name="Maven: org.jboss.resteasy:resteasy-servlet-initializer:3.0.6.Final" />

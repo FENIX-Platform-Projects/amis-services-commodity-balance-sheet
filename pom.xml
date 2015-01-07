@@ -10,7 +10,10 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <resteasy.version>3.0.6.Final</resteasy.version>
-        <jackson.version>1.9.13</jackson.version>
+        <jackson.version>2.4.3</jackson.version>
+        <orient.version>1.7.8</orient.version>
+        <crossdomain.version>1.1</crossdomain.version>
+        <apachepoi.version>3.10.1</apachepoi.version>
     </properties>
 
 	<build>
@@ -88,8 +91,6 @@
 			<name>FAO projects-releases</name>
 			<url>http://10.5.67.135/artifactory/libs-release-local</url>
 		</repository>
-
-
 	</distributionManagement>
 
 
@@ -118,10 +119,38 @@
             <version>1.1</version>
         </dependency>
 
+
+        <!-- FENIX metadata standards -->
+        <dependency>
+            <groupId>org.fao.fenix</groupId>
+            <artifactId>fenix-commons-search</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-object</artifactId>
+            <version>${orient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-client</artifactId>
+            <version>${orient.version}</version>
+        </dependency>
+
         <!-- Jackson custom configuration support -->
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
 
@@ -148,7 +177,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.10.1</version>
+            <version>${apachepoi.version}</version>
         </dependency>
 
 

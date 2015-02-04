@@ -1,30 +1,16 @@
 package org.fao.amis.dataset.services.rest;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-
-
 import org.fao.amis.dataset.dao.DatasetData;
 import org.fao.amis.dataset.dao.FilterData;
 import org.fao.amis.dataset.dao.SupportData;
-import org.fao.amis.dataset.dto.DatasetFilter;
-import org.fao.amis.dataset.dto.DatasetFilterWithDate;
-import org.fao.amis.dataset.dto.DatasetNationalFilter;
-import org.fao.amis.dataset.dto.DatasetUpdate;
-import org.fao.amis.dataset.dto.DatasetUpdatePrevSeason;
-import org.fao.amis.dataset.dto.DateFilter;
-import org.fao.amis.dataset.dto.FilterCrops;
-import org.fao.amis.dataset.dto.FilterDatabase;
-import org.fao.amis.dataset.dto.FilterYear;
+import org.fao.amis.dataset.dto.*;
 import org.fao.amis.server.tools.utils.DatasourceObject;
 import org.fao.amis.server.tools.utils.YearObject;
+
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 @Path("dataset")
 @Produces({"application/json"})
@@ -101,7 +87,23 @@ public class DatasetService
         return this.dao2.getCropsNumber(filter);
     }
 
+
+    @POST
+    @Path("populationData")
+    public Iterator<Object[]> getData(PopulationFilter filter) throws Exception { return this.dao2.getPopulationData(filter);}
+
+
+    @PUT
+    @Path("populationData")
+    public void getData(PopulationDataset filter) throws Exception {  this.dao2.updPopulationData(filter);}
+
+
+
+
     /*
+
+
+    @PUT
 
     @POST
     @Path("export")

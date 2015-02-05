@@ -24,8 +24,8 @@ public class SupportData
     private static String queryCrops = "select crops_num from amis_crops where region_code =? and product_code =?";
     private static String queryPopulationLoad = "select distinct on (year) region_code, region_name, element_code,element_name, units, year, value, flag, notes from prova_national_pop where region_code = ? order by year ASC";
     private static  String queryDeletePopulation = "delete from prova_national_pop where region_code =?";
-    private static int[] queryInsertTypesPopulation = { Types.INTEGER, Types.VARCHAR, Types.INTEGER, Types.VARCHAR,Types.VARCHAR, Types.REAL, Types.INTEGER, Types.VARCHAR, Types.VARCHAR };
-    private static String queryInsertPopulation = "insert into prova_national_pop(region_code, region_name, element_code, element_name, units,value,year,flag,notes) values (?,?,?,?,?,?,?,?,?)";
+    private static int[] queryInsertTypesPopulation = { Types.INTEGER, Types.VARCHAR, Types.INTEGER, Types.VARCHAR,Types.VARCHAR, Types.INTEGER,Types.REAL,  Types.VARCHAR, Types.VARCHAR };
+    private static String queryInsertPopulation = "insert into prova_national_pop(region_code, region_name, element_code, element_name, units,year,value,flag,notes) values (?,?,?,?,?,?,?,?,?)";
 
 
     public Iterator<Object[]> getMostRecentForecastDate(DateFilter filter) throws Exception {

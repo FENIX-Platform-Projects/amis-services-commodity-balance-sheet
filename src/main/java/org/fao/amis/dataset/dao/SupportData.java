@@ -22,10 +22,10 @@ public class SupportData
     private static int[] queryInsertTypes = { 4, 4, 4, 4, 12, 12, 7, 12, 12 };
     private static String queryLoad = "select element_code, units, date, value, flag,  notes from national_forecast where region_code = ? and product_code = ? and year = ? and date =?";
     private static String queryCrops = "select crops_num from amis_crops where region_code =? and product_code =?";
-    private static String queryPopulationLoad = "select distinct on (year) region_code, region_name, element_code,element_name, units, year, value, flag, notes from prova_national_pop where region_code = ? order by year ASC";
-    private static  String queryDeletePopulation = "delete from prova_national_pop where region_code =?";
+    private static String queryPopulationLoad = "select distinct on (year) region_code, region_name, element_code,element_name, units, year, value, flag, notes from national_population where region_code = ? order by year DESC";
+    private static  String queryDeletePopulation = "delete from national_population where region_code =?";
     private static int[] queryInsertTypesPopulation = { Types.INTEGER, Types.VARCHAR, Types.INTEGER, Types.VARCHAR,Types.VARCHAR, Types.INTEGER,Types.REAL,  Types.VARCHAR, Types.VARCHAR };
-    private static String queryInsertPopulation = "insert into prova_national_pop(region_code, region_name, element_code, element_name, units,year,value,flag,notes) values (?,?,?,?,?,?,?,?,?)";
+    private static String queryInsertPopulation = "insert into national_population (region_code, region_name, element_code, element_name, units,year,value,flag,notes) values (?,?,?,?,?,?,?,?,?)";
 
 
     public Iterator<Object[]> getMostRecentForecastDate(DateFilter filter) throws Exception {

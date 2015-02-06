@@ -23,7 +23,7 @@ public class DatasetData
     @Inject
     private ConnectionManager connectionManager;
     private static String queryLoad = "select element_code, units, date, value, flag,  notes from national_forecast where region_code = ? and product_code = ? and year = ?";
-    private static String queryLoadNational = "select element_code, units, value, flag from national_population where region_code = ? and element_code = ? and year = ? ";
+    private static String queryLoadNational = "select element_code, units, value, flag,notes from national_population where region_code = ? and element_code = ? and year = ? ";
     private static String queryDelete = "delete from national_forecast where region_code = ? and product_code = ? and year = ? and season = ?";
     private static String queryDeletePrevYear = "delete from national_forecast where region_code = ? and product_code = ? and year = ? and season = ? and date = ? and database =?";
     private static String queryMostRecentDate = "select distinct date from national_forecast where region_code = ? and product_code = ? and year = ? order by date ASC";

@@ -181,15 +181,6 @@
         </dependency>
 
 
-        <!-- J2EE -->
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-
         <!-- Log4j -->
         <dependency>
             <groupId>log4j</groupId>

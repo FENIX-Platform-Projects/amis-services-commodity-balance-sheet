@@ -17,11 +17,10 @@
         <param-value>Qwaszx</param-value>
     </context-param>
 
-
-
-
-    <!-- Server environment  -->
     <!--
+
+
+
 
     <context-param>
         <param-name>url</param-name>
@@ -35,9 +34,8 @@
         <param-name>psw</param-name>
         <param-value>Qwaszx</param-value>
     </context-param>
--->
 
-
+    -->
     <!-- Temporary folder for file downloaded from export-->
     <context-param>
         <param-name>tmp.folder</param-name>

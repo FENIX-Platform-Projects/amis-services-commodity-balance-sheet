@@ -98,7 +98,12 @@ public class DatasetService
     public void getData(PopulationDataset filter) throws Exception {  this.dao2.updPopulationData(filter);}
 
 
-
+    @POST
+    @Path("annualExport")
+    public Iterator<Object[]> getData(FilterExport filter) throws Exception
+    {
+        return this.dao.getAnnualExportData(filter);
+    }
 
     /*
 

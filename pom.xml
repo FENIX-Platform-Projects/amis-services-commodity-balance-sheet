@@ -44,6 +44,7 @@
                 <version>2.10</version>
             </plugin>
 		</plugins>
+
 	</build>
 
     <!-- PROFILES -->

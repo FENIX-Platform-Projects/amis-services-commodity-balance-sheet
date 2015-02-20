@@ -32,7 +32,7 @@ public class HandlerExcelCreation {
 
         // create the Excel file
         HSSFWorkbook workbook = new HSSFWorkbook();
-        AmisExcelUtils.setCustomizedPalette((HSSFWorkbook) workbook);
+        AmisExcelUtils.initStyles((HSSFWorkbook) workbook);
 
         //Initialize font
         AmisExcelUtils.initializeHSSFFontStyles(workbook);
@@ -43,6 +43,7 @@ public class HandlerExcelCreation {
         CommodityParser commParser = new CommodityParser();
 
 
+        // for each sheet
         for (int commodity : commodityList) {
 
             String commodityString = "" + commodity;
@@ -54,9 +55,12 @@ public class HandlerExcelCreation {
 
             int rowCounter = 0;
 
+            /* summary title (immutable ) */
             rowCounter = this.sheetCreator.createSummary(rowCounter, sheet, workbook, dataModel, commodityLabel);
-
             rowCounter = this.sheetCreator.createSheetTitle(rowCounter,sheet,workbook);
+
+
+            /* body part (mutable) */
 
             /*
                 -------------------------    FoodBalance   -------------------------------------------------

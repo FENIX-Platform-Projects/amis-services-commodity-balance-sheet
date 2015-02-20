@@ -1,4 +1,4 @@
-.idea/
+.idea/**
 .target/
 *.class
 *.jar
@@ -6,3 +6,5 @@
 *.iml
 *.war
 **/target/**
+**/.idea/**
+.idea/workspace.xml

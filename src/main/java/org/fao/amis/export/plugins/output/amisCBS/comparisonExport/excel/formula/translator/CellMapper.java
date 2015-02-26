@@ -25,10 +25,7 @@ public class CellMapper{
 
 
     public void putData(String date, String code, String type, String value){
-
-        String key = date+"*"+code+"*"+type;
-
-        this.mapCells.put(key,value);
+        this.mapCells.put(""+date+"*"+code+"*"+type+"",value);
     }
 
 

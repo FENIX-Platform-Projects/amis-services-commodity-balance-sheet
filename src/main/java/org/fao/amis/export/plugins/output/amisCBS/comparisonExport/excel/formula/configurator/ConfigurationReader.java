@@ -1,6 +1,5 @@
 package org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.formula.configurator;
 
-
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.formula.bean.FormulaBean;
 
 import java.io.IOException;
@@ -27,7 +26,6 @@ public class ConfigurationReader {
     public LinkedList<FormulaBean> getFormulas(String[] codes){
 
         LinkedList<FormulaBean> formulaBeans = new LinkedList<FormulaBean>();
-
 
         for(String code: codes){
 

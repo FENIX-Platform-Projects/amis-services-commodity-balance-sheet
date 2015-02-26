@@ -26,6 +26,7 @@ public class DatasetFilter
     public Integer getYear() {
         return this.year;
     }
+
     public void setYear(Integer year) {
         this.year = year;
     }

@@ -20,8 +20,6 @@ public class DataFactory {
     public DataFactory( ArrayList<Object[]> data, String season, String dataSource, String region){
         try {
 
-
-
             this.fakeConstructor = new DataCreator(data, season, dataSource, region);
 
             qvo = new AMISQuery();
@@ -42,7 +40,6 @@ public class DataFactory {
 
     public DataCreator getDataCreatorIstance(){
         return  this.fakeConstructor;
-
     }
 
 
@@ -54,6 +51,5 @@ public class DataFactory {
     public Forecast getForecastIstance() {
         return this.forecasts;
     }
-
 
 }

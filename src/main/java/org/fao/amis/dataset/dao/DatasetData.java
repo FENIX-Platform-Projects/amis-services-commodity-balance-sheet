@@ -85,7 +85,6 @@ public class DatasetData
         Connection connection = this.connectionManager.getConnection();
         PreparedStatement statement = connection.prepareStatement(queryLoad);
 
-
         statement.setInt(1, filter.getRegion().intValue());
         statement.setInt(2, filter.getProduct().intValue());
         statement.setInt(3, filter.getYear().intValue());

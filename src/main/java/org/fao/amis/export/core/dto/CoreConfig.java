@@ -27,7 +27,7 @@ public class CoreConfig {
     }
 
     public PluginConfig getOutput() {
-        return output;
+        return output ;
     }
 
     public void setOutput(PluginConfig output) {

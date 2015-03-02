@@ -1,6 +1,7 @@
 package org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.configurations.dataCreator;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class DataCreator {
 
@@ -8,18 +9,16 @@ public class DataCreator {
 
     private String datasource, season, country;
 
-    public DataCreator( ArrayList<Object[]> dataTrue, String season, String dataSource, String region) {
+    public DataCreator( ArrayList<Object[]> dataTrue, LinkedHashMap filterData) {
         this.data = dataTrue;
-        this.datasource = dataSource;
-        this.season = season;
-        this.country = region;
+        this.datasource = filterData.get("datasource").toString();
+        this.season = filterData.get("season").toString();
+        this.country = filterData.get("region").toString();
     }
-
 
     public ArrayList<Object[]> getData() {
         return this.data;
     }
-
 
     public String getDatasource() {
         return datasource;

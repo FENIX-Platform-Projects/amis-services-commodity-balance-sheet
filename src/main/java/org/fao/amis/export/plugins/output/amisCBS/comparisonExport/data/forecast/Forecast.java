@@ -172,13 +172,17 @@ public class Forecast {
 
         if(type.equals("national")){
           dataUtils.fillElementsMap(this.foodBalanceResults,listElements,this.unorderedMap);
+            System.out.println(this.foodBalanceResults);
+
         }
         else if(type.equals("international")){
             dataUtils.fillElementsMap(this.ityResults,listElements,this.unorderedMap);
+            System.out.println(this.ityResults);
+
         }
         else{
             dataUtils.fillElementsMap(this.otherResults,listElements,this.unorderedMap);
-
+            System.out.println(this.otherResults);
         }
 
     }

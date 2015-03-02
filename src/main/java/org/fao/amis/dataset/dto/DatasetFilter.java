@@ -1,13 +1,12 @@
 package org.fao.amis.dataset.dto;
 
-public class DatasetFilter
-{
+public class DatasetFilter {
     private Integer region;
     private Integer product;
     private Integer year;
+    private String season;
 
-    public Integer getRegion()
-    {
+    public Integer getRegion() {
         return this.region;
     }
 
@@ -30,4 +29,8 @@ public class DatasetFilter
     public void setYear(Integer year) {
         this.year = year;
     }
+
+    public String getSeason() { return season;  }
+
+    public void setSeason(String season) { this.season = season; }
 }

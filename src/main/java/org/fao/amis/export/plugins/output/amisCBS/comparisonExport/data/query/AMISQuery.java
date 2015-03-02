@@ -55,20 +55,14 @@ public class AMISQuery {
 
     private void initMaps(String type) throws IOException {
 
-       // InputStream inputStream = null;
+
 
          if(type.equals("national")){
              dataUtils = new DataUtils();
-
              Properties prop = new Properties();
-             String propFileName = null;
              this.foodBalanceElements = new HashMap<Integer, HashMap<Integer, String>>();
-             propFileName = URL_NATIONAL;
-             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(URL_NATIONAL);
              prop.load(inputStream);
-
-             this.foodBalanceElements = new HashMap<Integer, HashMap<Integer, String>>();
-
 
              dataUtils.fillMap(this.foodBalanceElements, COMMODITIES, MAIZE_AND_WHEAT_FOOD, RICE_FOOD, SOYBEANS_FOOD, prop);
              LOGGER.warn("*****************************************");
@@ -83,10 +77,8 @@ public class AMISQuery {
              dataUtils = new DataUtils();
 
              Properties prop = new Properties();
-             String propFileName = null;
              this.ityElements = new HashMap<Integer, HashMap<Integer, String>>();
-             propFileName = URL_INTERNATION;
-             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(URL_INTERNATION);
              prop.load(inputStream);
 
              dataUtils.fillMap(this.ityElements,COMMODITIES,MAIZE_AND_WHEAT_FOOD,RICE_FOOD,SOYBEANS_FOOD, prop);
@@ -99,12 +91,9 @@ public class AMISQuery {
 
         else if(type.equals("others")){
              dataUtils = new DataUtils();
-
              Properties prop = new Properties();
-             String propFileName = null;
              this.otherElements = new HashMap<Integer, HashMap<Integer, String>>();
-             propFileName = URL_OTHERS;
-             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(URL_OTHERS);
 
              prop.load(inputStream);
              LOGGER.debug("*****************************************");

@@ -145,11 +145,11 @@ public class SheetCreator {
         for (int i = 0; i < dates.length; i++) {
             String date = dates[i].toString();
 
-            if (Integer.parseInt(date.substring(12, 16)) == firstYearSeason.get(0)) {
+            if (Integer.parseInt(date.substring(0, 4)) == firstYearSeason.get(0)) {
                 columnNumber = createHeadersValuesWithFlagsAndComments(date, columnNumber, row, (HSSFWorkbook) workbook, sheet, false);
             } else {
                 // if it is the first
-                if (i != dates.length - 1 && Integer.parseInt(date.substring(12, 16)) == Integer.parseInt(dates[i + 1].toString().substring(12, 16))) {
+                if (i != dates.length - 1 && Integer.parseInt(date.substring(0, 4)) == Integer.parseInt(dates[i + 1].toString().substring(0, 4))) {
                     columnNumber = createHeadersValuesWithFlagsAndComments(date, columnNumber, row, (HSSFWorkbook) workbook, sheet,false);
                 } else {
                     columnNumber = createHeadersValuesWithFlagsAndComments(date, columnNumber, row, (HSSFWorkbook) workbook, sheet,true);
@@ -261,12 +261,12 @@ public class SheetCreator {
             for (int j = 0; j < length; j++) {
                 String date = dates[j].toString();
 
-                if (Integer.parseInt(date.substring(12, 16)) == firstYearSeason.get(0)) {
+                if (Integer.parseInt(date.substring(0, 4)) == firstYearSeason.get(0)) {
                     columnNumber = fillForecastElementsWithFlagsAndComments(columnNumber, row, workbook, foodBalanceResults.get(date), code, sheet, date);
                     datesList.add(date);
                 } else {
                     // if it is the first
-                    if (j != length - 1 && Integer.parseInt(date.substring(12, 16)) == Integer.parseInt(dates[j + 1].toString().substring(12, 16))) {
+                    if (j != length - 1 && Integer.parseInt(date.substring(0, 4)) == Integer.parseInt(dates[j + 1].toString().substring(0, 4))) {
                         columnNumber = fillForecastElementsWithFlagsAndComments(columnNumber, row, workbook, foodBalanceResults.get(date), code, sheet, date);
                         datesList.add(date);
                     } else {
@@ -563,8 +563,10 @@ public class SheetCreator {
 
         Collection<Integer> seasons = new ArrayList<Integer>();
 
+        // order season as integer considering the first year
+        // ( ex: 2000 for "2000/01"
         for (Object date : dates)
-            seasons.add(Integer.parseInt(date.toString().substring(12, 16)));
+            seasons.add(Integer.parseInt(date.toString().substring(0, 4)));
 
         return ((Collection) seasons);
 

@@ -7,6 +7,7 @@ import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.query.AM
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 
 public class DataFactory {
@@ -17,10 +18,10 @@ public class DataFactory {
 
     private Forecast forecasts;
 
-    public DataFactory( ArrayList<Object[]> data, String season, String dataSource, String region){
+    public DataFactory( ArrayList<Object[]> data, LinkedHashMap filterData){
         try {
 
-            this.fakeConstructor = new DataCreator(data, season, dataSource, region);
+            this.fakeConstructor = new DataCreator(data, filterData);
 
             qvo = new AMISQuery();
             qvo.init();

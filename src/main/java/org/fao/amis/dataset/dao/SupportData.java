@@ -20,7 +20,7 @@ public class SupportData
     private ConnectionManager connectionManager;
     private static String queryMostRecentDate = "select distinct date from national_forecast where region_code = ? and product_code =? and year = ? order by date";
     private static int[] queryInsertTypes = { 4, 4, 4, 4, 12, 12, 7, 12, 12 };
-    private static String queryLoad = "select element_code, units, date, value, flag,  notes from national_forecast where region_code = ? and product_code = ? and year = ? and date =?";
+    private static String queryLoad = "select element_code, units, date, value, flag,  notes from national_forecast where region_code = ? and product_code = ? and year = ? and date =? and season=?";
     private static String queryCrops = "select crops_num from amis_crops where region_code =? and product_code =?";
     private static String queryPopulationLoad = "select distinct on (year) region_code, region_name, element_code,element_name, units, year, value, flag, notes from national_population where region_code = ? order by year DESC";
     private static  String queryDeletePopulation = "delete from national_population where region_code =?";
@@ -47,6 +47,7 @@ public class SupportData
         statement.setInt(2, filter.getProduct().intValue());
         statement.setInt(3, filter.getYear().intValue());
         statement.setString(4, filter.getDate());
+        statement.setString(5,filter.getSeason());
 
         return this.utils.getDataIterator(statement.executeQuery());
     }

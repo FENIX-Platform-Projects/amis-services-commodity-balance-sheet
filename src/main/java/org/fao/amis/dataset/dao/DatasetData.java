@@ -18,14 +18,14 @@ public class DatasetData
 
     @Inject
     private ConnectionManager connectionManager;
-    private static String queryLoad = "select element_code, units, date, value, flag,  notes from national_forecast where region_code = ? and product_code = ? and year = ?";
+    private static String queryLoad = "select element_code, units, date, value, flag,  notes from national_forecast where region_code = ? and product_code = ? and year = ? and season =?";
     private static String queryLoadNational = "select element_code, units, value, flag,notes from national_population where region_code = ? and element_code = ? and year = ? ";
     private static String queryDelete = "delete from national_forecast where region_code = ? and product_code = ? and year = ? and season = ?";
     private static String queryDeletePrevYear = "delete from national_forecast where region_code = ? and product_code = ? and year = ? and season = ? and date = ? and database =?";
     private static String queryMostRecentDate = "select distinct date from national_forecast where region_code = ? and product_code = ? and year = ? order by date ASC";
     private static String queryDeleteNational = "delete from national_population where region_code = ? and product_code = ? and year = ? and database =?";
     private static String queryInsert = "insert into national_forecast(region_code, product_code, year,season,database, element_code, units, date, value, flag, notes) values (?,?,?,?,?,?,?,?,?,?,?)";
-    private static String queryExportTotalAnnual = "select  product_code , element_code, units, date||' (' ||season|| ')' as date  ,value,flag, notes from (select region_code ,\n" +
+    private static String queryExportTotalAnnual = "select  product_code , element_code, units, season||' (' ||date|| ')' as date  ,value,flag, notes from (select region_code ,\n" +
             "  region_name ,\n" +
             "  product_code ,\n" +
             "  product_name ,\n" +
@@ -88,6 +88,7 @@ public class DatasetData
         statement.setInt(1, filter.getRegion().intValue());
         statement.setInt(2, filter.getProduct().intValue());
         statement.setInt(3, filter.getYear().intValue());
+        statement.setString(4,""+filter.getSeason());
 
         return this.utils.getDataIterator(statement.executeQuery());
     }

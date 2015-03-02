@@ -3,16 +3,12 @@ package org.fao.amis.export.plugins.output.amisCBS.comparisonExport;
 import com.google.common.collect.Lists;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.Factory.DataFactory;
-import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.configurations.dataCreator.DataCreator;
-import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.daoValue.DaoForecastValue;
-import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.forecast.Forecast;
-import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.query.AMISQuery;
-import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.handlerCreation.HandlerExcelCreation;
 import org.fao.amis.export.core.dto.CoreOutputHeader;
 import org.fao.amis.export.core.dto.CoreOutputType;
 import org.fao.amis.export.core.dto.data.CoreData;
 import org.fao.amis.export.core.output.plugin.Output;
+import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.Factory.DataFactory;
+import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.handlerCreation.HandlerExcelCreation;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -32,10 +28,14 @@ public class OutputBalanceSheet   extends Output {
 
     @Override
     public void process(CoreData resource) throws Exception {
+        System.out.println("asdasdas");
+
         LinkedHashMap tmp = ((LinkedHashMap)config.get("filterData"));
         ArrayList<Object[]> ss  = Lists.newArrayList(resource.getData());
-        wb = createSheet(ss,tmp.get("season").toString(), tmp.get("datasource").toString(), tmp.get("region").toString());
+        wb = createSheet(ss,tmp );
     }
+
+
 
     @Override
     public CoreOutputHeader getHeader() throws Exception {
@@ -56,11 +56,9 @@ public class OutputBalanceSheet   extends Output {
 
     }
 
-    private HSSFWorkbook createSheet( ArrayList<Object[]> data, String season, String dataSource, String region){
+    private HSSFWorkbook createSheet( ArrayList<Object[]> data, LinkedHashMap filterData){
 
-
-
-        DataFactory dataFactory = new DataFactory(data, season, dataSource, region);
+       /* DataFactory dataFactory = new DataFactory(data, filterData);
         Forecast forecast = dataFactory.getForecastIstance();
         AMISQuery qvo = dataFactory.getAMISQueryIstance();
         DataCreator fakeCostructor = dataFactory.getDataCreatorIstance();
@@ -81,10 +79,10 @@ public class OutputBalanceSheet   extends Output {
         LOGGER.debug("Food balance Results");
         LOGGER.debug(forecast.getFoodBalanceResults().toString());
 
-        LOGGER.debug("forecasts: getFoodBalanceREsults");
-
+        LOGGER.debug("forecasts: getFoodBalanceREsults");*/
+        DataFactory dataFactory = new DataFactory(data, filterData);
         HandlerExcelCreation excelController = new HandlerExcelCreation();
-        return excelController.init(forecast, qvo, fakeCostructor);
+        return excelController.init(dataFactory.getForecastIstance(), dataFactory.getAMISQueryIstance(), dataFactory.getDataCreatorIstance());
     }
 
 

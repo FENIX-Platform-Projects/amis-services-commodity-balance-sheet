@@ -70,7 +70,8 @@ public class DataUtils {
     }
 
 
-    public void fillElementsMap(LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>>> toFillMap, HashMap<Integer, HashMap<Integer, String>> toFollow,
+    public void fillElementsMap(LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>>> toFillMap,
+                                HashMap<Integer, HashMap<Integer, String>> toFollow,
                                 LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>>> unorderedMap) {
 
         Set<Integer> commodities = toFollow.keySet();

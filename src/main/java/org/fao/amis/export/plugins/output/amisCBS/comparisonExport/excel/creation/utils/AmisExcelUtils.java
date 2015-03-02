@@ -21,7 +21,6 @@ public class AmisExcelUtils {
 
     private static Map<String, HSSFCellStyle> styles;
 
-
     public static void initStyles(HSSFWorkbook workbook) {
         setCustomizedPalette(workbook);
         initializeHSSFFontStyles(workbook);

@@ -3,6 +3,7 @@ package org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.Factory
 
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.configurations.dataCreator.DataCreator;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.forecast.Forecast;
+import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.formula.FormulaHandler;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.query.AMISQuery;
 
 import java.io.IOException;
@@ -14,11 +15,15 @@ public class DataFactory {
 
     private DataCreator fakeConstructor;
 
+    private FormulaHandler formulaHandler;
+
     private AMISQuery qvo;
 
     private Forecast forecasts;
 
     public DataFactory( ArrayList<Object[]> data, LinkedHashMap filterData){
+
+        formulaHandler = new FormulaHandler();
         try {
 
             this.fakeConstructor = new DataCreator(data, filterData);
@@ -28,6 +33,9 @@ public class DataFactory {
 
             forecasts = new Forecast();
             forecasts.initData(this.fakeConstructor.getData());
+
+            formulaHandler.createCalculatedModel(forecasts.getUnorderedMap());
+
 
             forecasts.createOrderedMaps(qvo.getFoodBalanceElements(), "national");
             forecasts.createOrderedMaps(qvo.getItyElements(), "international");

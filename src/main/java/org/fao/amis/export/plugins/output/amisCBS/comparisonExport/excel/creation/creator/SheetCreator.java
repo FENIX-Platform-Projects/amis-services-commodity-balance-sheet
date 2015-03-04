@@ -278,12 +278,12 @@ public class SheetCreator {
 
         }
 
-        if (this.FORMULA_URL != null) {
+   /*     if (this.FORMULA_URL != null) {
             for (String date : datesList) {
                 LinkedList<FormulaBean> formulaBeans = this.configurationReader.getFormulas(this.nationalCodes);
                 handleFormulas(formulaBeans, sheet, workbook, date);
             }
-        }
+        }*/
 
         return rowCounter;
     }
@@ -323,7 +323,8 @@ public class SheetCreator {
             // notes
             Cell cell2 = row.createCell((short) columnNumber);
             cell2.setCellStyle(AmisExcelUtils.getBasicCellStyle());
-            cell2.setCellValue((forecast.getNotes().equals("null"))? "": forecast.getNotes());
+
+            cell2.setCellValue((forecast.getNotes() == null || forecast.getNotes().equals("null"))? "": forecast.getNotes());
             sheet.autoSizeColumn(columnNumber);
 
             String indexLetter2 = CellReference.convertNumToColString(columnNumber) + ""+(cell.getRowIndex()+1);

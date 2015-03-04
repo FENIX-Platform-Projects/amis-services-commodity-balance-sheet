@@ -73,7 +73,7 @@ public class ServletFenixExport extends HttpServlet {
             if (tmpFile.exists()) {
                 response.setContentType(outputHeader.getType().getContentType());
                 response.setHeader("Content-Disposition", "attachment; filename=" + outputHeader.getName());
-                response.setContentLengthLong(tmpFile.length());
+                response.setContentLength((int)tmpFile.length());
 
                 writeFile(tmpFile, response.getOutputStream());
                 tmpFile.delete();

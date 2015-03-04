@@ -28,7 +28,6 @@ public class OutputBalanceSheet   extends Output {
 
     @Override
     public void process(CoreData resource) throws Exception {
-        System.out.println("asdasdas");
 
         LinkedHashMap tmp = ((LinkedHashMap)config.get("filterData"));
         ArrayList<Object[]> ss  = Lists.newArrayList(resource.getData());

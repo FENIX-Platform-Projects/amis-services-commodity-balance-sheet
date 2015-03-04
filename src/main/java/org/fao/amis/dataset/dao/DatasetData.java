@@ -77,9 +77,7 @@ public class DatasetData
             "  where region_code = ?) t\n" +
             "where date = maxdate  order by product_code,season DESC";
 
-
     private static int[] queryInsertTypes = { Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.VARCHAR,Types.VARCHAR, Types.INTEGER, Types.VARCHAR, Types.VARCHAR, Types.REAL, Types.VARCHAR, Types.VARCHAR };
-
 
     public Iterator<Object[]> getNationalData(DatasetFilter filter) throws Exception {
         Connection connection = this.connectionManager.getConnection();
@@ -168,8 +166,7 @@ public class DatasetData
         }
     }
 
-    public Iterator<Object[]> getMostRecentForecastDate(DatasetFilter filter) throws Exception
-    {
+    public Iterator<Object[]> getMostRecentForecastDate(DatasetFilter filter) throws Exception {
         Connection connection = this.connectionManager.getConnection();
         PreparedStatement statement = connection.prepareStatement(queryMostRecentDate);
 
@@ -180,9 +177,7 @@ public class DatasetData
         return this.utils.getDataIterator(statement.executeQuery());
     }
 
-
-    public Iterator<Object[]> getAnnualExportData(FilterExport filter) throws Exception
-    {
+    public Iterator<Object[]> getAnnualExportData(FilterExport filter) throws Exception  {
         Connection connection = this.connectionManager.getConnection();
         PreparedStatement statement = connection.prepareStatement(queryExportTotalAnnual);
 
@@ -191,4 +186,5 @@ public class DatasetData
 
         return this.utils.getDataIterator(statement.executeQuery());
     }
+
 }

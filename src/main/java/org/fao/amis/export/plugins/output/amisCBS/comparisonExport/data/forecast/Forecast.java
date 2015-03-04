@@ -162,9 +162,7 @@ public class Forecast {
     }
 
 
-    public LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>>> getUnorderedMap() {
-        return unorderedMap;
-    }
+
 
 
     public void createOrderedMaps( HashMap< Integer, HashMap<Integer, String>> listElements, String type){
@@ -172,17 +170,14 @@ public class Forecast {
 
         if(type.equals("national")){
           dataUtils.fillElementsMap(this.foodBalanceResults,listElements,this.unorderedMap);
-            System.out.println(this.foodBalanceResults);
 
         }
         else if(type.equals("international")){
             dataUtils.fillElementsMap(this.ityResults,listElements,this.unorderedMap);
-            System.out.println(this.ityResults);
 
         }
         else{
             dataUtils.fillElementsMap(this.otherResults,listElements,this.unorderedMap);
-            System.out.println(this.otherResults);
         }
 
     }
@@ -209,5 +204,9 @@ public class Forecast {
         return this.COMMODITY_LIST;
     }
 
+
+    public LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>>> getUnorderedMap() {
+        return unorderedMap;
+    }
 
 }

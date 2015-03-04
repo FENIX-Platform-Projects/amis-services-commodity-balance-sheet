@@ -75,7 +75,7 @@ public class DatasetData
             "\t LEFT JOIN national_population t2 ON t2.region_code = t1.region_code and \n" +
             "\t t2.year = t1.year) as nationalJOIN \n" +
             "  where region_code = ?) t\n" +
-            "where date = maxdate  order by product_code,season DESC";
+            "where date = maxdate  order by product_code,season ASC";
 
     private static int[] queryInsertTypes = { Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.VARCHAR,Types.VARCHAR, Types.INTEGER, Types.VARCHAR, Types.VARCHAR, Types.REAL, Types.VARCHAR, Types.VARCHAR };
 

@@ -197,8 +197,6 @@ public class SheetCreator {
 
     private int createHeadersValuesSimple(String date, int columnNumber, Row row, HSSFWorkbook workbook, Sheet sheet) {
 
-        String flags = "Forecasting Methodology";
-        String notes = "Notes";
 
         row.setHeight((short) (3 * 260));
         Cell cell = row.createCell((short) columnNumber);

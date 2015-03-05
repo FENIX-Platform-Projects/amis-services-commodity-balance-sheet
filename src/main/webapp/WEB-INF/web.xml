@@ -19,8 +19,6 @@
 -->
 
 
-
-
     <context-param>
         <param-name>url</param-name>
         <param-value>jdbc:postgresql://exlprfaostat1.ext.fao.org/amis-cbs-v3</param-value>

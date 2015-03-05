@@ -33,7 +33,6 @@ public class FormulaUtils {
     public boolean checkIfOk (String valuesToSearch,  LinkedHashMap<String, DaoForecastValue> forecast) {
 
         boolean found = (forecast.get(valuesToSearch) != null) && (forecast.get(valuesToSearch).getValue() != -1);
-        System.out.println(found);
         return (forecast.get(valuesToSearch) != null) && (forecast.get(valuesToSearch).getValue() != -1);
     }
 

@@ -9,6 +9,7 @@ import org.fao.amis.export.core.dto.data.CoreData;
 import org.fao.amis.export.core.output.plugin.Output;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.Factory.DataFactory;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.handlerCreation.HandlerExcelCreation;
+import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.externalServices.BeanNationalYear;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class OutputBalanceSheet   extends Output {
     private Map<String, Object> config;
     private CoreData resource;
     HSSFWorkbook wb;
+    private BeanNationalYear bean;
 
     @Override
     public void init(Map<String, Object> config) { this.config = config; }
@@ -57,30 +59,12 @@ public class OutputBalanceSheet   extends Output {
 
     private HSSFWorkbook createSheet( ArrayList<Object[]> data, LinkedHashMap filterData){
 
-       /* DataFactory dataFactory = new DataFactory(data, filterData);
-        Forecast forecast = dataFactory.getForecastIstance();
-        AMISQuery qvo = dataFactory.getAMISQueryIstance();
-        DataCreator fakeCostructor = dataFactory.getDataCreatorIstance();
 
-        LOGGER.debug("FoodBalance");
-        LOGGER.debug(qvo.getFoodBalanceElements().toString());
-        LOGGER.debug("International");
-        LOGGER.debug(qvo.getItyElements().toString());
-
-        LOGGER.debug("othersss");
-        LOGGER.debug(qvo.getOtherElements());
-
-
-        LOGGER.debug("forecasts: getFoodBalanceREsults");
-        LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>>> map =
-                forecast.getUnorderedMap();
-
-        LOGGER.debug("Food balance Results");
-        LOGGER.debug(forecast.getFoodBalanceResults().toString());
-
-        LOGGER.debug("forecasts: getFoodBalanceREsults");*/
         DataFactory dataFactory = new DataFactory(data, filterData);
         HandlerExcelCreation excelController = new HandlerExcelCreation();
+
+        this.bean = new BeanNationalYear();
+        bean.execute();
         return excelController.init(dataFactory.getForecastIstance(), dataFactory.getAMISQueryIstance(), dataFactory.getDataCreatorIstance());
     }
 

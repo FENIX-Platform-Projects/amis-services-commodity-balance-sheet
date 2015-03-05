@@ -7,7 +7,9 @@ import java.util.*;
 
 public class FormulaHandler {
 
+
     FormulaUtils formulaUtils;
+
 
     public FormulaHandler(){
         formulaUtils = new FormulaUtils();
@@ -132,6 +134,7 @@ public class FormulaHandler {
 
     }
 
+
     private void perCapFoodUseFormula (LinkedHashMap<String, DaoForecastValue> dateForecasts) {
 
         if(formulaUtils.checkIfOk("14",dateForecasts) && formulaUtils.checkIfOk("1",dateForecasts) ){
@@ -141,7 +144,5 @@ public class FormulaHandler {
         }
 
     }
-
-
 
 }

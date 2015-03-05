@@ -19,6 +19,9 @@ public class HandlerExcelCreation {
 
     private SheetCreator sheetCreator;
 
+    private Map<String, String> mapColumnsToView;
+
+
     private static final Logger LOGGER = org.apache.log4j.Logger.getLogger(HandlerExcelCreation.class);
 
 
@@ -72,13 +75,13 @@ public class HandlerExcelCreation {
             createColumnVisualizationType(foodBalanceResults);
 
 
-            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, foodBalanceResults, "foodBalance");
+            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, foodBalanceResults, "foodBalance",this.mapColumnsToView);
 
             // list of elements to show on the left
             HashMap< Integer, HashMap<Integer, String>> elements =  qvo.getFoodBalanceElements();
 
             // put on the excel the elements and the values
-            rowCounter = this.sheetCreator.createDataTableGroup(rowCounter,sheet,workbook,elements.get(commodity), foodBalanceResults);
+            rowCounter = this.sheetCreator.createDataTableGroup(rowCounter,sheet,workbook,elements.get(commodity), foodBalanceResults, this.mapColumnsToView);
 
             rowCounter++;
 
@@ -88,13 +91,13 @@ public class HandlerExcelCreation {
 
             LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> ityResults = forecast.getItyResults().get(commodityString);
 
-            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, ityResults, "international");
+            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, ityResults, "international",this.mapColumnsToView);
 
             // list of elements to show on the left
             HashMap< Integer, HashMap<Integer, String>> elementsITY =  qvo.getItyElements();
 
             // put on the excel the elements and the values
-            rowCounter = this.sheetCreator.createDataTableGroup(rowCounter,sheet,workbook,elementsITY.get(commodity), ityResults);
+            rowCounter = this.sheetCreator.createDataTableGroup(rowCounter,sheet,workbook,elementsITY.get(commodity), ityResults, this.mapColumnsToView);
 
             rowCounter++;
               /*
@@ -103,15 +106,15 @@ public class HandlerExcelCreation {
 
             LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> otherResults = forecast.getOtherResults().get(commodityString);
 
-            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, otherResults, "others");
+            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, otherResults, "others",this.mapColumnsToView);
 
             // list of elements to show on the left
             HashMap< Integer, HashMap<Integer, String>> elementsOTH =  qvo.getOtherElements();
 
             // put on the excel the elements and the values
-            rowCounter = this.sheetCreator.createDataTableGroup(rowCounter,sheet,workbook,elementsOTH.get(commodity), otherResults);
+            rowCounter = this.sheetCreator.createDataTableGroup(rowCounter,sheet,workbook,elementsOTH.get(commodity), otherResults,this.mapColumnsToView);
 
-            sheet.createFreezePane(1,0);
+            sheet.createFreezePane(2,0,2,2);
 
         }
 
@@ -124,18 +127,12 @@ public class HandlerExcelCreation {
 
         List<String> datesList = new ArrayList<String>();
 
-    /*    LinkedHashMap<String,DaoForecastValue> pp = new LinkedHashMap<String, DaoForecastValue>();
-        pp.put("2", new DaoForecastValue("null", "null", 12));
-        forecastsForCommodity.put("2014/15 (2015-02-01)", pp);*/
-
         datesList.addAll(forecastsForCommodity.keySet());
-
-        LOGGER.error(datesList.toString());
 
         // LAST value
         int counter = 1;
         int datesSize = datesList.size();
-        Map<String, String> mapColumnsToView = new HashMap<String, String>();
+        mapColumnsToView = new HashMap<String, String>();
         String lastDate = datesList.get(datesSize - counter);
         mapColumnsToView.put(lastDate, "complete");
         counter++;
@@ -170,18 +167,12 @@ public class HandlerExcelCreation {
             counter++;
         }
 
-        System.out.println("prova");
-
-
-
-
-
-
-
-
+        LOGGER.error(mapColumnsToView.toString());
 
     }
 
+
+    public Map<String, String> getMapColumnsToView() { return mapColumnsToView; }
 
 
 }

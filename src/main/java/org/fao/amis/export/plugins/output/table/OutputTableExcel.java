@@ -9,6 +9,7 @@ import org.fao.amis.export.core.dto.CoreOutputHeader;
 import org.fao.amis.export.core.dto.CoreOutputType;
 import org.fao.amis.export.core.dto.data.CoreData;
 import org.fao.amis.export.core.output.plugin.Output;
+import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.externalServices.BeanNationalYear;
 import org.fao.amis.export.plugins.output.table.utilsMetadata.DatatypeFormatter;
 import org.fao.fenix.commons.msd.dto.full.DSDColumn;
 import org.fao.fenix.commons.msd.dto.full.DSDDataset;
@@ -27,6 +28,7 @@ public class OutputTableExcel extends Output {
     private CoreData resource;
     SXSSFWorkbook wb;
     DatatypeFormatter formatterValue;
+    private BeanNationalYear bean;
 
     @Override
     public void init(Map<String, Object> config) {
@@ -59,6 +61,9 @@ public class OutputTableExcel extends Output {
 
 
     private SXSSFWorkbook createExcel(Collection<DSDColumn> collection, Iterator<Object[]> data) throws Exception {
+
+
+
 
         formatterValue = new DatatypeFormatter();
         formatterValue.init(config.get("lang"));

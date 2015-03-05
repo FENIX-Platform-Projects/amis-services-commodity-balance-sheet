@@ -100,10 +100,7 @@ public class DatasetService
 
     @POST
     @Path("annualExport")
-    public Iterator<Object[]> getData(FilterExport filter) throws Exception
-    {
-        return this.dao.getAnnualExportData(filter);
-    }
+    public Iterator<Object[]> getData(FilterExport filter) throws Exception { return this.dao.getAnnualExportData(filter); }
 
     /*
 

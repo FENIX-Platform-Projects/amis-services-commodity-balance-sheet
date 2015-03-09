@@ -25,7 +25,7 @@ public class AmisExcelUtils {
         setCustomizedPalette(workbook);
         initializeHSSFFontStyles(workbook);
 
-        styles = new HashMap<String,HSSFCellStyle>();
+        styles = new HashMap<String, HSSFCellStyle>();
 
         styles.put("rightAllignment", createRightAlignmentStyle(workbook));
         styles.put("leftAllignment", createLeftAlignmentStyle(workbook));
@@ -33,6 +33,7 @@ public class AmisExcelUtils {
         styles.put("rightAllignmentWithBorders", createRightAlignmentWithBordersStyle(workbook));
         styles.put("blueStyle", createBlueCellStyle(workbook));
         styles.put("greyStyle", createGreyCellStyle(workbook));
+        styles.put("centerAlignment", createCenterAlignmentStyle(workbook));
 
 
     }
@@ -263,4 +264,15 @@ public class AmisExcelUtils {
 
         return rowCounter;
     }
+
+    private static HSSFCellStyle createCenterAlignmentStyle(HSSFWorkbook workbook) {
+        HSSFCellStyle style = workbook.createCellStyle();
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER_SELECTION);
+        return style;
+    }
+
+    public static HSSFCellStyle getCenterAlignmentStyle() {
+        return styles.get("centerAlignment");
+    }
+
 }

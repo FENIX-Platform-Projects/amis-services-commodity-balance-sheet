@@ -7,7 +7,7 @@ public class BeanNationalYear {
 
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:postgresql://exlpramis1.ext.fao.org/fenix";
+    static final String DB_URL = "jdbc:postgresql://exlpramis1.ext.fao.org:57609/fenix";
 
     //  Database credentials
     static final String USER = "fenix";

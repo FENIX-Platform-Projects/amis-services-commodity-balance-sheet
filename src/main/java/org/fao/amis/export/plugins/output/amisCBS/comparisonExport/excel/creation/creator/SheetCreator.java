@@ -7,10 +7,12 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.configuration.URLGetter;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.configurations.dataCreator.DataCreator;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.daoValue.DaoForecastValue;
+import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.natMarkBean.NationalMarketingBean;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.utils.AmisExcelUtils;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.formula.configurator.ConfigurationReader;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.formula.translator.CellMapper;
@@ -34,6 +36,10 @@ public class SheetCreator {
     private static final int ROW_START_ELEMENTS = 9;
 
 
+    private String lastSeason;
+
+    private int rowStartingITY, rowStartingOther;
+
     private String commodityChosen;
 
     private CellMapper cellMappers;
@@ -41,31 +47,30 @@ public class SheetCreator {
     private URLGetter urlGetter;
 
     private ArrayList<Integer> firstYearSeason;
-    private HashMap<String,String> othersMeasureUnitsMap;
+    private HashMap<String, String> othersMeasureUnitsMap;
 
     public SheetCreator() {
 
         urlGetter = new URLGetter();
-        this.othersMeasureUnitsMap = new HashMap<String,String>();
-        this.othersMeasureUnitsMap.put("Population","1000s");
-        this.othersMeasureUnitsMap.put("Area Harvested","Thousand Ha");
-        this.othersMeasureUnitsMap.put("Area Planted","Thousand Ha");
-        this.othersMeasureUnitsMap.put("Yield","Tonnes/Ha");
-        this.othersMeasureUnitsMap.put("Extraction Rate","%");
+        this.othersMeasureUnitsMap = new HashMap<String, String>();
+        this.othersMeasureUnitsMap.put("Population", "1000s");
+        this.othersMeasureUnitsMap.put("Area Harvested", "Thousand Ha");
+        this.othersMeasureUnitsMap.put("Area Planted", "Thousand Ha");
+        this.othersMeasureUnitsMap.put("Yield", "Tonnes/Ha");
+        this.othersMeasureUnitsMap.put("Extraction Rate", "%");
     }
 
     public int createSummary(int rowCounter, Sheet sheet, HSSFWorkbook workbook, DataCreator dataCreator, String commodityLabel) {
 
-
         //Create Date Last Updated
         String commodity = commodityLabel;
         this.commodityChosen = commodityLabel;
-        String season = dataCreator.getSeason();
+        lastSeason = dataCreator.getSeason();
         String dataSource = dataCreator.getDatasource();
         String country = dataCreator.getCountry();
 
         rowCounter = createHeadingRow(rowCounter, sheet, workbook, "COMMODITY: ", commodity);
-        rowCounter = createHeadingRow(rowCounter, sheet, workbook, "LAST SEASON: ", season);
+        rowCounter = createHeadingRow(rowCounter, sheet, workbook, "LAST SEASON: ", lastSeason);
         rowCounter = createHeadingRow(rowCounter, sheet, workbook, "COUNTRY: ", country);
         rowCounter = createHeadingRow(rowCounter, sheet, workbook, "DATASOURCE: ", dataSource);
 
@@ -104,6 +109,7 @@ public class SheetCreator {
         Cell cell = row.createCell((short) 0);
         cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyle(workbook, null));
         cell.setCellValue(title.toUpperCase());
+        sheet.autoSizeColumn(0);
 
         rowCounter = AmisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
 
@@ -113,7 +119,7 @@ public class SheetCreator {
 
     public int createHeadersGroup(int rowCounter, Sheet sheet, HSSFWorkbook workbook,
                                   LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> mapGroup, String type,
-                                  Map<String, String> mapColumnsToView) {
+                                  Map<String, String> mapColumnsToView, String months) {
 
         String title;
 
@@ -143,10 +149,16 @@ public class SheetCreator {
         Cell cell = row.createCell((short) columnNumber);
         cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyle(workbook, null));
         cell.setCellValue(title);
-        sheet.autoSizeColumn(columnNumber);
-        //TODO put here the marketing year
-        columnNumber+=2;
+        sheet.setColumnWidth(100, columnNumber);
+     //   sheet.autoSizeColumn(columnNumber);
 
+        //MARKETING YEAR
+        if (months != null) {
+            columnNumber = putMarketingYear(sheet, workbook, row, columnNumber, months);
+            columnNumber++;
+        } else {
+            columnNumber += 2;
+        }
         Object[] dates = mapGroup.keySet().toArray();
 
         firstYearSeason = (ArrayList) createSeasonOrderedArray(dates);
@@ -154,9 +166,7 @@ public class SheetCreator {
         for (int i = 0; i < dates.length; i++) {
             String date = dates[i].toString();
             String resultColumn = mapColumnsToView.get(dates[i].toString());
-
             switch (resultColumn) {
-
                 case "show":
                     columnNumber = createHeadersValuesSimpleShow(date, columnNumber, row, (HSSFWorkbook) workbook, sheet);
                     break;
@@ -190,11 +200,13 @@ public class SheetCreator {
         Set<Integer> codes = elements.keySet();
 
 
-        int rowUM = rowCounter+1;
+        int rowUM = rowCounter + 1;
         int columnUM = 1;
-        Cell cellUM = sheet.createRow(rowUM).createCell((short) columnUM);
-        cellUM.setCellStyle(AmisExcelUtils.getGreyCellStyle());
-        putMeasurementUnitValues(elements, "national", columnUM, rowCounter,sheet,cellUM);
+       // Cell cellUM = sheet.createRow(rowUM).createCell((short) columnUM);
+       putMeasurementUnitValues(elements, "national", columnUM, rowCounter, sheet);
+
+        Cell cellpp = sheet.createRow(15).createCell((short) 1);
+        cellpp.setCellValue("Millionnnn");
 
 
         for (int code : codes) {
@@ -206,11 +218,10 @@ public class SheetCreator {
             Cell cell = row.createCell((short) columnNumber);
             cell.setCellStyle(AmisExcelUtils.getGreyCellStyle());
             cell.setCellValue(elements.get(code));
-            sheet.autoSizeColumn(columnNumber);
+            // sheet.autoSizeColumn(columnNumber);
+            sheet.setColumnWidth(200, columnNumber);
 
-
-            columnNumber+=2;
-            //
+            columnNumber += 2;
 
 
             Object[] dates = foodBalanceResults.keySet().toArray();
@@ -237,6 +248,7 @@ public class SheetCreator {
             }
         }
 
+        rowCounter++;
         return rowCounter;
     }
 
@@ -295,7 +307,7 @@ public class SheetCreator {
         sheet.autoSizeColumn(columnNumber);
 
         // hide the column hust before this
-        sheet.setColumnHidden(columnNumber-1, true);
+        sheet.setColumnHidden(columnNumber - 1, true);
 
         columnNumber += 2;
 
@@ -317,7 +329,7 @@ public class SheetCreator {
         columnNumber++;
         sheet.setColumnHidden(columnNumber, true);
 
-        columnNumber ++;
+        columnNumber++;
 
         return columnNumber;
     }
@@ -480,95 +492,6 @@ public class SheetCreator {
     }
 
 
-    /*private void handleFormulas(LinkedList<FormulaBean> formulaBeans, Sheet sheet, HSSFWorkbook wb, String date) {
-
-        LinkedHashMap<String, String> mapper = cellMappers.getMapCells();
-
-
-        for (FormulaBean formulaBean : formulaBeans) {
-            String codeOperand = formulaBean.getOperand();
-            LOGGER.info("codeOperand");
-            LOGGER.info(codeOperand);
-
-            String operandCodeValue = mapper.get(date + "*" + codeOperand + "*" + "value");
-            LOGGER.info(operandCodeValue);
-
-            String operandCodeFlags = mapper.get(date + "*" + codeOperand + "*" + "flags");
-            LOGGER.info(operandCodeFlags);
-
-
-            LinkedList<String> addendumsCodes = new LinkedList<String>();
-            String operator = formulaBean.getOperator();
-            LOGGER.info(operator);
-
-
-            for (String addendum : formulaBean.getAddendums()) {
-                addendumsCodes.add(mapper.get(date + "*" + addendum + "*" + "value"));
-            }
-            LOGGER.info(addendumsCodes.toString());
-            makeFormula(operandCodeFlags, operandCodeValue, operator, addendumsCodes, sheet);
-
-        }
-    }
-
-    private void makeFormula(String operandCodeFlags, String operandCodeValue,
-                             String operator, LinkedList<String> addendumsCodes,
-                             Sheet sheet) {
-
-        LOGGER.info("StartedMAKE FORMULA");
-
-        Cell operandCellValue = null;
-        Cell operandCellFlag = null;
-
-
-        CellReference referenceValue = new CellReference(operandCodeValue);
-        Row rowIndex = sheet.getRow(referenceValue.getRow());
-        if (rowIndex != null) {
-            operandCellValue = rowIndex.getCell(referenceValue.getCol());
-        }
-
-        String formula = "";
-
-        int lengthAddendums = addendumsCodes.size();
-
-        boolean operandsExist = true;
-
-        int i = 0;
-        for (String addendumCode : addendumsCodes) {
-
-            operandsExist = checkIfExist(addendumCode, sheet);
-
-            CellReference tempReference = new CellReference(operandCodeValue);
-            Row tempRow = sheet.getRow(tempReference.getRow());
-            Cell tempCell = tempRow.getCell(tempReference.getCol());
-
-
-            formula += addendumCode;
-            if (i != lengthAddendums - 1) {
-                formula += operator;
-            }
-            i++;
-        }
-
-        if (operandsExist) {
-            operandCellValue.setCellFormula(formula);
-
-            // set the flag to C
-*//*
-            CellReference referenceFlags = new CellReference(operandCodeFlags);
-            Row rowIndexFlag = sheet.getRow(referenceFlags.getRow());
-            if (rowIndexFlag != null) {
-                operandCellFlag = rowIndexFlag.getCell(referenceFlags.getCol());
-            }
-
-            operandCellFlag.setCellValue("C");
-        }
-        *//*
-
-        }
-    }*/
-
-
     private boolean checkIfExist(String addendumCode, Sheet sheet) {
 
         boolean result = true;
@@ -600,31 +523,109 @@ public class SheetCreator {
     }
 
 
-    private boolean putMeasurementUnitValues (HashMap<Integer, String> elements, String type, int columnNumber, int rowNumber, Sheet sheet, Cell cell) {
+    private void putMeasurementUnitValues(HashMap<Integer, String> elements, String type, int columnNumber, int rowNumber, Sheet sheet) {
 
 
         int startRowUnitsNat = 9;
 
 
-
+        Row row = null;
+        Cell cell = null;
+        int rowEnd = -1;
         switch (type) {
 
             case "national":
+                row = sheet.createRow(ROW_START_ELEMENTS);
+                cell= row.createCell((short)columnNumber);
                 cell.setCellValue("Thousand tonnes");
-                sheet.addMergedRegion(new CellRangeAddress(ROW_START_ELEMENTS, ROW_START_ELEMENTS+elements.size(),UM_COLUMN_NUMBER,UM_COLUMN_NUMBER));
-
+                cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
+                rowEnd = ROW_START_ELEMENTS+elements.size();
+                sheet.addMergedRegion(new CellRangeAddress(ROW_START_ELEMENTS, rowEnd, UM_COLUMN_NUMBER,UM_COLUMN_NUMBER));
+                rowStartingITY = rowEnd+7;
                 break;
             case "international":
 
+                row= sheet.createRow(rowStartingITY);
+                cell= row.createCell((short)columnNumber);
+                cell.setCellValue("Thousand tonnes");
+                cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
+                rowEnd = rowStartingITY+elements.size();
+                sheet.addMergedRegion(new CellRangeAddress(rowStartingITY, rowEnd, UM_COLUMN_NUMBER,UM_COLUMN_NUMBER));
+                rowStartingOther = rowEnd+3;
                 break;
 
             default:
+                row = sheet.createRow(rowStartingOther);
+                cell= row.createCell((short)columnNumber);
+
+
+                break;
+        }
+    }
+
+    private int putMarketingYear(Sheet sheet, Workbook workbook, Row row, int columnNumber, String valueToPut) {
+
+        columnNumber++;
+        Cell cell = row.createCell((short) columnNumber);
+        cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyle((HSSFWorkbook) workbook, null));
+        cell.setCellValue(valueToPut);
+        sheet.autoSizeColumn(columnNumber);
+
+        return columnNumber;
+
+    }
+
+    public int createFooterMarketingYear(int rowCounter, Sheet sheet, Workbook workbook, NationalMarketingBean bean, String type, Map<String, String> datesMap) {
+
+
+        Row row = sheet.createRow(rowCounter);
+        Cell cell = row.createCell((short) 0);
+
+        String footerValue = "";
+        String lastSeasonStart = lastSeason.split("/")[0];
+        String months, cropsMonths, startingYear, endingYear, startingYearCrops, endingYearCrops;
+
+        switch (type) {
+            case "national":
+                months = bean.getNmyMonths();
+
+
+                startingYear = ""+(Integer.parseInt(bean.getNmyStartingYear())+ Integer.parseInt(lastSeasonStart));
+                endingYear = ""+(Integer.parseInt(bean.getNmyEndingYear()) + + Integer.parseInt(lastSeasonStart));
+
+                String startingCropsMonths = bean.getHarvestBean().getBeginningOfHarvest();
+                String endingCropsMonths = bean.getHarvestBean().getEndOfHarvest();
+
+                startingYearCrops = ""+(Integer.parseInt(bean.getHarvestBean().getBeginningHarvestYear())+ Integer.parseInt(lastSeasonStart));
+                endingYearCrops = ""+(Integer.parseInt(bean.getHarvestBean().getEndHarvestYear())+ Integer.parseInt(lastSeasonStart));
+
+
+                footerValue += "In the " + lastSeason + " forecasts, the NMY covers the period from  " + months.split("/")[0] + " " + startingYear +
+                        " to " + months.split("/")[1] + " " + endingYear;
+                footerValue += " and refers to the crop that is harvested mainly from " + startingCropsMonths + " " + startingYearCrops +
+                        " to " + endingCropsMonths + " " + endingYearCrops;
+
+                break;
+
+            case "ity":
+
+                months = bean.getItyMonths();
+
+                startingYear = ""+(Integer.parseInt(bean.getItyStartingYear())+ Integer.parseInt(lastSeasonStart));
+                endingYear = ""+(Integer.parseInt(bean.getItyEndingYear()) + + Integer.parseInt(lastSeasonStart));
+
+                footerValue += "In the " + lastSeason + " forecasts, the ITY covers the period from  " + months.split("/")[0] + " " + startingYear +
+                        " to " + months.split("/")[1] + " " + endingYear;
 
                 break;
         }
 
+        cell.setCellValue(footerValue);
+        sheet.setColumnWidth(10, 0);
 
-        return true;
+        rowCounter++;
+
+        return rowCounter;
     }
 
 }

@@ -33,7 +33,9 @@ public class OutputBalanceSheet   extends Output {
 
         LinkedHashMap tmp = ((LinkedHashMap)config.get("filterData"));
         ArrayList<Object[]> ss  = Lists.newArrayList(resource.getData());
-        wb = createSheet(ss,tmp );
+        ArrayList<Object[]> nmy  =  (ArrayList<Object[]>)config.get("marketingYear");
+
+        wb = createSheet(ss,tmp,nmy );
     }
 
 
@@ -57,15 +59,14 @@ public class OutputBalanceSheet   extends Output {
 
     }
 
-    private HSSFWorkbook createSheet( ArrayList<Object[]> data, LinkedHashMap filterData){
+    private HSSFWorkbook createSheet( ArrayList<Object[]> data, LinkedHashMap filterData,  ArrayList<Object[]> marketingYear){
 
 
-        DataFactory dataFactory = new DataFactory(data, filterData);
+        DataFactory dataFactory = new DataFactory(data, filterData, marketingYear);
         HandlerExcelCreation excelController = new HandlerExcelCreation();
 
-        this.bean = new BeanNationalYear();
-        bean.execute();
-        return excelController.init(dataFactory.getForecastIstance(), dataFactory.getAMISQueryIstance(), dataFactory.getDataCreatorIstance());
+        return excelController.init(dataFactory.getForecastIstance(), dataFactory.getAMISQueryIstance(), dataFactory.getDataCreatorIstance(),
+                dataFactory.getMapMarketingYear());
     }
 
 

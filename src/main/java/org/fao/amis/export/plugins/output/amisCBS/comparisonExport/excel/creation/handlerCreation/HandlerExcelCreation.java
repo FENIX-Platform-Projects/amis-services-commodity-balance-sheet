@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.configurations.dataCreator.DataCreator;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.daoValue.DaoForecastValue;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.forecast.Forecast;
+import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.natMarkBean.NationalMarketingBean;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.query.AMISQuery;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.utils.commodity.CommodityParser;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.creator.SheetCreator;
@@ -21,6 +22,8 @@ public class HandlerExcelCreation {
 
     private Map<String, String> mapColumnsToView;
 
+    private List<String> datesList; // oreder ASC
+
 
     private static final Logger LOGGER = org.apache.log4j.Logger.getLogger(HandlerExcelCreation.class);
 
@@ -30,7 +33,7 @@ public class HandlerExcelCreation {
     }
 
 
-    public HSSFWorkbook init(Forecast forecast, AMISQuery qvo, DataCreator dataModel) {
+    public HSSFWorkbook init(Forecast forecast, AMISQuery qvo, DataCreator dataModel, HashMap<String,NationalMarketingBean> marketingYearMap) {
 
         // create the Excel file
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -75,7 +78,7 @@ public class HandlerExcelCreation {
             createColumnVisualizationType(foodBalanceResults);
 
 
-            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, foodBalanceResults, "foodBalance",this.mapColumnsToView);
+            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, foodBalanceResults, "foodBalance",this.mapColumnsToView, marketingYearMap.get(commodityString).getNmyMonths());
 
             // list of elements to show on the left
             HashMap< Integer, HashMap<Integer, String>> elements =  qvo.getFoodBalanceElements();
@@ -85,13 +88,17 @@ public class HandlerExcelCreation {
 
             rowCounter++;
 
+            rowCounter = this.sheetCreator.createFooterMarketingYear(rowCounter,sheet,workbook,marketingYearMap.get(commodityString),"national", this.mapColumnsToView);
+
+            rowCounter++;
+
               /*
                 -------------------------    ITY RESULTS   -------------------------------------------------
              */
 
             LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> ityResults = forecast.getItyResults().get(commodityString);
 
-            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, ityResults, "international",this.mapColumnsToView);
+            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, ityResults, "international",this.mapColumnsToView, marketingYearMap.get(commodityString).getItyMonths());
 
             // list of elements to show on the left
             HashMap< Integer, HashMap<Integer, String>> elementsITY =  qvo.getItyElements();
@@ -100,13 +107,18 @@ public class HandlerExcelCreation {
             rowCounter = this.sheetCreator.createDataTableGroup(rowCounter,sheet,workbook,elementsITY.get(commodity), ityResults, this.mapColumnsToView);
 
             rowCounter++;
+
+            rowCounter = this.sheetCreator.createFooterMarketingYear(rowCounter,sheet,workbook,marketingYearMap.get(commodityString),"ity", this.mapColumnsToView);
+
+
+            rowCounter++;
               /*
                 -------------------------    OTHERS   -------------------------------------------------
              */
 
             LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> otherResults = forecast.getOtherResults().get(commodityString);
 
-            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, otherResults, "others",this.mapColumnsToView);
+            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, otherResults, "others",this.mapColumnsToView, null);
 
             // list of elements to show on the left
             HashMap< Integer, HashMap<Integer, String>> elementsOTH =  qvo.getOtherElements();
@@ -125,7 +137,7 @@ public class HandlerExcelCreation {
 
     private void createColumnVisualizationType ( LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> forecastsForCommodity ){
 
-        List<String> datesList = new ArrayList<String>();
+        datesList = new ArrayList<String>();
 
         datesList.addAll(forecastsForCommodity.keySet());
 

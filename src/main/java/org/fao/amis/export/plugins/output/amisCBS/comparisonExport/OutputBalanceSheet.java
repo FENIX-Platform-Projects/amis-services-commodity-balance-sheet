@@ -9,7 +9,6 @@ import org.fao.amis.export.core.dto.data.CoreData;
 import org.fao.amis.export.core.output.plugin.Output;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.Factory.DataFactory;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.handlerCreation.HandlerExcelCreation;
-import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.externalServices.BeanNationalYear;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ public class OutputBalanceSheet   extends Output {
     private Map<String, Object> config;
     private CoreData resource;
     HSSFWorkbook wb;
-    private BeanNationalYear bean;
 
     @Override
     public void init(Map<String, Object> config) { this.config = config; }

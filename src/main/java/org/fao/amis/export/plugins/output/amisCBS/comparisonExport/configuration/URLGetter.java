@@ -19,9 +19,9 @@ public class URLGetter {
     private static final String othersProperties = "export/component/semanticDivision/other.properties";
 
     // Commodity Division
-    private static final int[] maizeAndWheatCodes ={19,18,5,7,27,999,35,20,13,14,15,21,28,34,29,30,31,32,33,8 ,10, 16 ,1,2,4,37};
-    private static final int[] riceCodes ={19,18,998,5,7,27,999,35,20,13,14,15,21,28,34,8,10, 16,1,2,4,3 ,37 };
-    private static final int[] soybeanCodes ={19,18,5,7,27,999,35,20,36,31,13,14, 15,21,28,34, 10, 8,16,1,2,4 ,37};
+    private static final int[] maizeAndWheatCodes ={19,18,5,7,27,999,35,20,13,14,15,21,28,34,29,30,31,32,33,8 ,10,12, 16 ,1,2,4,37};
+    private static final int[] riceCodes ={19,18,998,5,7,27,999,35,20,13,14,15,21,28,34,8,10,12, 16,1,2,4,3 ,37 };
+    private static final int[] soybeanCodes ={19,18,5,7,27,999,35,20,36,31,13,14, 15,21,28,34, 10,12, 8,16,1,2,4 ,37};
     private static final int[] commodityCodes = {5,4,6,1};
 
 

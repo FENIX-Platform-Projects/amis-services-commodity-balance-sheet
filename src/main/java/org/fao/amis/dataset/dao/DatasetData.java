@@ -25,57 +25,72 @@ public class DatasetData
     private static String queryMostRecentDate = "select distinct date from national_forecast where region_code = ? and product_code = ? and year = ? order by date ASC";
     private static String queryDeleteNational = "delete from national_population where region_code = ? and product_code = ? and year = ? and database =?";
     private static String queryInsert = "insert into national_forecast(region_code, product_code, year,season,database, element_code, units, date, value, flag, notes) values (?,?,?,?,?,?,?,?,?,?,?)";
-    private static String queryExportTotalAnnual = "select  product_code , element_code, units, season||' (' ||date|| ')' as date  ,value,flag, notes from (select region_code ,\n" +
-            "  region_name ,\n" +
-            "  product_code ,\n" +
-            "  product_name ,\n" +
-            "  element_code ,\n" +
-            "  element_name ,\n" +
-            "  season ,\n" +
-            "  units,\n" +
-            "  year,\n" +
-            "  date ,\n" +
-            "  value ,\n" +
-            "  flag, \n" +
-            "  notes ,\n" +
-            "  max(date) over (partition by season) as maxdate\n" +
-            "  from (SELECT    \n" +
-            "\t   t1.product_code,\n" +
-            "           t1.product_name,\n" +
-            "           t1.region_code,\n" +
-            "           t1.region_name,\n" +
-            "           t1.element_code,\n" +
-            "           t1.element_name,\n" +
-            "           t1.year,\n" +
-            "           t1.date,\n" +
-            "           t1.season ,\n" +
-            "           t1.units,\n" +
-            "           t1.value,\n" +
-            "           t1.flag,\n" +
-            "           t1.notes\n" +
-            "      FROM national_forecast t1\n" +
-            "\tLEFT JOIN national_population t2 ON t2.region_code = t1.region_code \n" +
-            "\tand \n" +
-            " t2.year = t1.year\n" +
-            "UNION\n" +
-            "    SELECT t1.product_code,\n" +
-            "           t1.product_name,\n" +
-            "           t2.region_code,\n" +
-            "           t2.region_name,\n" +
-            "           t2.element_code,\n" +
-            "           t2.element_name,\n" +
-            "           t2.year,\n" +
-            "           t1.date,\n" +
-            "           t1.season ,\n" +
-            "           t2.units,\n" +
-            "           t2.value,\n" +
-            "           t2.flag,\n" +
-            "           t2.notes\n" +
-            "\t   FROM national_forecast t1\n" +
-            "\t LEFT JOIN national_population t2 ON t2.region_code = t1.region_code and \n" +
-            "\t t2.year = t1.year) as nationalJOIN \n" +
-            "  where region_code = ?) t\n" +
-            "where date = maxdate  order by product_code,season ASC";
+    private static String queryExportTotalAnnual =
+            "select  product_code , element_code, units, season||' (' ||date|| ')' as date  ,value,flag, notes from (select region_code ,\n" +
+                    "  region_name ,\n" +
+                    "  product_code ,\n" +
+                    "  product_name ,\n" +
+                    "  element_code ,\n" +
+                    "  element_name ,\n" +
+                    "  season ,\n" +
+                    "  units,\n" +
+                    "  year,\n" +
+                    "  date ,\n" +
+                    "  value ,\n" +
+                    "  flag, \n" +
+                    "  notes ,\n" +
+                    "  max(date) over (partition by season) as maxdate\n" +
+                    "  from (SELECT    \n" +
+                    "   t1.product_code,\n" +
+                    "         t1.product_name,\n" +
+                    "         t1.region_code, \n" +
+                    "         t1.region_name, \n" +
+                    "         t1.element_code,\n" +
+                    "         t1.element_name,\n" +
+                    "         t1.year,       \n" +
+                    "         t1.date,       \n" +
+                    "         t1.season ,    \n" +
+                    "         t1.units,      \n" +
+                    "         t1.value,      \n" +
+                    "         t1.flag,       \n" +
+                    "         t1.notes       \n" +
+                    "    FROM national_forecast t1\n" +
+                    "LEFT JOIN national_population t2 ON t2.region_code = t1.region_code \n" +
+                    "and \n" +
+                    " t2.year = t1.year\n" +
+                    "UNION\n" +
+                    "    SELECT t1.product_code,\n" +
+                    "           t1.product_name,\n" +
+                    "           t2.region_code, \n" +
+                    "           t2.region_name, \n" +
+                    "           t2.element_code,\n" +
+                    "           t2.element_name,\n" +
+                    "           t2.year,     \n" +
+                    "           t1.date,     \n" +
+                    "           t1.season ,  \n" +
+                    "           t2.units,    \n" +
+                    "           t2.value,    \n" +
+                    "           t2.flag,     \n" +
+                    "           t2.notes     \n" +
+                    "  FROM national_forecast t1                                                 \n" +
+                    "LEFT JOIN national_population t2 ON t2.region_code = t1.region_code and\n" +
+                    "t2.year = t1.year) as nationalJOIN \n" +
+                    "  where region_code = ?) t\n" +
+                    "where date = maxdate \n" +
+                    "\n" +
+                    "UNION\n" +
+                    "\n" +
+                    "select  product_code , element_code, units, season||' (' ||date|| ')' as date  ,value,flag, notes from national_forecast where  (product_code, season, date) in (\n" +
+                    "select   distinct on (product_code  ,season,date)\n" +
+                    "product_code  ,season,date\n" +
+                    "from (select * from national_forecast where region_code =?\n" +
+                    ") as before_last\n" +
+                    "where season in (select distinct season from national_forecast where region_code =?\n" +
+                    "order by season DESC limit 2) \n" +
+                    "and date in (select distinct  date from national_forecast where region_code =? \n" +
+                    "and season in ( before_last.season) and product_code in ( before_last.product_code) order by date DESC limit 1 offset 1)\n" +
+                    "order by product_code, season DESC, date DESC\n" +
+                    ") and region_code = ? order by product_code, date, date DESC";
 
     private static int[] queryInsertTypes = { Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.VARCHAR,Types.VARCHAR, Types.INTEGER, Types.VARCHAR, Types.VARCHAR, Types.REAL, Types.VARCHAR, Types.VARCHAR };
 
@@ -181,8 +196,9 @@ public class DatasetData
         Connection connection = this.connectionManager.getConnection();
         PreparedStatement statement = connection.prepareStatement(queryExportTotalAnnual);
 
-        statement.setInt(1, filter.getRegionCode().intValue());
-
+        Integer[] regionCodes =filter.getRegionCode();
+        for(int i=0; i<regionCodes.length ; i++)
+            statement.setInt(i+1, regionCodes[i].intValue());
 
         return this.utils.getDataIterator(statement.executeQuery());
     }

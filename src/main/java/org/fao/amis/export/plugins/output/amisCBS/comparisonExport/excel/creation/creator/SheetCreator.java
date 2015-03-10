@@ -4,10 +4,7 @@ package org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creati
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.configuration.URLGetter;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.configurations.dataCreator.DataCreator;
@@ -150,7 +147,7 @@ public class SheetCreator {
         cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyle(workbook, null));
         cell.setCellValue(title);
         sheet.setColumnWidth(100, columnNumber);
-     //   sheet.autoSizeColumn(columnNumber);
+        //   sheet.autoSizeColumn(columnNumber);
 
         //MARKETING YEAR
         if (months != null) {
@@ -195,19 +192,17 @@ public class SheetCreator {
     public int createDataTableGroup(int rowCounter, Sheet sheet, HSSFWorkbook workbook,
                                     HashMap<Integer, String> elements,
                                     LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> foodBalanceResults,
-                                    Map<String, String> mapColumnsToView) {
+                                    Map<String, String> mapColumnsToView, boolean putUM) {
 
         Set<Integer> codes = elements.keySet();
 
 
         int rowUM = rowCounter + 1;
         int columnUM = 1;
-       // Cell cellUM = sheet.createRow(rowUM).createCell((short) columnUM);
-       putMeasurementUnitValues(elements, "national", columnUM, rowCounter, sheet);
-
-        Cell cellpp = sheet.createRow(15).createCell((short) 1);
-        cellpp.setCellValue("Millionnnn");
-
+        // Cell cellUM = sheet.createRow(rowUM).createCell((short) columnUM);
+        if(putUM) {
+            putMeasurementUnitValues(elements, "national", columnUM, rowCounter, sheet);
+        }
 
         for (int code : codes) {
 
@@ -222,7 +217,6 @@ public class SheetCreator {
             sheet.setColumnWidth(200, columnNumber);
 
             columnNumber += 2;
-
 
             Object[] dates = foodBalanceResults.keySet().toArray();
 
@@ -525,42 +519,33 @@ public class SheetCreator {
 
     private void putMeasurementUnitValues(HashMap<Integer, String> elements, String type, int columnNumber, int rowNumber, Sheet sheet) {
 
-
         int startRowUnitsNat = 9;
-
 
         Row row = null;
         Cell cell = null;
         int rowEnd = -1;
-        switch (type) {
-
-            case "national":
-                row = sheet.createRow(ROW_START_ELEMENTS);
-                cell= row.createCell((short)columnNumber);
-                cell.setCellValue("Thousand tonnes");
-                cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
-                rowEnd = ROW_START_ELEMENTS+elements.size();
-                sheet.addMergedRegion(new CellRangeAddress(ROW_START_ELEMENTS, rowEnd, UM_COLUMN_NUMBER,UM_COLUMN_NUMBER));
-                rowStartingITY = rowEnd+7;
-                break;
-            case "international":
-
-                row= sheet.createRow(rowStartingITY);
-                cell= row.createCell((short)columnNumber);
-                cell.setCellValue("Thousand tonnes");
-                cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
-                rowEnd = rowStartingITY+elements.size();
-                sheet.addMergedRegion(new CellRangeAddress(rowStartingITY, rowEnd, UM_COLUMN_NUMBER,UM_COLUMN_NUMBER));
-                rowStartingOther = rowEnd+3;
-                break;
-
-            default:
-                row = sheet.createRow(rowStartingOther);
-                cell= row.createCell((short)columnNumber);
 
 
-                break;
-        }
+        row = sheet.createRow(ROW_START_ELEMENTS);
+        cell = row.createCell((short) columnNumber);
+        cell.setCellValue("Thousand tonnes");
+        cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
+        rowEnd = ROW_START_ELEMENTS + elements.size() - 1;
+        sheet.addMergedRegion(new CellRangeAddress(ROW_START_ELEMENTS, rowEnd, UM_COLUMN_NUMBER, UM_COLUMN_NUMBER));
+        rowStartingITY = rowEnd + 7;
+
+        row = sheet.createRow(rowStartingITY);
+        cell = row.createCell((short) columnNumber);
+        cell.setCellValue("Thousand tonnes");
+        cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
+        rowEnd = rowStartingITY + 2;
+        sheet.addMergedRegion(new CellRangeAddress(rowStartingITY, rowEnd, UM_COLUMN_NUMBER, UM_COLUMN_NUMBER));
+        rowStartingOther = rowEnd + 3;
+
+        row = sheet.createRow(rowStartingOther);
+        cell = row.createCell((short) columnNumber);
+
+
     }
 
     private int putMarketingYear(Sheet sheet, Workbook workbook, Row row, int columnNumber, String valueToPut) {
@@ -590,20 +575,25 @@ public class SheetCreator {
                 months = bean.getNmyMonths();
 
 
-                startingYear = ""+(Integer.parseInt(bean.getNmyStartingYear())+ Integer.parseInt(lastSeasonStart));
-                endingYear = ""+(Integer.parseInt(bean.getNmyEndingYear()) + + Integer.parseInt(lastSeasonStart));
+                startingYear = "" + (Integer.parseInt(bean.getNmyStartingYear()) + Integer.parseInt(lastSeasonStart));
+                endingYear = "" + (Integer.parseInt(bean.getNmyEndingYear()) + +Integer.parseInt(lastSeasonStart));
 
                 String startingCropsMonths = bean.getHarvestBean().getBeginningOfHarvest();
                 String endingCropsMonths = bean.getHarvestBean().getEndOfHarvest();
 
-                startingYearCrops = ""+(Integer.parseInt(bean.getHarvestBean().getBeginningHarvestYear())+ Integer.parseInt(lastSeasonStart));
-                endingYearCrops = ""+(Integer.parseInt(bean.getHarvestBean().getEndHarvestYear())+ Integer.parseInt(lastSeasonStart));
+                startingYearCrops = "" + (Integer.parseInt(bean.getHarvestBean().getBeginningHarvestYear()) + Integer.parseInt(lastSeasonStart));
+                endingYearCrops = "" + (Integer.parseInt(bean.getHarvestBean().getEndHarvestYear()) + Integer.parseInt(lastSeasonStart));
 
 
-                footerValue += "In the " + lastSeason + " forecasts, the NMY covers the period from  " + months.split("/")[0] + " " + startingYear +
-                        " to " + months.split("/")[1] + " " + endingYear;
-                footerValue += " and refers to the crop that is harvested mainly from " + startingCropsMonths + " " + startingYearCrops +
-                        " to " + endingCropsMonths + " " + endingYearCrops;
+                if (!months.equals("-1") && !startingYear.equals("-1") && !endingYear.equals("-1")) {
+                    footerValue += "In the " + lastSeason + " forecasts, the NMY covers the period from  " + months.split("/")[0] + " " + startingYear +
+                            " to " + months.split("/")[1] + " " + endingYear;
+                }
+
+                if (!startingCropsMonths.equals("-1") && !startingYearCrops.equals("-1") && !endingCropsMonths.equals("-1") && !endingYearCrops.equals("-1")) {
+                    footerValue += " and refers to the crop that is harvested mainly from " + startingCropsMonths + " " + startingYearCrops +
+                            " to " + endingCropsMonths + " " + endingYearCrops;
+                }
 
                 break;
 
@@ -611,12 +601,13 @@ public class SheetCreator {
 
                 months = bean.getItyMonths();
 
-                startingYear = ""+(Integer.parseInt(bean.getItyStartingYear())+ Integer.parseInt(lastSeasonStart));
-                endingYear = ""+(Integer.parseInt(bean.getItyEndingYear()) + + Integer.parseInt(lastSeasonStart));
+                startingYear = "" + (Integer.parseInt(bean.getItyStartingYear()) + Integer.parseInt(lastSeasonStart));
+                endingYear = "" + (Integer.parseInt(bean.getItyEndingYear()) + +Integer.parseInt(lastSeasonStart));
 
-                footerValue += "In the " + lastSeason + " forecasts, the ITY covers the period from  " + months.split("/")[0] + " " + startingYear +
-                        " to " + months.split("/")[1] + " " + endingYear;
-
+                if (!months.equals("-1") && !startingYear.equals("-1") && !endingYear.equals("-1")) {
+                    footerValue += "In the " + lastSeason + " forecasts, the ITY covers the period from  " + months.split("/")[0] + " " + startingYear +
+                            " to " + months.split("/")[1] + " " + endingYear;
+                }
                 break;
         }
 
@@ -626,6 +617,18 @@ public class SheetCreator {
         rowCounter++;
 
         return rowCounter;
+    }
+
+    public void createNoDataAvailable(Workbook workbook, Sheet sheet) {
+
+        Cell cell = sheet.createRow(5).createCell(3);
+        Font font = workbook.createFont();
+        font.setFontHeightInPoints((short) 30);
+        font.setFontName("IMPACT");
+        CellStyle style = workbook.createCellStyle();
+        style.setFont(font);
+        cell.setCellValue("NO DATA AVAILABLE");
+        cell.setCellStyle(style);
     }
 
 }

@@ -75,58 +75,68 @@ public class HandlerExcelCreation {
             LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> foodBalanceResults = forecast.getFoodBalanceResults().get(commodityString);
 
 
-            createColumnVisualizationType(foodBalanceResults);
 
+            if(foodBalanceResults.size() != 0) {
+                createColumnVisualizationType(foodBalanceResults);
 
-            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, foodBalanceResults, "foodBalance",this.mapColumnsToView, marketingYearMap.get(commodityString).getNmyMonths());
+                rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, foodBalanceResults, "foodBalance", this.mapColumnsToView, marketingYearMap.get(commodityString).getNmyMonths());
 
-            // list of elements to show on the left
-            HashMap< Integer, HashMap<Integer, String>> elements =  qvo.getFoodBalanceElements();
+                // list of elements to show on the left
+                HashMap<Integer, HashMap<Integer, String>> elements = qvo.getFoodBalanceElements();
 
-            // put on the excel the elements and the values
-            rowCounter = this.sheetCreator.createDataTableGroup(rowCounter,sheet,workbook,elements.get(commodity), foodBalanceResults, this.mapColumnsToView);
+                // put on the excel the elements and the values
+                int rowUM = rowCounter + 1;
+                int columnUM = 1;
+                // Cell cellUM = sheet.createRow(rowUM).createCell((short) columnUM);
+//              this.sheetCreator.putMeasurementUnitValues(elements.get(commodity), "national", columnUM, rowCounter, sheet);
+                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elements.get(commodity), foodBalanceResults, this.mapColumnsToView, true);
 
-            rowCounter++;
+                rowCounter++;
 
-            rowCounter = this.sheetCreator.createFooterMarketingYear(rowCounter,sheet,workbook,marketingYearMap.get(commodityString),"national", this.mapColumnsToView);
+                rowCounter = this.sheetCreator.createFooterMarketingYear(rowCounter, sheet, workbook, marketingYearMap.get(commodityString), "national", this.mapColumnsToView);
 
-            rowCounter++;
+                rowCounter++;
 
               /*
                 -------------------------    ITY RESULTS   -------------------------------------------------
              */
 
-            LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> ityResults = forecast.getItyResults().get(commodityString);
+                LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> ityResults = forecast.getItyResults().get(commodityString);
 
-            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, ityResults, "international",this.mapColumnsToView, marketingYearMap.get(commodityString).getItyMonths());
+                rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, ityResults, "international", this.mapColumnsToView, marketingYearMap.get(commodityString).getItyMonths());
 
-            // list of elements to show on the left
-            HashMap< Integer, HashMap<Integer, String>> elementsITY =  qvo.getItyElements();
+                // list of elements to show on the left
+                HashMap<Integer, HashMap<Integer, String>> elementsITY = qvo.getItyElements();
 
-            // put on the excel the elements and the values
-            rowCounter = this.sheetCreator.createDataTableGroup(rowCounter,sheet,workbook,elementsITY.get(commodity), ityResults, this.mapColumnsToView);
+                // put on the excel the elements and the values
+           //     this.sheetCreator.putMeasurementUnitValues(elementsITY.get(commodity), "international", 1, rowCounter, sheet);
+                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elementsITY.get(commodity), ityResults, this.mapColumnsToView, false);
 
-            rowCounter++;
+                rowCounter++;
 
-            rowCounter = this.sheetCreator.createFooterMarketingYear(rowCounter,sheet,workbook,marketingYearMap.get(commodityString),"ity", this.mapColumnsToView);
+                rowCounter = this.sheetCreator.createFooterMarketingYear(rowCounter, sheet, workbook, marketingYearMap.get(commodityString), "ity", this.mapColumnsToView);
 
 
-            rowCounter++;
+                rowCounter++;
               /*
                 -------------------------    OTHERS   -------------------------------------------------
              */
 
-            LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> otherResults = forecast.getOtherResults().get(commodityString);
+                LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> otherResults = forecast.getOtherResults().get(commodityString);
 
-            rowCounter = this.sheetCreator.createHeadersGroup(rowCounter,sheet,workbook, otherResults, "others",this.mapColumnsToView, null);
+                rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, otherResults, "others", this.mapColumnsToView, null);
 
-            // list of elements to show on the left
-            HashMap< Integer, HashMap<Integer, String>> elementsOTH =  qvo.getOtherElements();
+                // list of elements to show on the left
+                HashMap<Integer, HashMap<Integer, String>> elementsOTH = qvo.getOtherElements();
 
-            // put on the excel the elements and the values
-            rowCounter = this.sheetCreator.createDataTableGroup(rowCounter,sheet,workbook,elementsOTH.get(commodity), otherResults,this.mapColumnsToView);
+                // put on the excel the elements and the values
+             //   this.sheetCreator.putMeasurementUnitValues(elementsOTH.get(commodity), "others", 1, rowCounter, sheet);
+                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elementsOTH.get(commodity), otherResults, this.mapColumnsToView, false);
 
-            sheet.createFreezePane(2,0,2,2);
+                sheet.createFreezePane(2, 0, 2, 2);
+            }else {
+                this.sheetCreator.createNoDataAvailable(workbook, sheet);
+            }
 
         }
 
@@ -167,8 +177,12 @@ public class HandlerExcelCreation {
             }
             // update
             counter++;
-            otherDate = datesList.get(datesSize - counter);
-            year = Integer.parseInt(otherDate.substring(0, 4));
+            if(datesSize - counter >=0) {
+                otherDate = datesList.get(datesSize - counter);
+                year = Integer.parseInt(otherDate.substring(0, 4));
+            }else{
+                year--;
+            }
         }
 
         mapColumnsToView.put(otherDate, "showOnly");

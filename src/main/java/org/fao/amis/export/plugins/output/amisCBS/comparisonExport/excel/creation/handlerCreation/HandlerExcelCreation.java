@@ -3,7 +3,10 @@ package org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creati
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.configurations.dataCreator.DataCreator;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.daoValue.DaoForecastValue;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.forecast.Forecast;
@@ -89,7 +92,15 @@ public class HandlerExcelCreation {
                 int columnUM = 1;
                 // Cell cellUM = sheet.createRow(rowUM).createCell((short) columnUM);
 //              this.sheetCreator.putMeasurementUnitValues(elements.get(commodity), "national", columnUM, rowCounter, sheet);
-                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elements.get(commodity), foodBalanceResults, this.mapColumnsToView, true);
+                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elements.get(commodity), foodBalanceResults, this.mapColumnsToView);
+
+                Row row = sheet.createRow(9);
+                Cell cell = row.createCell((short) 1);
+                cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
+                cell.setCellValue("Thousand tonnes");
+                int endNmy = 9+ elements.get(commodity).size();
+                CellRangeAddress region =new CellRangeAddress(9,endNmy-1,1,1);
+                sheet.addMergedRegion(region);
 
                 rowCounter++;
 
@@ -110,12 +121,20 @@ public class HandlerExcelCreation {
 
                 // put on the excel the elements and the values
            //     this.sheetCreator.putMeasurementUnitValues(elementsITY.get(commodity), "international", 1, rowCounter, sheet);
-                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elementsITY.get(commodity), ityResults, this.mapColumnsToView, false);
+                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elementsITY.get(commodity), ityResults, this.mapColumnsToView);
+
+                int startIty = endNmy+ 7;
+                Row rowIt = sheet.getRow(startIty - 1);
+                Cell cellIt1 = rowIt.createCell((short) 1);
+                cellIt1.setCellValue("Thousand tonnes");
+                Row rowIt2 = sheet.getRow(startIty);
+                Cell cellIt2 = rowIt2.createCell((short) 1);
+                cellIt2.setCellValue("Thousand tonnes");
+                int startOth = startIty+7;
 
                 rowCounter++;
 
                 rowCounter = this.sheetCreator.createFooterMarketingYear(rowCounter, sheet, workbook, marketingYearMap.get(commodityString), "ity", this.mapColumnsToView);
-
 
                 rowCounter++;
               /*
@@ -131,8 +150,57 @@ public class HandlerExcelCreation {
 
                 // put on the excel the elements and the values
              //   this.sheetCreator.putMeasurementUnitValues(elementsOTH.get(commodity), "others", 1, rowCounter, sheet);
-                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elementsOTH.get(commodity), otherResults, this.mapColumnsToView, false);
+                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elementsOTH.get(commodity), otherResults, this.mapColumnsToView);
+                Row rowOth;
+                Cell cellOth;
+                if(elementsOTH.get(commodity).size()>4){
 
+                    rowOth = sheet.getRow(startOth );
+                    cellOth = rowOth.createCell((short) 1);
+                    cellOth.setCellValue("1000s");
+
+
+                    rowOth = sheet.getRow(startOth +1);
+                    cellOth = rowOth.createCell((short) 1);
+                    cellOth.setCellValue("Thousand Ha");
+
+
+                    rowOth = sheet.getRow(startOth +2);
+                    cellOth = rowOth.createCell((short) 1);
+                    cellOth.setCellValue("%");
+
+
+                    rowOth = sheet.getRow(startOth +3);
+                    cellOth = rowOth.createCell((short) 1);
+                    cellOth.setCellValue("Tonnes/Ha");
+
+
+                    rowOth = sheet.getRow(startOth +4);
+                    cellOth = rowOth.createCell((short) 1);
+                    cellOth.setCellValue("Thousand Ha");
+
+                }else{
+
+                    rowOth = sheet.getRow(startOth );
+                    cellOth = rowOth.createCell((short) 1);
+                    cellOth.setCellValue("1000s");
+
+
+                    rowOth = sheet.getRow(startOth +1);
+                    cellOth = rowOth.createCell((short) 1);
+                    cellOth.setCellValue("Thousand Ha");
+
+
+                    rowOth = sheet.getRow(startOth +2);
+                    cellOth = rowOth.createCell((short) 1);
+                    cellOth.setCellValue("Tonnes/Ha");
+
+
+                    rowOth = sheet.getRow(startOth +3);
+                    cellOth = rowOth.createCell((short) 1);
+                    cellOth.setCellValue("Thousand Ha");
+
+                }
                 sheet.createFreezePane(2, 0, 2, 2);
             }else {
                 this.sheetCreator.createNoDataAvailable(workbook, sheet);

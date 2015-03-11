@@ -192,7 +192,7 @@ public class SheetCreator {
     public int createDataTableGroup(int rowCounter, Sheet sheet, HSSFWorkbook workbook,
                                     HashMap<Integer, String> elements,
                                     LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> foodBalanceResults,
-                                    Map<String, String> mapColumnsToView, boolean putUM) {
+                                    Map<String, String> mapColumnsToView) {
 
         Set<Integer> codes = elements.keySet();
 
@@ -200,9 +200,7 @@ public class SheetCreator {
         int rowUM = rowCounter + 1;
         int columnUM = 1;
         // Cell cellUM = sheet.createRow(rowUM).createCell((short) columnUM);
-        if(putUM) {
-            putMeasurementUnitValues(elements, "national", columnUM, rowCounter, sheet);
-        }
+
 
         for (int code : codes) {
 
@@ -339,7 +337,7 @@ public class SheetCreator {
 
             int value = (int) forecast.getValue();
             Cell cell = row.createCell((short) columnNumber);
-            cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+       //     cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
             if (value == -1) {
                 cell.setCellValue("");
             } else {
@@ -352,7 +350,7 @@ public class SheetCreator {
 
             // flags
             Cell cell1 = row.createCell((short) columnNumber);
-            cell1.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+         //   cell1.setCellStyle(AmisExcelUtils.getBasicCellStyle());
             cell1.setCellValue((forecast.getFlags().equals("null")) ? "" : forecast.getFlags());
 
             String indexLetter1 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -362,7 +360,7 @@ public class SheetCreator {
 
             // notes
             Cell cell2 = row.createCell((short) columnNumber);
-            cell2.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+       //     cell2.setCellStyle(AmisExcelUtils.getBasicCellStyle());
 
             cell2.setCellValue((forecast.getNotes() == null || forecast.getNotes().equals("null")) ? "" : forecast.getNotes());
             sheet.autoSizeColumn(columnNumber);
@@ -375,7 +373,7 @@ public class SheetCreator {
         } else {
 
             Cell cell = row.createCell((short) columnNumber);
-            cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            //cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
             cell.setCellValue("");
 
             String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -386,7 +384,7 @@ public class SheetCreator {
             // flags
 
             Cell cell1 = row.createCell((short) columnNumber);
-            cell1.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            //cell1.setCellStyle(AmisExcelUtils.getBasicCellStyle());
             cell1.setCellValue("");
 
             String indexLetter1 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -397,7 +395,7 @@ public class SheetCreator {
 
             // notes
             Cell cell2 = row.createCell((short) columnNumber);
-            cell2.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            //cell2.setCellStyle(AmisExcelUtils.getBasicCellStyle());
             cell2.setCellValue("");
 
             String indexLetter2 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -421,7 +419,7 @@ public class SheetCreator {
 
             int value = (int) forecast.getValue();
             Cell cell = row.createCell((short) columnNumber);
-            cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            //cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
             if (value == -1) {
                 cell.setCellValue("");
             } else {
@@ -435,7 +433,7 @@ public class SheetCreator {
         } else {
 
             Cell cell = row.createCell((short) columnNumber);
-            cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            //cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
             cell.setCellValue("");
 
             String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -459,7 +457,7 @@ public class SheetCreator {
 
             int value = (int) forecast.getValue();
             Cell cell = row.createCell((short) columnNumber);
-            cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            //cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
             if (value == -1) {
                 cell.setCellValue("");
             } else {
@@ -473,7 +471,7 @@ public class SheetCreator {
         } else {
 
             Cell cell = row.createCell((short) columnNumber);
-            cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            //cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
             cell.setCellValue("");
 
             String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -525,16 +523,16 @@ public class SheetCreator {
         Cell cell = null;
         int rowEnd = -1;
 
-
-        row = sheet.createRow(ROW_START_ELEMENTS);
+        row = sheet.createRow(ROW_START_ELEMENTS+1);
         cell = row.createCell((short) columnNumber);
         cell.setCellValue("Thousand tonnes");
         cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
-        rowEnd = ROW_START_ELEMENTS + elements.size() - 1;
-        sheet.addMergedRegion(new CellRangeAddress(ROW_START_ELEMENTS, rowEnd, UM_COLUMN_NUMBER, UM_COLUMN_NUMBER));
+        rowEnd = ROW_START_ELEMENTS+1 + elements.size() -1;
+        CellRangeAddress region = CellRangeAddress.valueOf("B"+ROW_START_ELEMENTS+1+":B+"+rowEnd);
+        sheet.addMergedRegion(region);
         rowStartingITY = rowEnd + 7;
 
-        row = sheet.createRow(rowStartingITY);
+        /*row = sheet.createRow(rowStartingITY);
         cell = row.createCell((short) columnNumber);
         cell.setCellValue("Thousand tonnes");
         cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
@@ -543,9 +541,7 @@ public class SheetCreator {
         rowStartingOther = rowEnd + 3;
 
         row = sheet.createRow(rowStartingOther);
-        cell = row.createCell((short) columnNumber);
-
-
+        cell = row.createCell((short) columnNumber);*/
     }
 
     private int putMarketingYear(Sheet sheet, Workbook workbook, Row row, int columnNumber, String valueToPut) {
@@ -554,7 +550,7 @@ public class SheetCreator {
         Cell cell = row.createCell((short) columnNumber);
         cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyle((HSSFWorkbook) workbook, null));
         cell.setCellValue(valueToPut);
-        sheet.autoSizeColumn(columnNumber);
+      //  sheet.autoSizeColumn(columnNumber);
 
         return columnNumber;
 

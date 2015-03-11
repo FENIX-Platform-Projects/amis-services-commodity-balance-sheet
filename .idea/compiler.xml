@@ -23,11 +23,13 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="amis-services" />
+        <module name="wds" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="amis-services" target="1.7" />
+      <module name="wds" target="1.6" />
+      <module name="wds-core" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>
-

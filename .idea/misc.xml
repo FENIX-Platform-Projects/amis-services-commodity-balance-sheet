@@ -4,6 +4,7 @@
     <entry_points version="2.0" />
   </component>
   <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$USER_HOME$/Documents/GenericProjects/WDS/wds" />
     <file type="web" url="file://$PROJECT_DIR$" />
   </component>
   <component name="IdProvider" IDEtalkID="EFF09AE510375C08F99DCF4953EEF978" />
@@ -18,4 +19,3 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>
-

@@ -14,6 +14,7 @@ import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creatio
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.formula.configurator.ConfigurationReader;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.formula.translator.CellMapper;
 
+import java.text.DateFormatSymbols;
 import java.util.*;
 
 public class SheetCreator {
@@ -31,6 +32,8 @@ public class SheetCreator {
     private static final int UM_COLUMN_NUMBER = 1;
     private static final int SPACE_INT_OTH = 4;
     private static final int ROW_START_ELEMENTS = 9;
+
+    private static final String EVERY_SHEETS_TITLE = "amis commodity forecasts";
 
 
     private String lastSeason;
@@ -66,9 +69,9 @@ public class SheetCreator {
         String dataSource = dataCreator.getDatasource();
         String country = dataCreator.getCountry();
 
+        rowCounter = createHeadingRow(rowCounter, sheet, workbook, "COUNTRY: ", country);
         rowCounter = createHeadingRow(rowCounter, sheet, workbook, "COMMODITY: ", commodity);
         rowCounter = createHeadingRow(rowCounter, sheet, workbook, "LAST SEASON: ", lastSeason);
-        rowCounter = createHeadingRow(rowCounter, sheet, workbook, "COUNTRY: ", country);
         rowCounter = createHeadingRow(rowCounter, sheet, workbook, "DATASOURCE: ", dataSource);
 
         rowCounter = AmisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
@@ -102,10 +105,9 @@ public class SheetCreator {
     public int createSheetTitle(int rowCounter, Sheet sheet, HSSFWorkbook workbook) {
         Row row = sheet.createRow(rowCounter++);
         this.cellMappers = new CellMapper();
-        String title = "amis commodity balance sheet";
         Cell cell = row.createCell((short) 0);
         cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyle(workbook, null));
-        cell.setCellValue(title.toUpperCase());
+        cell.setCellValue(EVERY_SHEETS_TITLE.toUpperCase());
         sheet.autoSizeColumn(0);
 
         rowCounter = AmisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
@@ -251,7 +253,7 @@ public class SheetCreator {
         row.setHeight((short) (3 * 260));
         Cell cell = row.createCell((short) columnNumber);
         cell.setCellStyle(AmisExcelUtils.getBlueCellStyle());
-        cell.setCellValue(date);
+        cell.setCellValue(reformatDate(date));
         sheet.autoSizeColumn(columnNumber);
 
         columnNumber++;
@@ -280,7 +282,7 @@ public class SheetCreator {
         row.setHeight((short) (3 * 260));
         Cell cell = row.createCell((short) columnNumber);
         cell.setCellStyle(AmisExcelUtils.getBlueCellStyle());
-        cell.setCellValue(date);
+        cell.setCellValue(reformatDate(date));
         sheet.autoSizeColumn(columnNumber);
 
         columnNumber++;
@@ -295,7 +297,7 @@ public class SheetCreator {
         row.setHeight((short) (3 * 260));
         Cell cell = row.createCell((short) columnNumber);
         cell.setCellStyle(AmisExcelUtils.getBlueCellStyle());
-        cell.setCellValue(date);
+        cell.setCellValue(reformatDate(date));
         sheet.autoSizeColumn(columnNumber);
 
         // hide the column hust before this
@@ -313,7 +315,7 @@ public class SheetCreator {
         row.setHeight((short) (3 * 260));
         Cell cell = row.createCell((short) columnNumber);
         cell.setCellStyle(AmisExcelUtils.getBlueCellStyle());
-        cell.setCellValue(date);
+        cell.setCellValue(reformatDate(date));
         sheet.autoSizeColumn(columnNumber);
         sheet.setColumnHidden(columnNumber, true);
 
@@ -625,6 +627,28 @@ public class SheetCreator {
         style.setFont(font);
         cell.setCellValue("NO DATA AVAILABLE");
         cell.setCellStyle(style);
+    }
+
+
+    private String reformatDate (String entireDate) {
+        String result = "";
+
+        String[] splitted = entireDate.split("\\(");
+        result += splitted[0] + " \n";
+
+        String[] forecastDate = splitted[1].split("-");
+        result+= "(";
+        result +=  new DateFormatSymbols().getMonths()[Integer.parseInt(forecastDate[1])-1] + " ";
+        result +=forecastDate[0] + ")";
+        return result;
+
+
+
+
+
+
+
+
     }
 
 }

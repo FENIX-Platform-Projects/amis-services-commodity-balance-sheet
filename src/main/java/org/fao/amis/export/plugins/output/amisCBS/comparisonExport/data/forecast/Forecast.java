@@ -35,7 +35,6 @@ public class Forecast {
 
     private URLGetter urlGetter;
 
-
     public Forecast() {
 
         this.urlGetter = new URLGetter();

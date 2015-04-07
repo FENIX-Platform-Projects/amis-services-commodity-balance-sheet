@@ -4,8 +4,7 @@ package org.fao.amis.export.plugins.input.table;
 import org.fao.amis.export.core.dto.data.CoreData;
 import org.fao.amis.export.core.dto.data.CoreTableData;
 import org.fao.amis.export.core.input.plugin.Input;
-import org.fao.fenix.commons.msd.dto.data.dataset.Resource;
-
+import org.fao.fenix.commons.msd.dto.data.Resource;
 import java.util.Map;
 
 public class InputAmisCBS extends Input {

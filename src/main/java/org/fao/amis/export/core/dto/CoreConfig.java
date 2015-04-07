@@ -1,6 +1,6 @@
 package org.fao.amis.export.core.dto;
 
-import org.fao.fenix.commons.msd.dto.data.dataset.Resource;
+import org.fao.fenix.commons.msd.dto.data.Resource;
 
 public class CoreConfig {
 

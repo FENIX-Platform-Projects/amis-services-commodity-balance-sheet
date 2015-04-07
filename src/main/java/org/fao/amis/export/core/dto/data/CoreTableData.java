@@ -1,6 +1,6 @@
 package org.fao.amis.export.core.dto.data;
 
-import org.fao.fenix.commons.msd.dto.data.dataset.MeIdentification;
+import org.fao.fenix.commons.msd.dto.full.MeIdentification;
 
 import java.util.Iterator;
 

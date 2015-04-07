@@ -1,7 +1,7 @@
 package org.fao.amis.export.core.input.plugin;
 
 import org.fao.amis.export.core.dto.data.CoreData;
-import org.fao.fenix.commons.msd.dto.data.dataset.Resource;
+import org.fao.fenix.commons.msd.dto.data.Resource;
 
 import java.util.Map;
 

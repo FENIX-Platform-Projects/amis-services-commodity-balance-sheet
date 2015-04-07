@@ -5,7 +5,7 @@ import org.fao.amis.export.core.dto.PluginConfig;
 import org.fao.amis.export.core.input.plugin.Input;
 import org.fao.amis.export.core.utils.configuration.ConfiguratorURL;
 import org.fao.amis.export.core.utils.reader.PropertiesReader;
-import org.fao.fenix.commons.msd.dto.data.dataset.Resource;
+import org.fao.fenix.commons.msd.dto.data.Resource;
 
 import java.util.HashMap;
 import java.util.Map;

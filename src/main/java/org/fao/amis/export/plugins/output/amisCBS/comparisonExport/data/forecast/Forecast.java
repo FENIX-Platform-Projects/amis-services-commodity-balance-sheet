@@ -1,6 +1,7 @@
 package org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.forecast;
 
 
+import com.google.common.collect.Lists;
 import org.apache.log4j.Logger;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.configuration.URLGetter;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.daoValue.DaoForecastValue;
@@ -8,10 +9,7 @@ import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.utils.da
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Properties;
+import java.util.*;
 
 
 public class Forecast {
@@ -53,7 +51,6 @@ public class Forecast {
 
     private void initProperties() {
 
-
         this.prop = new Properties();
         String propFileName = null;
         propFileName = URL_FORECASTS;
@@ -69,7 +66,7 @@ public class Forecast {
 
 
 
-    public void initData(ArrayList<Object[]> data) {
+    public void initData(ArrayList<ArrayList<Object>> data) {
 
         this.unorderedMap =
                 new LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>>>();
@@ -88,7 +85,11 @@ public class Forecast {
 
 
             for(int i =0; i< data.size(); i++){
-                Object[] row =data.get(i);
+
+
+                Object[] row = Lists.newArrayList(data.get(i)).toArray();
+
+     //           Object[] row = data.get(i);
 
 
                 if (commodityCode.equals("" + row[commodityIndex])) {
@@ -121,7 +122,7 @@ public class Forecast {
 
     // OK
     private LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> createTempMap(
-            ArrayList<Object[]> data, String commodityCode, String date, int commodityIndex, int dateIndex) {
+            ArrayList<ArrayList<Object>> data, String commodityCode, String date, int commodityIndex, int dateIndex) {
 
         LinkedHashMap<String, DaoForecastValue> tempMap = new LinkedHashMap<String, DaoForecastValue>();
         int codeIndex = Integer.parseInt(this.prop.getProperty("code"));
@@ -131,7 +132,7 @@ public class Forecast {
         int notesIndex = Integer.parseInt(this.prop.getProperty("notes"));
 
         for(int i =0; i< data.size(); i++){
-            Object[] row = data.get(i);
+            Object[] row = Lists.newArrayList(data.get(i)).toArray();
 
             double value;
 

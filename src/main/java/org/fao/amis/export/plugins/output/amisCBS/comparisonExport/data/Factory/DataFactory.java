@@ -26,7 +26,7 @@ public class DataFactory {
 
     private Forecast forecasts;
 
-    public DataFactory(ArrayList<Object[]> data, LinkedHashMap filterData, ArrayList<Object[]> nationalMarkData) {
+    public DataFactory(ArrayList<ArrayList<Object>> data, LinkedHashMap filterData, ArrayList<Object[]> nationalMarkData) {
 
         formulaHandler = new FormulaHandler();
         try {

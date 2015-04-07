@@ -30,10 +30,10 @@ public class OutputBalanceSheet   extends Output {
     public void process(CoreData resource) throws Exception {
 
         LinkedHashMap tmp = ((LinkedHashMap)config.get("filterData"));
-        ArrayList<Object[]> ss  = Lists.newArrayList(resource.getData());
+        ArrayList<ArrayList<Object>> ss  = Lists.newArrayList(resource.getData());
         ArrayList<Object[]> nmy  =  (ArrayList<Object[]>)config.get("marketingYear");
 
-        wb = createSheet(ss,tmp,nmy );
+        wb = createSheet((ArrayList<ArrayList<Object>>) ss,tmp,nmy );
     }
 
 
@@ -57,7 +57,7 @@ public class OutputBalanceSheet   extends Output {
 
     }
 
-    private HSSFWorkbook createSheet( ArrayList<Object[]> data, LinkedHashMap filterData,  ArrayList<Object[]> marketingYear){
+    private HSSFWorkbook createSheet( ArrayList<ArrayList<Object>> data, LinkedHashMap filterData,  ArrayList<Object[]> marketingYear){
 
 
         DataFactory dataFactory = new DataFactory(data, filterData, marketingYear);

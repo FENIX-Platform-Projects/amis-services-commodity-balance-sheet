@@ -5,18 +5,18 @@ import java.util.LinkedHashMap;
 
 public class DataCreator {
 
-    private ArrayList<Object[]> data ;
+    private ArrayList<ArrayList<Object>> data ;
 
     private String datasource, season, country;
 
-    public DataCreator( ArrayList<Object[]> dataTrue, LinkedHashMap filterData) {
+    public DataCreator( ArrayList<ArrayList<Object>> dataTrue, LinkedHashMap filterData) {
         this.data = dataTrue;
         this.datasource = filterData.get("datasource").toString();
         this.season = filterData.get("season").toString();
         this.country = filterData.get("region").toString();
     }
 
-    public ArrayList<Object[]> getData() {
+    public ArrayList<ArrayList<Object>> getData() {
         return this.data;
     }
 

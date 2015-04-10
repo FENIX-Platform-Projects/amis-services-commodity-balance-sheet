@@ -100,11 +100,15 @@ public class AmisExcelUtils {
     }
 
     public static HSSFCellStyle getBasicCellStyle() {
-        return styles.get("basicStyle");
+        HSSFCellStyle style = styles.get("basicStyle");
+        return style;
     }
 
     private static HSSFCellStyle createBasicCellStyle(HSSFWorkbook workbook) {
-        return workbook.createCellStyle();
+        HSSFCellStyle style =  workbook.createCellStyle();
+        setNoBorderStyle(style);
+        return style;
+
     }
 
     public static HSSFCellStyle getBlueCellStyle() {
@@ -141,11 +145,25 @@ public class AmisExcelUtils {
         return cellStyle;
     }
 
+    public static HSSFCellStyle getBoldTextWithVerticalAl(HSSFWorkbook workbook, HSSFCellStyle cellStyle) {
+
+        if (cellStyle == null) {
+            cellStyle = workbook.createCellStyle();
+        }
+
+        cellStyle.setFont(bigBoldFont);
+        cellStyle.setVerticalAlignment(HSSFCellStyle.ALIGN_CENTER);
+
+        return cellStyle;
+
+    }
+
+
     public static HSSFCellStyle getBigBoldTextCellStyle(HSSFWorkbook workbook, HSSFCellStyle cellStyle) {
 
         if (cellStyle == null) {
-            cellStyle = getBasicCellStyle();
-        }
+            cellStyle = workbook.createCellStyle();
+       }
 
         cellStyle.setFont(bigBoldFont);
 
@@ -172,7 +190,7 @@ public class AmisExcelUtils {
     public static HSSFCellStyle getBoldTextCellStyle(HSSFWorkbook workbook, HSSFCellStyle cellStyle) {
 
         if (cellStyle == null) {
-            cellStyle = getBasicCellStyle();
+            cellStyle = workbook.createCellStyle();
         }
 
         cellStyle.setFont(boldFont);
@@ -182,8 +200,9 @@ public class AmisExcelUtils {
     }
 
     public static HSSFCellStyle getBordersStyle(HSSFWorkbook workbook, HSSFCellStyle cellStyle) {
-        if (cellStyle == null) {
-            cellStyle = getBasicCellStyle();
+
+        if(cellStyle==null) {
+            cellStyle = workbook.createCellStyle();
         }
         cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
@@ -275,4 +294,10 @@ public class AmisExcelUtils {
         return styles.get("centerAlignment");
     }
 
+
+    private static void setNoBorderStyle (HSSFCellStyle cellStyle ){
+        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_NONE);
+        cellStyle.setBorderTop(HSSFCellStyle.BORDER_NONE);
+        cellStyle.setBorderLeft(HSSFCellStyle.BORDER_NONE);
+        cellStyle.setBorderRight(HSSFCellStyle.BORDER_NONE);    }
 }

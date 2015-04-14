@@ -30,6 +30,8 @@ public class AmisExcelUtils {
         styles.put("rightAllignment", createRightAlignmentStyle(workbook));
         styles.put("leftAllignment", createLeftAlignmentStyle(workbook));
         styles.put("basicStyle", createBasicCellStyle(workbook));
+        styles.put("borderBasicStyle", createBasicWithBordersStyle(workbook));
+        styles.put("borderBasicStyleRightAlignment", createBasicWithBordersStyleRigthAlig(workbook));
         styles.put("rightAllignmentWithBorders", createRightAlignmentWithBordersStyle(workbook));
         styles.put("blueStyle", createBlueCellStyle(workbook));
         styles.put("greyStyle", createGreyCellStyle(workbook));
@@ -104,9 +106,35 @@ public class AmisExcelUtils {
         return style;
     }
 
+    public static HSSFCellStyle getBasicWithBorders() {
+        HSSFCellStyle style = styles.get("borderBasicStyle");
+        return style;
+    }
+
+    public static HSSFCellStyle getBasicWithRightAlWithBorders() {
+        HSSFCellStyle style = styles.get("borderBasicStyleRightAlignment");
+        return style;
+    }
+
+
     private static HSSFCellStyle createBasicCellStyle(HSSFWorkbook workbook) {
         HSSFCellStyle style =  workbook.createCellStyle();
         setNoBorderStyle(style);
+        return style;
+
+    }
+
+    private static HSSFCellStyle createBasicWithBordersStyle(HSSFWorkbook workbook) {
+        HSSFCellStyle style =  workbook.createCellStyle();
+        setSimpleBorderStyle(style);
+        return style;
+
+    }
+
+    private static HSSFCellStyle createBasicWithBordersStyleRigthAlig(HSSFWorkbook workbook) {
+        HSSFCellStyle style =  workbook.createCellStyle();
+        setSimpleBorderStyle(style);
+        style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
         return style;
 
     }
@@ -126,6 +154,7 @@ public class AmisExcelUtils {
         cellStyle.setWrapText(true);
 
         cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
 
         return cellStyle;
 
@@ -153,6 +182,7 @@ public class AmisExcelUtils {
 
         cellStyle.setFont(bigBoldFont);
         cellStyle.setVerticalAlignment(HSSFCellStyle.ALIGN_CENTER);
+        cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 
         return cellStyle;
 
@@ -199,19 +229,28 @@ public class AmisExcelUtils {
 
     }
 
+    public static HSSFCellStyle getBoldTextCellStyleWithAlignment(HSSFWorkbook workbook, HSSFCellStyle cellStyle) {
+
+        if (cellStyle == null) {
+            cellStyle = workbook.createCellStyle();
+        }
+
+        cellStyle.setFont(boldFont);
+        cellStyle.setVerticalAlignment(HSSFCellStyle.ALIGN_CENTER);
+        cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+
+        return cellStyle;
+
+    }
+
     public static HSSFCellStyle getBordersStyle(HSSFWorkbook workbook, HSSFCellStyle cellStyle) {
 
         if(cellStyle==null) {
             cellStyle = workbook.createCellStyle();
         }
-        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-        cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-        cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-        cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-        cellStyle.setLeftBorderColor(IndexedColors.BLUE_GREY.getIndex());
-        cellStyle.setRightBorderColor(IndexedColors.BLUE_GREY.getIndex());
-        cellStyle.setTopBorderColor(IndexedColors.BLUE_GREY.getIndex());
-        cellStyle.setBottomBorderColor(IndexedColors.BLUE_GREY.getIndex());
+
+        setSimpleBorderStyle(cellStyle);
+        setBlueBorderStyle(cellStyle);
 
         return cellStyle;
     }
@@ -222,7 +261,7 @@ public class AmisExcelUtils {
 
         bigBoldFont = workbook.createFont();
         bigBoldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        bigBoldFont.setFontHeightInPoints((short) 11);
+        bigBoldFont.setFontHeightInPoints((short) 10);
 
         whiteFont = workbook.createFont();
         whiteFont.setColor(HSSFColor.WHITE.index);
@@ -299,5 +338,21 @@ public class AmisExcelUtils {
         cellStyle.setBorderBottom(HSSFCellStyle.BORDER_NONE);
         cellStyle.setBorderTop(HSSFCellStyle.BORDER_NONE);
         cellStyle.setBorderLeft(HSSFCellStyle.BORDER_NONE);
-        cellStyle.setBorderRight(HSSFCellStyle.BORDER_NONE);    }
+        cellStyle.setBorderRight(HSSFCellStyle.BORDER_NONE);
+    }
+
+
+    private static void setSimpleBorderStyle (HSSFCellStyle cellStyle ){
+        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);    }
+
+    private static void setBlueBorderStyle (HSSFCellStyle cellStyle ){
+        cellStyle.setLeftBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        cellStyle.setRightBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        cellStyle.setTopBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        cellStyle.setBottomBorderColor(IndexedColors.BLUE_GREY.getIndex());    }
+
+
 }

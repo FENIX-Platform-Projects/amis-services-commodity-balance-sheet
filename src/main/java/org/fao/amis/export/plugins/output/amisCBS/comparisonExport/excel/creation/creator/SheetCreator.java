@@ -47,17 +47,9 @@ public class SheetCreator {
     private URLGetter urlGetter;
 
     private ArrayList<Integer> firstYearSeason;
-    private HashMap<String, String> othersMeasureUnitsMap;
 
     public SheetCreator() {
-
         urlGetter = new URLGetter();
-        this.othersMeasureUnitsMap = new HashMap<String, String>();
-        this.othersMeasureUnitsMap.put("Population", "1000s");
-        this.othersMeasureUnitsMap.put("Area Harvested", "Thousand Ha");
-        this.othersMeasureUnitsMap.put("Area Planted", "Thousand Ha");
-        this.othersMeasureUnitsMap.put("Yield", "Tonnes/Ha");
-        this.othersMeasureUnitsMap.put("Extraction Rate", "%");
     }
 
     public int createSummary(int rowCounter, Sheet sheet, HSSFWorkbook workbook, DataCreator dataCreator, String commodityLabel) {
@@ -339,7 +331,7 @@ public class SheetCreator {
 
             int value = (int) forecast.getValue();
             Cell cell = row.createCell((short) columnNumber);
-            //     cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            cell.setCellStyle(AmisExcelUtils.getBasicWithBorders());
             if (value == -1) {
                 cell.setCellValue("");
             } else {
@@ -352,7 +344,7 @@ public class SheetCreator {
 
             // flags
             Cell cell1 = row.createCell((short) columnNumber);
-            //   cell1.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            cell1.setCellStyle(AmisExcelUtils.getBasicWithRightAlWithBorders());
             cell1.setCellValue((forecast.getFlags().equals("null")) ? "" : forecast.getFlags());
 
             String indexLetter1 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -362,7 +354,7 @@ public class SheetCreator {
 
             // notes
             Cell cell2 = row.createCell((short) columnNumber);
-            //     cell2.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            cell2.setCellStyle(AmisExcelUtils.getBasicWithBorders());
 
             cell2.setCellValue((forecast.getNotes() == null || forecast.getNotes().equals("null")) ? "" : forecast.getNotes());
             sheet.autoSizeColumn(columnNumber);
@@ -375,7 +367,7 @@ public class SheetCreator {
         } else {
 
             Cell cell = row.createCell((short) columnNumber);
-            //cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            cell.setCellStyle(AmisExcelUtils.getBasicWithBorders());
             cell.setCellValue("");
 
             String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -386,7 +378,7 @@ public class SheetCreator {
             // flags
 
             Cell cell1 = row.createCell((short) columnNumber);
-            //cell1.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            cell1.setCellStyle(AmisExcelUtils.getBasicWithRightAlWithBorders());
             cell1.setCellValue("");
 
             String indexLetter1 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -396,7 +388,7 @@ public class SheetCreator {
 
             // notes
             Cell cell2 = row.createCell((short) columnNumber);
-            //cell2.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            cell2.setCellStyle(AmisExcelUtils.getBasicWithBorders());
             cell2.setCellValue("");
 
             String indexLetter2 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -420,7 +412,7 @@ public class SheetCreator {
 
             int value = (int) forecast.getValue();
             Cell cell = row.createCell((short) columnNumber);
-            //cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            cell.setCellStyle(AmisExcelUtils.getBasicWithBorders());
             if (value == -1) {
                 cell.setCellValue("");
             } else {
@@ -434,7 +426,7 @@ public class SheetCreator {
         } else {
 
             Cell cell = row.createCell((short) columnNumber);
-            //cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            cell.setCellStyle(AmisExcelUtils.getBasicWithBorders());
             cell.setCellValue("");
 
             String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -456,7 +448,7 @@ public class SheetCreator {
 
             int value = (int) forecast.getValue();
             Cell cell = row.createCell((short) columnNumber);
-            //cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            cell.setCellStyle(AmisExcelUtils.getBasicWithBorders());
             if (value == -1) {
                 cell.setCellValue("");
             } else {
@@ -470,7 +462,7 @@ public class SheetCreator {
         } else {
 
             Cell cell = row.createCell((short) columnNumber);
-            //cell.setCellStyle(AmisExcelUtils.getBasicCellStyle());
+            cell.setCellStyle(AmisExcelUtils.getBasicWithBorders());
             cell.setCellValue("");
 
             String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -537,8 +529,10 @@ public class SheetCreator {
 
         columnNumber++;
         Cell cell = row.createCell((short) columnNumber);
-        cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyle((HSSFWorkbook) workbook, null));
-        cell.setCellValue(valueToPut);
+        cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyleWithAlignment((HSSFWorkbook) workbook, null));
+        String value = reformatMarketingYear(valueToPut);
+
+        cell.setCellValue(value);
         //  sheet.autoSizeColumn(columnNumber);
 
         return columnNumber;
@@ -575,7 +569,7 @@ public class SheetCreator {
 
                 if (!startingCropsMonths.equals("-1") && !startingYearCrops.equals("-1") && !endingCropsMonths.equals("-1") && !endingYearCrops.equals("-1")) {
                     footerValue += " and refers to the crop that is harvested mainly from " + startingCropsMonths + " " + startingYearCrops +
-                            " to " + endingCropsMonths + " " + endingYearCrops;
+                            " to " + fromIntegerToDate(endingCropsMonths) + " " + endingYearCrops;
                 }
                 break;
 
@@ -622,6 +616,21 @@ public class SheetCreator {
         result += "(";
         result += new DateFormatSymbols().getMonths()[Integer.parseInt(forecastDate[1]) - 1] + " ";
         result += forecastDate[0] + ")";
+        return result;
+    }
+
+    private String fromIntegerToDate (String month) {
+       return new DateFormatSymbols().getMonths()[Integer.parseInt(month)] + " ";
+    }
+
+
+    private String reformatMarketingYear (String entireDate) {
+
+        String result = "";
+        String[] splitted = entireDate.split("/");
+        result += splitted[0] + " /";
+        result+=" \n";
+        result+= splitted[1];
         return result;
     }
 

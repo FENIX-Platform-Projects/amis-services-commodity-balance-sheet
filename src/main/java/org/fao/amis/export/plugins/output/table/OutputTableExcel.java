@@ -60,9 +60,6 @@ public class OutputTableExcel extends Output {
 
     private SXSSFWorkbook createExcel(Collection<DSDColumn> collection, Iterator<Object[]> data) throws Exception {
 
-
-
-
         formatterValue = new DatatypeFormatter();
         formatterValue.init(config.get("lang"));
 

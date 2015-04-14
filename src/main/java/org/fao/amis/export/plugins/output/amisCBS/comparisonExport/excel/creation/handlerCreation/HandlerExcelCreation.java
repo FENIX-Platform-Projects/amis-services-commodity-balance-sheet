@@ -4,6 +4,7 @@ package org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creati
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -25,7 +26,10 @@ public class HandlerExcelCreation {
 
     private Map<String, String> mapColumnsToView;
 
-    private List<String> datesList; // oreder ASC
+    private List<String> datesList; // order ASC
+
+    private final static String[] OTH_UM_RICE = {"1000s", "Thousand Ha", "%", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
+    private final static String[] OTH_UM_OTH_COMM = {"1000s", "Thousand Ha", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
 
 
     private static final Logger LOGGER = org.apache.log4j.Logger.getLogger(HandlerExcelCreation.class);
@@ -36,7 +40,7 @@ public class HandlerExcelCreation {
     }
 
 
-    public HSSFWorkbook init(Forecast forecast, AMISQuery qvo, DataCreator dataModel, HashMap<String,NationalMarketingBean> marketingYearMap) {
+    public HSSFWorkbook init(Forecast forecast, AMISQuery qvo, DataCreator dataModel, HashMap<String, NationalMarketingBean> marketingYearMap) {
 
         // create the Excel file
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -65,7 +69,7 @@ public class HandlerExcelCreation {
 
             /* summary title (immutable ) */
             rowCounter = this.sheetCreator.createSummary(rowCounter, sheet, workbook, dataModel, commodityLabel);
-            rowCounter = this.sheetCreator.createSheetTitle(rowCounter,sheet,workbook);
+            rowCounter = this.sheetCreator.createSheetTitle(rowCounter, sheet, workbook);
 
 
             /* body part (mutable) */
@@ -78,8 +82,7 @@ public class HandlerExcelCreation {
             LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> foodBalanceResults = forecast.getFoodBalanceResults().get(commodityString);
 
 
-
-            if(foodBalanceResults.size() != 0) {
+            if (foodBalanceResults.size() != 0) {
                 createColumnVisualizationType(foodBalanceResults);
 
                 rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, foodBalanceResults, "foodBalance", this.mapColumnsToView, marketingYearMap.get(commodityString).getNmyMonths());
@@ -91,16 +94,18 @@ public class HandlerExcelCreation {
                 int rowUM = rowCounter + 1;
                 int columnUM = 1;
                 // Cell cellUM = sheet.createRow(rowUM).createCell((short) columnUM);
-//              this.sheetCreator.putMeasurementUnitValues(elements.get(commodity), "national", columnUM, rowCounter, sheet);
                 rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elements.get(commodity), foodBalanceResults, this.mapColumnsToView);
 
                 Row row = sheet.createRow(9);
                 Cell cell = row.createCell((short) 1);
                 cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
+                cell.getCellStyle().setVerticalAlignment(CellStyle.ALIGN_CENTER);
+
                 cell.setCellValue("Thousand tonnes");
-                int endNmy = 9+ elements.get(commodity).size();
-                CellRangeAddress region =new CellRangeAddress(9,endNmy-1,1,1);
+                int endNmy = 9 + elements.get(commodity).size();
+                CellRangeAddress region = new CellRangeAddress(9, endNmy - 1, 1, 1);
                 sheet.addMergedRegion(region);
+               // CellUtil.setAlignment(cell, workbook, CellStyle.ALIGN_CENTER);
 
                 rowCounter++;
 
@@ -120,17 +125,17 @@ public class HandlerExcelCreation {
                 HashMap<Integer, HashMap<Integer, String>> elementsITY = qvo.getItyElements();
 
                 // put on the excel the elements and the values
-           //     this.sheetCreator.putMeasurementUnitValues(elementsITY.get(commodity), "international", 1, rowCounter, sheet);
+                //     this.sheetCreator.putMeasurementUnitValues(elementsITY.get(commodity), "international", 1, rowCounter, sheet);
                 rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elementsITY.get(commodity), ityResults, this.mapColumnsToView);
 
-                int startIty = endNmy+ 7;
+                int startIty = endNmy + 7;
                 Row rowIt = sheet.getRow(startIty - 1);
                 Cell cellIt1 = rowIt.createCell((short) 1);
                 cellIt1.setCellValue("Thousand tonnes");
                 Row rowIt2 = sheet.getRow(startIty);
                 Cell cellIt2 = rowIt2.createCell((short) 1);
                 cellIt2.setCellValue("Thousand tonnes");
-                int startOth = startIty+7;
+                int startOth = startIty + 7;
 
                 rowCounter++;
 
@@ -149,63 +154,26 @@ public class HandlerExcelCreation {
                 HashMap<Integer, HashMap<Integer, String>> elementsOTH = qvo.getOtherElements();
 
                 // put on the excel the elements and the values
-             //   this.sheetCreator.putMeasurementUnitValues(elementsOTH.get(commodity), "others", 1, rowCounter, sheet);
+                //   this.sheetCreator.putMeasurementUnitValues(elementsOTH.get(commodity), "others", 1, rowCounter, sheet);
                 rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elementsOTH.get(commodity), otherResults, this.mapColumnsToView);
                 Row rowOth;
                 Cell cellOth;
-                if(elementsOTH.get(commodity).size()>4){
+                if (elementsOTH.get(commodity).size() > 4) {
+                    String[] measuremntUnits = (elementsOTH.get(commodity).size() > 5) ? OTH_UM_RICE : OTH_UM_OTH_COMM;
 
-                    rowOth = sheet.getRow(startOth );
-                    cellOth = rowOth.createCell((short) 1);
-                    cellOth.setCellValue("1000s");
-
-
-                    rowOth = sheet.getRow(startOth +1);
-                    cellOth = rowOth.createCell((short) 1);
-                    cellOth.setCellValue("Thousand Ha");
+                    for (int count = 0; count < elementsOTH.get(commodity).size(); count++) {
+                        rowOth = sheet.getRow(startOth + count);
+                        cellOth = rowOth.createCell((short) 1);
+                        cellOth.setCellValue(measuremntUnits[count]);
+                    }
 
 
-                    rowOth = sheet.getRow(startOth +2);
-                    cellOth = rowOth.createCell((short) 1);
-                    cellOth.setCellValue("%");
-
-
-                    rowOth = sheet.getRow(startOth +3);
-                    cellOth = rowOth.createCell((short) 1);
-                    cellOth.setCellValue("Tonnes/Ha");
-
-
-                    rowOth = sheet.getRow(startOth +4);
-                    cellOth = rowOth.createCell((short) 1);
-                    cellOth.setCellValue("Thousand Ha");
-
-                }else{
-
-                    rowOth = sheet.getRow(startOth );
-                    cellOth = rowOth.createCell((short) 1);
-                    cellOth.setCellValue("1000s");
-
-
-                    rowOth = sheet.getRow(startOth +1);
-                    cellOth = rowOth.createCell((short) 1);
-                    cellOth.setCellValue("Thousand Ha");
-
-
-                    rowOth = sheet.getRow(startOth +2);
-                    cellOth = rowOth.createCell((short) 1);
-                    cellOth.setCellValue("Tonnes/Ha");
-
-
-                    rowOth = sheet.getRow(startOth +3);
-                    cellOth = rowOth.createCell((short) 1);
-                    cellOth.setCellValue("Thousand Ha");
-
+                    sheet.createFreezePane(2, 0, 2, 2);
+                } else {
+                    this.sheetCreator.createNoDataAvailable(workbook, sheet);
                 }
-                sheet.createFreezePane(2, 0, 2, 2);
-            }else {
-                this.sheetCreator.createNoDataAvailable(workbook, sheet);
-            }
 
+            }
         }
 
 
@@ -213,7 +181,7 @@ public class HandlerExcelCreation {
     }
 
 
-    private void createColumnVisualizationType ( LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> forecastsForCommodity ){
+    private void createColumnVisualizationType(LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> forecastsForCommodity) {
 
         datesList = new ArrayList<String>();
 
@@ -235,20 +203,20 @@ public class HandlerExcelCreation {
 
         int tmpYear = lastYear;
 
-        while(year >= lastYear-1){
+        while (year >= lastYear - 1) {
             // put date
-            if(year == tmpYear){
+            if (year == tmpYear) {
                 mapColumnsToView.put(otherDate, "show");
-            }else{
+            } else {
                 mapColumnsToView.put(otherDate, "complete");
                 tmpYear = year;
             }
             // update
             counter++;
-            if(datesSize - counter >=0) {
+            if (datesSize - counter >= 0) {
                 otherDate = datesList.get(datesSize - counter);
                 year = Integer.parseInt(otherDate.substring(0, 4));
-            }else{
+            } else {
                 year--;
             }
         }
@@ -256,7 +224,7 @@ public class HandlerExcelCreation {
         mapColumnsToView.put(otherDate, "showOnly");
         counter++;
 
-        while(counter <= datesSize){
+        while (counter <= datesSize) {
             mapColumnsToView.put(datesList.get(datesSize - counter), "hidden");
             counter++;
         }
@@ -266,7 +234,9 @@ public class HandlerExcelCreation {
     }
 
 
-    public Map<String, String> getMapColumnsToView() { return mapColumnsToView; }
+    public Map<String, String> getMapColumnsToView() {
+        return mapColumnsToView;
+    }
 
 
 }

@@ -16,6 +16,7 @@ import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.query.AM
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.utils.commodity.CommodityParser;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.creator.SheetCreator;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.utils.AmisExcelUtils;
+import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.utils.AmisStaticTables;
 
 import java.util.*;
 
@@ -31,12 +32,14 @@ public class HandlerExcelCreation {
     private final static String[] OTH_UM_RICE = {"1000s", "Thousand Ha", "%", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
     private final static String[] OTH_UM_OTH_COMM = {"1000s", "Thousand Ha", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
 
+    private AmisStaticTables amisStaticTables;
 
     private static final Logger LOGGER = org.apache.log4j.Logger.getLogger(HandlerExcelCreation.class);
 
 
     public HandlerExcelCreation() {
         this.sheetCreator = new SheetCreator();
+        amisStaticTables = new AmisStaticTables();
     }
 
 
@@ -173,11 +176,17 @@ public class HandlerExcelCreation {
                 }
 
             }
+
+            amisStaticTables.buildTables(sheet,rowCounter,workbook);
+
         }
 
 
         return workbook;
     }
+
+
+
 
 
     private void createColumnVisualizationType(LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> forecastsForCommodity) {

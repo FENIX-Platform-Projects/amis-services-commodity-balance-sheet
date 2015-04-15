@@ -102,7 +102,7 @@ public class SheetCreator {
         cell.setCellValue(EVERY_SHEETS_TITLE.toUpperCase());
         sheet.autoSizeColumn(0);
 
-       //rowCounter = AmisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
+       // rowCounter = AmisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
 
         return rowCounter;
     }
@@ -295,7 +295,7 @@ public class SheetCreator {
         // hide the column hust before this
         sheet.setColumnHidden(columnNumber - 1, true);
 
-        columnNumber ++;
+        columnNumber += 2;
 
         return columnNumber;
     }
@@ -315,7 +315,7 @@ public class SheetCreator {
         columnNumber++;
         sheet.setColumnHidden(columnNumber, true);
 
-      //  columnNumber++;
+        columnNumber++;
 
         return columnNumber;
     }

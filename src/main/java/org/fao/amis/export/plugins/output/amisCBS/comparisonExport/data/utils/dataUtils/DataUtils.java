@@ -15,7 +15,7 @@ public class DataUtils {
     private static final Logger LOGGER = Logger.getLogger(DataUtils.class);
 
 
-    public void fillMap(HashMap<Integer, HashMap<Integer, String>> elementMap, int[] commodities,
+    public void fillMap(HashMap<Integer, LinkedHashMap<Integer, String>> elementMap, int[] commodities,
                         int[] maizeAndWheatList,
                         int[] riceList, int[] soybeanList, Properties codeList) {
 
@@ -25,7 +25,7 @@ public class DataUtils {
 
         for (int commodity : commodities) {
 
-            HashMap<Integer, String> temporaryMap = new HashMap<Integer, String>();
+            LinkedHashMap<Integer, String> temporaryMap = new LinkedHashMap<Integer, String>();
 
             switch (commodity) {
                 case 1:
@@ -51,7 +51,7 @@ public class DataUtils {
 
     }
 
-    public void fillTempMap(HashMap<Integer, String> tmp, int[] listCodes, Properties codeList) {
+    public void fillTempMap(LinkedHashMap<Integer, String> tmp, int[] listCodes, Properties codeList) {
 
         for (int code : listCodes) {
             LOGGER.info("VALUE");
@@ -71,7 +71,7 @@ public class DataUtils {
 
 
     public void fillElementsMap(LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>>> toFillMap,
-                                HashMap<Integer, HashMap<Integer, String>> toFollow,
+                                HashMap<Integer, LinkedHashMap<Integer, String>> toFollow,
                                 LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>>> unorderedMap) {
 
         Set<Integer> commodities = toFollow.keySet();

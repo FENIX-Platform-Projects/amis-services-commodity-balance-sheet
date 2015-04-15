@@ -80,7 +80,7 @@ public class DataFactory {
                     row[ORDER_MYSERVICE[4]].toString(), row[ORDER_MYSERVICE[5]].toString(),
                     new HarvestBean(
                             row[ORDER_MYSERVICE[6]].toString(), row[ORDER_MYSERVICE[7]].toString(),
-                            row[ORDER_MYSERVICE[7]].toString(), row[ORDER_MYSERVICE[9]].toString()
+                            row[ORDER_MYSERVICE[8]].toString(), row[ORDER_MYSERVICE[9]].toString()
                     )
             );
             this.mapMarketingYear.put(row[0].toString(), temp);

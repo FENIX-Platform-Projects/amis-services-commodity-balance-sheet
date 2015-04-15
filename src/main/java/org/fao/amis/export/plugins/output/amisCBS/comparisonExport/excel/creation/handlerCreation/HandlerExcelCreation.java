@@ -88,22 +88,21 @@ public class HandlerExcelCreation {
                 rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, foodBalanceResults, "foodBalance", this.mapColumnsToView, marketingYearMap.get(commodityString).getNmyMonths());
 
                 // list of elements to show on the left
-                HashMap<Integer, HashMap<Integer, String>> elements = qvo.getFoodBalanceElements();
+                HashMap<Integer, LinkedHashMap<Integer, String>> elements = qvo.getFoodBalanceElements();
 
-                // put on the excel the elements and the values
-                int rowUM = rowCounter + 1;
-                int columnUM = 1;
                 // Cell cellUM = sheet.createRow(rowUM).createCell((short) columnUM);
                 rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elements.get(commodity), foodBalanceResults, this.mapColumnsToView);
 
-                Row row = sheet.createRow(9);
+                Row row = sheet.getRow(8);
                 Cell cell = row.createCell((short) 1);
                 cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
                 cell.getCellStyle().setVerticalAlignment(CellStyle.ALIGN_CENTER);
+                cell.getCellStyle().setRotation((short) 90);
 
                 cell.setCellValue("Thousand tonnes");
-                int endNmy = 9 + elements.get(commodity).size();
-                CellRangeAddress region = new CellRangeAddress(9, endNmy - 1, 1, 1);
+                int endNmy = 8 + elements.get(commodity).size();
+                System.out.println(endNmy);
+                CellRangeAddress region = new CellRangeAddress(8, endNmy - 1, 1, 1);
                 sheet.addMergedRegion(region);
                // CellUtil.setAlignment(cell, workbook, CellStyle.ALIGN_CENTER);
 
@@ -122,7 +121,7 @@ public class HandlerExcelCreation {
                 rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, ityResults, "international", this.mapColumnsToView, marketingYearMap.get(commodityString).getItyMonths());
 
                 // list of elements to show on the left
-                HashMap<Integer, HashMap<Integer, String>> elementsITY = qvo.getItyElements();
+                HashMap<Integer, LinkedHashMap<Integer, String>> elementsITY = qvo.getItyElements();
 
                 // put on the excel the elements and the values
                 //     this.sheetCreator.putMeasurementUnitValues(elementsITY.get(commodity), "international", 1, rowCounter, sheet);
@@ -151,7 +150,7 @@ public class HandlerExcelCreation {
                 rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, otherResults, "others", this.mapColumnsToView, null);
 
                 // list of elements to show on the left
-                HashMap<Integer, HashMap<Integer, String>> elementsOTH = qvo.getOtherElements();
+                HashMap<Integer, LinkedHashMap<Integer, String>> elementsOTH = qvo.getOtherElements();
 
                 // put on the excel the elements and the values
                 //   this.sheetCreator.putMeasurementUnitValues(elementsOTH.get(commodity), "others", 1, rowCounter, sheet);

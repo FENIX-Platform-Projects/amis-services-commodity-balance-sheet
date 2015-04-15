@@ -165,7 +165,7 @@ public class Forecast {
 
 
 
-    public void createOrderedMaps( HashMap< Integer, HashMap<Integer, String>> listElements, String type){
+    public void createOrderedMaps( HashMap<Integer, LinkedHashMap<Integer, String>> listElements, String type){
         dataUtils = new DataUtils();
 
         if(type.equals("national")){

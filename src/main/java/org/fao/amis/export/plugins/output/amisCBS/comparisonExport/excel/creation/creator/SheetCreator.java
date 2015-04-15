@@ -102,7 +102,7 @@ public class SheetCreator {
         cell.setCellValue(EVERY_SHEETS_TITLE.toUpperCase());
         sheet.autoSizeColumn(0);
 
-        rowCounter = AmisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
+       //rowCounter = AmisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
 
         return rowCounter;
     }
@@ -295,7 +295,7 @@ public class SheetCreator {
         // hide the column hust before this
         sheet.setColumnHidden(columnNumber - 1, true);
 
-        columnNumber += 2;
+        columnNumber ++;
 
         return columnNumber;
     }
@@ -315,7 +315,7 @@ public class SheetCreator {
         columnNumber++;
         sheet.setColumnHidden(columnNumber, true);
 
-        columnNumber++;
+      //  columnNumber++;
 
         return columnNumber;
     }
@@ -563,13 +563,13 @@ public class SheetCreator {
 
 
                 if (!months.equals("-1") && !startingYear.equals("-1") && !endingYear.equals("-1")) {
-                    footerValue += "In the " + lastSeason + " forecasts, the NMY covers the period from  " + months.split("/")[0] + " " + startingYear +
+                    footerValue += "In the " + lastSeason + " forecasts, the NMY covers the period from " + months.split("/")[0] + " " + startingYear +
                             " to " + months.split("/")[1] + " " + endingYear;
                 }
 
                 if (!startingCropsMonths.equals("-1") && !startingYearCrops.equals("-1") && !endingCropsMonths.equals("-1") && !endingYearCrops.equals("-1")) {
                     footerValue += " and refers to the crop that is harvested mainly from " + startingCropsMonths + " " + startingYearCrops +
-                            " to " + fromIntegerToDate(endingCropsMonths) + " " + endingYearCrops;
+                            " to " + endingCropsMonths + " " + endingYearCrops;
                 }
                 break;
 
@@ -581,7 +581,7 @@ public class SheetCreator {
                 endingYear = "" + (Integer.parseInt(bean.getItyEndingYear()) + +Integer.parseInt(lastSeasonStart));
 
                 if (!months.equals("-1") && !startingYear.equals("-1") && !endingYear.equals("-1")) {
-                    footerValue += "In the " + lastSeason + " forecasts, the ITY covers the period from  " + months.split("/")[0] + " " + startingYear +
+                    footerValue += "In the " + lastSeason + " forecasts, the ITY covers the period from " + months.split("/")[0] + " " + startingYear +
                             " to " + months.split("/")[1] + " " + endingYear;
                 }
                 break;

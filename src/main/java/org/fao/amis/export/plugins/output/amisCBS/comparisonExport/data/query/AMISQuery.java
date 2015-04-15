@@ -7,6 +7,7 @@ import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.utils.da
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 
@@ -18,11 +19,11 @@ public class AMISQuery {
 
     private static  String URL_NATIONAL, URL_INTERNATION, URL_OTHERS;
 
-    private HashMap< Integer, HashMap<Integer, String>> foodBalanceElements;
+    private HashMap< Integer, LinkedHashMap<Integer, String>> foodBalanceElements;
 
-    private HashMap< Integer, HashMap<Integer, String>> ityElements;
+    private HashMap< Integer, LinkedHashMap<Integer, String>> ityElements;
 
-    private HashMap< Integer, HashMap<Integer, String>> otherElements;
+    private HashMap< Integer, LinkedHashMap<Integer, String>> otherElements;
 
     private DataUtils dataUtils;
 
@@ -60,7 +61,7 @@ public class AMISQuery {
          if(type.equals("national")){
              dataUtils = new DataUtils();
              Properties prop = new Properties();
-             this.foodBalanceElements = new HashMap<Integer, HashMap<Integer, String>>();
+             this.foodBalanceElements = new HashMap<Integer, LinkedHashMap<Integer, String>>();
              InputStream inputStream = getClass().getClassLoader().getResourceAsStream(URL_NATIONAL);
              prop.load(inputStream);
 
@@ -77,7 +78,7 @@ public class AMISQuery {
              dataUtils = new DataUtils();
 
              Properties prop = new Properties();
-             this.ityElements = new HashMap<Integer, HashMap<Integer, String>>();
+             this.ityElements = new HashMap<Integer, LinkedHashMap<Integer, String>>();
              InputStream inputStream = getClass().getClassLoader().getResourceAsStream(URL_INTERNATION);
              prop.load(inputStream);
 
@@ -92,7 +93,7 @@ public class AMISQuery {
         else if(type.equals("others")){
              dataUtils = new DataUtils();
              Properties prop = new Properties();
-             this.otherElements = new HashMap<Integer, HashMap<Integer, String>>();
+             this.otherElements = new HashMap<Integer, LinkedHashMap<Integer, String>>();
              InputStream inputStream = getClass().getClassLoader().getResourceAsStream(URL_OTHERS);
 
              prop.load(inputStream);
@@ -103,15 +104,15 @@ public class AMISQuery {
          }
     }
 
-    public HashMap<Integer, HashMap<Integer, String>> getFoodBalanceElements() {
+    public HashMap<Integer, LinkedHashMap<Integer, String>> getFoodBalanceElements() {
         return foodBalanceElements;
     }
 
-    public HashMap<Integer, HashMap<Integer, String>> getItyElements() {
+    public HashMap<Integer, LinkedHashMap<Integer, String>> getItyElements() {
         return ityElements;
     }
 
-    public HashMap<Integer, HashMap<Integer, String>> getOtherElements() {
+    public HashMap<Integer, LinkedHashMap<Integer, String>> getOtherElements() {
         return otherElements;
     }
 

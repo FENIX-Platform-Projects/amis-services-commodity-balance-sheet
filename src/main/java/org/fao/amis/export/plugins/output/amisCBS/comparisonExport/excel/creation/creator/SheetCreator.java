@@ -11,7 +11,6 @@ import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.configur
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.daoValue.DaoForecastValue;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.natMarkBean.NationalMarketingBean;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.utils.AmisExcelUtils;
-import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.formula.configurator.ConfigurationReader;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.formula.translator.CellMapper;
 
 import java.text.DateFormatSymbols;
@@ -20,38 +19,38 @@ import java.util.*;
 public class SheetCreator {
 
     private static final Logger LOGGER = Logger.getLogger(SheetCreator.class);
+    private final String NATIONAL = "foodBalance";
+    private final String INTERNATIONAL = "international";
+    private final String NATIONAL_TITLE = "National Marketing Year (NMY):";
+    private final String INTERNATIONAL_TITLE = "International Trade Year (ITY):";
+    private final String OTHERS_TITLE = "Others";
+    private final String FLAG_HEADER = "Forecasting \n Methodology";
+    private final String NOTES_HEADER = "Notes";
 
-    private String[] nationalCodes;
-
-    private static String FORMULA_URL;
-
-    private ConfigurationReader configurationReader;
-
-
-    private static final int SPACE_NAT_INT = 4;
-    private static final int UM_COLUMN_NUMBER = 1;
-    private static final int SPACE_INT_OTH = 4;
     private static final int ROW_START_ELEMENTS = 9;
-
     private static final String EVERY_SHEETS_TITLE = "amis commodity forecasts";
-
-
-    private String lastSeason;
-
-    private int rowStartingITY, rowStartingOther;
-
-    private String commodityChosen;
-
+    private String[] nationalCodes;
+    private String lastSeason, commodityChosen;
+    private int rowStartingITY;
     private CellMapper cellMappers;
-
     private URLGetter urlGetter;
-
     private ArrayList<Integer> firstYearSeason;
+
 
     public SheetCreator() {
         urlGetter = new URLGetter();
     }
 
+
+    /**
+     * Create the summary
+     * @param rowCounter
+     * @param sheet
+     * @param workbook
+     * @param dataCreator
+     * @param commodityLabel
+     * @return
+     */
     public int createSummary(int rowCounter, Sheet sheet, HSSFWorkbook workbook, DataCreator dataCreator, String commodityLabel) {
 
         //Create Date Last Updated
@@ -61,17 +60,26 @@ public class SheetCreator {
         String dataSource = dataCreator.getDatasource();
         String country = dataCreator.getCountry();
 
-        rowCounter = createHeadingRow(rowCounter, sheet, workbook, "COUNTRY: ", country);
-        rowCounter = createHeadingRow(rowCounter, sheet, workbook, "COMMODITY: ", commodity);
-        rowCounter = createHeadingRow(rowCounter, sheet, workbook, "LAST SEASON: ", lastSeason);
-        rowCounter = createHeadingRow(rowCounter, sheet, workbook, "DATASOURCE: ", dataSource);
+        rowCounter = createLegendRow(rowCounter, sheet, workbook, "COUNTRY: ", country);
+        rowCounter = createLegendRow(rowCounter, sheet, workbook, "COMMODITY: ", commodity);
+        rowCounter = createLegendRow(rowCounter, sheet, workbook, "LAST SEASON: ", lastSeason);
+        rowCounter = createLegendRow(rowCounter, sheet, workbook, "DATASOURCE: ", dataSource);
 
         rowCounter = AmisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
 
         return rowCounter;
     }
 
-    private int createHeadingRow(int rowCounter, Sheet sheet, HSSFWorkbook workbook, String header, String headerValue) {
+    /**
+     *Create the legend with country, commodity, last season, and datasource
+     * @param rowCounter
+     * @param sheet
+     * @param workbook
+     * @param header
+     * @param headerValue
+     * @return
+     */
+    private int createLegendRow(int rowCounter, Sheet sheet, HSSFWorkbook workbook, String header, String headerValue) {
         Row row = sheet.createRow(rowCounter++);
 
         if (header != null && headerValue == null) {
@@ -94,6 +102,13 @@ public class SheetCreator {
         return rowCounter;
     }
 
+    /**
+     * Create the title of each sheet
+     * @param rowCounter
+     * @param sheet
+     * @param workbook
+     * @return
+     */
     public int createSheetTitle(int rowCounter, Sheet sheet, HSSFWorkbook workbook) {
         Row row = sheet.createRow(rowCounter++);
         this.cellMappers = new CellMapper();
@@ -102,36 +117,35 @@ public class SheetCreator {
         cell.setCellValue(EVERY_SHEETS_TITLE.toUpperCase());
         sheet.autoSizeColumn(0);
 
-       // rowCounter = AmisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
-
         return rowCounter;
     }
 
 
+    /**
+     * Create the header of each forecast
+     * @param rowCounter
+     * @param sheet
+     * @param workbook
+     * @param mapGroup
+     * @param type
+     * @param mapColumnsToView
+     * @param months
+     * @return
+     */
     public int createHeadersGroup(int rowCounter, Sheet sheet, HSSFWorkbook workbook,
                                   LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> mapGroup, String type,
                                   Map<String, String> mapColumnsToView, String months) {
 
         String title;
 
-        if (type == "foodBalance") {
-            title = "National Marketing Year (NMY):";
+        if (type == NATIONAL) {
+            title = NATIONAL_TITLE;
             this.nationalCodes = urlGetter.getOperandsFormulaNational();
-            //       this.FORMULA_URL = urlGetter.getFormulaNational();
-            //       this.configurationReader = new ConfigurationReader(FORMULA_URL);
-        } else if (type == "international") {
-            LOGGER.info("----------------------------------------");
-            LOGGER.info("INTERMATIONAL START;;;;;;;;;;;;;");
-            //          this.FORMULA_URL = null;
-
-            title = "International Trade Year (ITY):";
+        } else if (type == INTERNATIONAL) {
+            title = INTERNATIONAL_TITLE;
         } else {
-
-            title = "Other";
+            title = OTHERS_TITLE;
             this.nationalCodes = urlGetter.getOperandsFormulaOthers();
-//            this.FORMULA_URL = urlGetter.getFormulaOthers();
-//            this.configurationReader = new ConfigurationReader(FORMULA_URL);
-
         }
 
         int columnNumber = 0;
@@ -141,7 +155,6 @@ public class SheetCreator {
         cell.setCellStyle(AmisExcelUtils.getBoldTextWithVerticalAl(workbook, null));
         cell.setCellValue(title);
         sheet.setColumnWidth(100, columnNumber);
-        //   sheet.autoSizeColumn(columnNumber);
 
         //MARKETING YEAR
         if (months != null) {
@@ -159,11 +172,11 @@ public class SheetCreator {
             String resultColumn = mapColumnsToView.get(dates[i].toString());
             switch (resultColumn) {
                 case "show":
-                    columnNumber = createHeadersValuesSimpleShow(date, columnNumber, row, (HSSFWorkbook) workbook, sheet);
+                    columnNumber = createHeadersValuesSimpleShow(date, columnNumber, row, sheet);
                     break;
 
                 case "showOnly":
-                    columnNumber = createHeadersValuesSimpleShowOnly(date, columnNumber, row, (HSSFWorkbook) workbook, sheet);
+                    columnNumber = createHeadersValuesSimpleShowOnly(date, columnNumber, row, sheet);
                     break;
 
                 case "complete":
@@ -171,30 +184,30 @@ public class SheetCreator {
                     break;
 
                 default:
-                    columnNumber = createHeadersValuesSimpleHidden(date, columnNumber, row, (HSSFWorkbook) workbook, sheet);
+                    columnNumber = createHeadersValuesSimpleHidden(date, columnNumber, row, sheet);
                     break;
             }
-
         }
-
         rowCounter++;
-
         return rowCounter;
     }
 
 
-    public int createDataTableGroup(int rowCounter, Sheet sheet, HSSFWorkbook workbook,
+    /**
+     * Create the body of the sheet, including the list of elements and the forecasts
+     * @param rowCounter
+     * @param sheet
+     * @param elements
+     * @param foodBalanceResults
+     * @param mapColumnsToView
+     * @return the number of column used
+     */
+    public int createDataTableGroup(int rowCounter, Sheet sheet,
                                     HashMap<Integer, String> elements,
                                     LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> foodBalanceResults,
                                     Map<String, String> mapColumnsToView) {
 
         Set<Integer> codes = elements.keySet();
-
-
-        int rowUM = rowCounter + 1;
-        int columnUM = 1;
-        // Cell cellUM = sheet.createRow(rowUM).createCell((short) columnUM);
-
 
         for (int code : codes) {
 
@@ -220,15 +233,15 @@ public class SheetCreator {
 
                 switch (resultColumn) {
                     case "show":
-                        columnNumber = fillForecastElementsShow(columnNumber, row, workbook, foodBalanceResults.get(date), code, sheet, date);
+                        columnNumber = fillForecastElementsShow(columnNumber, row, foodBalanceResults.get(date), code, date);
                         break;
 
                     case "complete":
-                        columnNumber = fillForecastElementsWithFlagsAndComments(columnNumber, row, workbook, foodBalanceResults.get(date), code, sheet, date);
+                        columnNumber = fillForecastElementsWithFlagsAndComments(columnNumber, row, foodBalanceResults.get(date), code, sheet, date);
                         break;
 
                     default:
-                        columnNumber = fillForecastElementsShowOnlyAndDefault(columnNumber, row, workbook, foodBalanceResults.get(date), code, sheet, date);
+                        columnNumber = fillForecastElementsShowOnlyAndDefault(columnNumber, row, foodBalanceResults.get(date), code, date);
                         break;
                 }
             }
@@ -238,9 +251,16 @@ public class SheetCreator {
         return rowCounter;
     }
 
+    /**
+     * Create the headers complete, with flags and comments, for the last forecast of the last season and last season -1
+     * @param date
+     * @param columnNumber
+     * @param row
+     * @param workbook
+     * @param sheet
+     * @return the number of column used
+     */
     private int createHeadersValuesWithFlagsAndComments(String date, int columnNumber, Row row, HSSFWorkbook workbook, Sheet sheet) {
-        String flags = "Forecasting \n Methodology";
-        String notes = "Notes";
 
         row.setHeight((short) (3 * 260));
         Cell cell = row.createCell((short) columnNumber);
@@ -252,14 +272,14 @@ public class SheetCreator {
 
         Cell cell2 = row.createCell((short) columnNumber);
         cell2.setCellStyle(AmisExcelUtils.getBlueCellStyle());
-        cell2.setCellValue(flags);
+        cell2.setCellValue(FLAG_HEADER);
         sheet.autoSizeColumn(columnNumber);
 
         columnNumber++;
 
         Cell cell3 = row.createCell((short) columnNumber);
         cell3.setCellStyle(AmisExcelUtils.getBlueCellStyle());
-        cell3.setCellValue(notes);
+        cell3.setCellValue(NOTES_HEADER);
         sheet.autoSizeColumn(columnNumber);
 
         columnNumber += 2;
@@ -267,9 +287,16 @@ public class SheetCreator {
         return columnNumber;
     }
 
-    // For the last update-1 forecast of the season
-    private int createHeadersValuesSimpleShow(String date, int columnNumber, Row row, HSSFWorkbook workbook, Sheet sheet) {
 
+    /**
+     * Create the headers with only value, for the last forecast -1 of last season and last season -1
+     * @param date
+     * @param columnNumber
+     * @param row
+     * @param sheet
+     * @return the number of column used
+     */
+     private int createHeadersValuesSimpleShow(String date, int columnNumber, Row row, Sheet sheet) {
 
         row.setHeight((short) (3 * 260));
         Cell cell = row.createCell((short) columnNumber);
@@ -282,8 +309,15 @@ public class SheetCreator {
         return columnNumber;
     }
 
-    // For two season before last one
-    private int createHeadersValuesSimpleShowOnly(String date, int columnNumber, Row row, HSSFWorkbook workbook, Sheet sheet) {
+    /**
+     * Create the header for only value to show for the last season -2
+     * @param date
+     * @param columnNumber
+     * @param row
+     * @param sheet
+     * @return the column number
+     */
+    private int createHeadersValuesSimpleShowOnly(String date, int columnNumber, Row row, Sheet sheet) {
 
 
         row.setHeight((short) (3 * 260));
@@ -301,10 +335,9 @@ public class SheetCreator {
     }
 
     // For other seasons hidden
-    private int createHeadersValuesSimpleHidden(String date, int columnNumber, Row row, HSSFWorkbook workbook, Sheet sheet) {
+    private int createHeadersValuesSimpleHidden(String date, int columnNumber, Row row, Sheet sheet) {
 
-
-        row.setHeight((short) (3 * 260));
+        AmisExcelUtils.setHeaderHeight(row);
         Cell cell = row.createCell((short) columnNumber);
         cell.setCellStyle(AmisExcelUtils.getBlueCellStyle());
         cell.setCellValue(reformatDate(date));
@@ -321,10 +354,9 @@ public class SheetCreator {
     }
 
 
-    private int fillForecastElementsWithFlagsAndComments(int columnNumber, Row row, HSSFWorkbook workbook, LinkedHashMap<String,
-            DaoForecastValue> elements, int code, Sheet sheet, String date) {
-        DaoForecastValue forecast = elements.get("" + code);
+    private int fillForecastElementsWithFlagsAndComments(int columnNumber, Row row, LinkedHashMap<String, DaoForecastValue> elements, int code, Sheet sheet, String date) {
 
+        DaoForecastValue forecast = elements.get("" + code);
 
         if (forecast != null) {
             // value
@@ -402,8 +434,7 @@ public class SheetCreator {
     }
 
 
-    private int fillForecastElementsShow(int columnNumber, Row row, HSSFWorkbook workbook, LinkedHashMap<String,
-            DaoForecastValue> elements, int code, Sheet sheet, String date) {
+    private int fillForecastElementsShow(int columnNumber, Row row, LinkedHashMap<String, DaoForecastValue> elements, int code, String date) {
 
         DaoForecastValue forecast = elements.get("" + code);
 
@@ -438,8 +469,8 @@ public class SheetCreator {
     }
 
 
-    private int fillForecastElementsShowOnlyAndDefault(int columnNumber, Row row, HSSFWorkbook workbook, LinkedHashMap<String,
-            DaoForecastValue> elements, int code, Sheet sheet, String date) {
+    private int fillForecastElementsShowOnlyAndDefault(int columnNumber, Row row, LinkedHashMap<String,
+            DaoForecastValue> elements, int code, String date) {
 
         DaoForecastValue forecast = elements.get("" + code);
 
@@ -619,18 +650,14 @@ public class SheetCreator {
         return result;
     }
 
-    private String fromIntegerToDate (String month) {
-       return new DateFormatSymbols().getMonths()[Integer.parseInt(month)] + " ";
-    }
 
-
-    private String reformatMarketingYear (String entireDate) {
+    private String reformatMarketingYear(String entireDate) {
 
         String result = "";
         String[] splitted = entireDate.split("/");
         result += splitted[0] + " /";
-        result+=" \n";
-        result+= splitted[1];
+        result += " \n";
+        result += splitted[1];
         return result;
     }
 

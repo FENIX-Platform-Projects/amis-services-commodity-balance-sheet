@@ -17,9 +17,11 @@ public class AmisExcelUtils {
     public static HSSFFont bigBoldFont;
     public static HSSFFont smallFont;
     public static HSSFFont boldSmallFont;
+    public static HSSFFont basicFont;
     private static HSSFPalette palette;
 
     private static Map<String, HSSFCellStyle> styles;
+
 
     public static void initStyles(HSSFWorkbook workbook) {
         setCustomizedPalette(workbook);
@@ -36,8 +38,6 @@ public class AmisExcelUtils {
         styles.put("blueStyle", createBlueCellStyle(workbook));
         styles.put("greyStyle", createGreyCellStyle(workbook));
         styles.put("centerAlignment", createCenterAlignmentStyle(workbook));
-
-
     }
 
     public static int createEmptyRow(int rowCounter, Sheet sheet, Workbook workbook) {
@@ -66,6 +66,13 @@ public class AmisExcelUtils {
                 (byte) 205     //RGB blue
         );
 
+        //customized Grey for table
+        palette.setColorAtIndex(HSSFColor.GREY_40_PERCENT.index,
+                (byte) 170,  //RGB red (0-255)
+                (byte) 150,    //RGB green
+                (byte) 58     //RGB blue
+        );
+
 
     }
 
@@ -80,7 +87,6 @@ public class AmisExcelUtils {
     }
 
     public static HSSFCellStyle getLeftAlignmentStyle() {
-
         return styles.get("leftAllignment");
     }
 
@@ -240,7 +246,6 @@ public class AmisExcelUtils {
         cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 
         return cellStyle;
-
     }
 
     public static HSSFCellStyle getBordersStyle(HSSFWorkbook workbook, HSSFCellStyle cellStyle) {
@@ -254,6 +259,10 @@ public class AmisExcelUtils {
 
         return cellStyle;
     }
+
+
+
+
 
     public static void initializeHSSFFontStyles(HSSFWorkbook workbook) {
         boldFont = workbook.createFont();
@@ -279,6 +288,8 @@ public class AmisExcelUtils {
         boldSmallFont = workbook.createFont();
         boldSmallFont.setFontHeightInPoints((short) 8);
         boldSmallFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+
+        basicFont = workbook.createFont();
 
     }
 
@@ -354,5 +365,38 @@ public class AmisExcelUtils {
         cellStyle.setTopBorderColor(IndexedColors.BLUE_GREY.getIndex());
         cellStyle.setBottomBorderColor(IndexedColors.BLUE_GREY.getIndex());    }
 
+    public static void setHeaderHeight (Row row) {
+        row.setHeight((short) (3 * 260));
+    }
 
+    public static void setHeaderFlagTable (CellStyle cellStyle) {
+
+        cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        cellStyle.setFillForegroundColor(HSSFColor.GREY_50_PERCENT.index);
+        //getBordersStyle cellStyle);
+    }
+
+    public static HSSFFont getSmallFont () {
+        return smallFont;
+    }
+
+    public static HSSFFont getItalicisedSmallFont () {
+        return italicisedSmallFont;
+    }
+
+    public static HSSFFont getItalicFont () {
+        return italicFont;
+    }
+
+    public static HSSFFont getBoldSmallFont () {
+        return boldSmallFont;
+    }
+
+    public static HSSFFont getBoldFont () {
+        return boldFont;
+    }
+
+    public static HSSFFont getBasicFont () {
+        return basicFont;
+    }
 }

@@ -23,40 +23,49 @@ import java.util.*;
 
 public class HandlerExcelCreation {
 
+    private static final Logger LOGGER = org.apache.log4j.Logger.getLogger(HandlerExcelCreation.class);
     private SheetCreator sheetCreator;
-
     private Map<String, String> mapColumnsToView;
-
     private List<String> datesList; // order ASC
-
     private final static String[] OTH_UM_RICE = {"1000s", "Thousand Ha", "%", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
     private final static String[] OTH_UM_OTH_COMM = {"1000s", "Thousand Ha", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
-
+    private final String THOUSAND_TONNES = "Thousand tonnes";
+    private final static int NMY_START_ROW = 8;
+    private final static int SPACE_SECTIONS = 7;
+    private final String NATIONAL = "foodBalance";
+    private final String INTERNATIONAL = "international";
+    private final String OTHERS = "others";
     private AmisStaticTables amisStaticTables;
-
-    private static final Logger LOGGER = org.apache.log4j.Logger.getLogger(HandlerExcelCreation.class);
 
 
     public HandlerExcelCreation() {
         this.sheetCreator = new SheetCreator();
-        amisStaticTables = new AmisStaticTables();
     }
 
 
+    /**
+     * Create the workbook, composed by sheet (one for each commodity)
+     * @param forecast
+     * @param qvo
+     * @param dataModel
+     * @param marketingYearMap
+     * @return Workbook created
+     */
     public HSSFWorkbook init(Forecast forecast, AMISQuery qvo, DataCreator dataModel, HashMap<String, NationalMarketingBean> marketingYearMap) {
 
         // create the Excel file
         HSSFWorkbook workbook = new HSSFWorkbook();
+
         AmisExcelUtils.initStyles((HSSFWorkbook) workbook);
 
         //Initialize font
         AmisExcelUtils.initializeHSSFFontStyles(workbook);
+        amisStaticTables = new AmisStaticTables(workbook);
+
 
         int[] commodityList = forecast.getCommodityList();
 
-
         CommodityParser commParser = new CommodityParser();
-
 
         // for each sheet
         for (int commodity : commodityList) {
@@ -76,25 +85,20 @@ public class HandlerExcelCreation {
 
 
             /* body part (mutable) */
-
-            /*
-                -------------------------    FoodBalance   -------------------------------------------------
-             */
-
+            /*    -------------------------    FoodBalance   ------------------------------------------------*/
 
             LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> foodBalanceResults = forecast.getFoodBalanceResults().get(commodityString);
-
 
             if (foodBalanceResults.size() != 0) {
                 createColumnVisualizationType(foodBalanceResults);
 
-                rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, foodBalanceResults, "foodBalance", this.mapColumnsToView, marketingYearMap.get(commodityString).getNmyMonths());
+                rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, foodBalanceResults, NATIONAL, this.mapColumnsToView, marketingYearMap.get(commodityString).getNmyMonths());
 
                 // list of elements to show on the left
                 HashMap<Integer, LinkedHashMap<Integer, String>> elements = qvo.getFoodBalanceElements();
 
                 // Cell cellUM = sheet.createRow(rowUM).createCell((short) columnUM);
-                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elements.get(commodity), foodBalanceResults, this.mapColumnsToView);
+                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, elements.get(commodity), foodBalanceResults, this.mapColumnsToView);
 
                 Row row = sheet.getRow(8);
                 Cell cell = row.createCell((short) 1);
@@ -102,13 +106,12 @@ public class HandlerExcelCreation {
                 cell.getCellStyle().setVerticalAlignment(CellStyle.ALIGN_CENTER);
                 cell.getCellStyle().setRotation((short) 90);
 
-                cell.setCellValue("Thousand tonnes");
+                cell.setCellValue(THOUSAND_TONNES);
                 int endNmy = 8 + elements.get(commodity).size();
                 System.out.println(endNmy);
                 CellRangeAddress region = new CellRangeAddress(8, endNmy - 1, 1, 1);
                 sheet.addMergedRegion(region);
-               // CellUtil.setAlignment(cell, workbook, CellStyle.ALIGN_CENTER);
-
+                // CellUtil.setAlignment(cell, workbook, CellStyle.ALIGN_CENTER);
                 rowCounter++;
 
                 rowCounter = this.sheetCreator.createFooterMarketingYear(rowCounter, sheet, workbook, marketingYearMap.get(commodityString), "national", this.mapColumnsToView);
@@ -121,23 +124,23 @@ public class HandlerExcelCreation {
 
                 LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> ityResults = forecast.getItyResults().get(commodityString);
 
-                rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, ityResults, "international", this.mapColumnsToView, marketingYearMap.get(commodityString).getItyMonths());
+                rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, ityResults, INTERNATIONAL, this.mapColumnsToView, marketingYearMap.get(commodityString).getItyMonths());
 
                 // list of elements to show on the left
                 HashMap<Integer, LinkedHashMap<Integer, String>> elementsITY = qvo.getItyElements();
 
                 // put on the excel the elements and the values
                 //     this.sheetCreator.putMeasurementUnitValues(elementsITY.get(commodity), "international", 1, rowCounter, sheet);
-                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elementsITY.get(commodity), ityResults, this.mapColumnsToView);
+                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, elementsITY.get(commodity), ityResults, this.mapColumnsToView);
 
-                int startIty = endNmy + 7;
+                int startIty = endNmy + SPACE_SECTIONS;
                 Row rowIt = sheet.getRow(startIty - 1);
                 Cell cellIt1 = rowIt.createCell((short) 1);
-                cellIt1.setCellValue("Thousand tonnes");
+                cellIt1.setCellValue(THOUSAND_TONNES);
                 Row rowIt2 = sheet.getRow(startIty);
                 Cell cellIt2 = rowIt2.createCell((short) 1);
-                cellIt2.setCellValue("Thousand tonnes");
-                int startOth = startIty + 7;
+                cellIt2.setCellValue(THOUSAND_TONNES);
+                int startOth = startIty + SPACE_SECTIONS;
 
                 rowCounter++;
 
@@ -150,14 +153,14 @@ public class HandlerExcelCreation {
 
                 LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> otherResults = forecast.getOtherResults().get(commodityString);
 
-                rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, otherResults, "others", this.mapColumnsToView, null);
+                rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, otherResults, OTHERS, this.mapColumnsToView, null);
 
                 // list of elements to show on the left
                 HashMap<Integer, LinkedHashMap<Integer, String>> elementsOTH = qvo.getOtherElements();
 
                 // put on the excel the elements and the values
                 //   this.sheetCreator.putMeasurementUnitValues(elementsOTH.get(commodity), "others", 1, rowCounter, sheet);
-                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, workbook, elementsOTH.get(commodity), otherResults, this.mapColumnsToView);
+                rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, elementsOTH.get(commodity), otherResults, this.mapColumnsToView);
                 Row rowOth;
                 Cell cellOth;
                 if (elementsOTH.get(commodity).size() > 4) {
@@ -168,8 +171,6 @@ public class HandlerExcelCreation {
                         cellOth = rowOth.createCell((short) 1);
                         cellOth.setCellValue(measuremntUnits[count]);
                     }
-
-
                     sheet.createFreezePane(2, 0, 2, 2);
                 } else {
                     this.sheetCreator.createNoDataAvailable(workbook, sheet);
@@ -177,18 +178,18 @@ public class HandlerExcelCreation {
 
             }
 
-            amisStaticTables.buildTables(sheet,rowCounter,workbook);
-
+            amisStaticTables.buildTables(sheet, rowCounter, workbook);
         }
-
 
         return workbook;
     }
 
 
-
-
-
+    /**
+     * Create a map that establish a way to how visualize each date in the sheet
+     * Type of visualization admitted : complete, showOnly, show, hidden
+     * @param forecastsForCommodity , an list ordered by date
+     */
     private void createColumnVisualizationType(LinkedHashMap<String, LinkedHashMap<String, DaoForecastValue>> forecastsForCommodity) {
 
         datesList = new ArrayList<String>();
@@ -236,9 +237,6 @@ public class HandlerExcelCreation {
             mapColumnsToView.put(datesList.get(datesSize - counter), "hidden");
             counter++;
         }
-
-        LOGGER.error(mapColumnsToView.toString());
-
     }
 
 

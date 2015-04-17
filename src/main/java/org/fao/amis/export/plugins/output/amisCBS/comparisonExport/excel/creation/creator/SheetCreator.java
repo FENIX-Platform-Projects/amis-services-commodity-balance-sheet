@@ -2,15 +2,16 @@ package org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creati
 
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.configuration.URLGetter;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.configurations.dataCreator.DataCreator;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.daoValue.DaoForecastValue;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.natMarkBean.NationalMarketingBean;
-import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.utils.AmisExcelUtils;
+import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.utils.*;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.formula.translator.CellMapper;
 
 import java.text.DateFormatSymbols;
@@ -26,19 +27,37 @@ public class SheetCreator {
     private final String OTHERS_TITLE = "Others";
     private final String FLAG_HEADER = "Forecasting \n Methodology";
     private final String NOTES_HEADER = "Notes";
+    private HashMap<String, StylesFont> mapStyles;
+
+    private CellStyle prova;
+    private HSSFFont privaFont;
 
     private static final int ROW_START_ELEMENTS = 9;
     private static final String EVERY_SHEETS_TITLE = "amis commodity forecasts";
     private String[] nationalCodes;
     private String lastSeason, commodityChosen;
     private int rowStartingITY;
+    private AmisExcelUtils amisExcelUtils;
     private CellMapper cellMappers;
     private URLGetter urlGetter;
+    private ElementStyles2 elementStyles2;
     private ArrayList<Integer> firstYearSeason;
+    private static  final HashMap<Integer,Integer>  SPACE_ELEMENT = new HashMap<Integer,Integer>(){
+        {put(13,1); put(14,1); put(15,1); put(36,1);
+            put(21,2);put(34,2);put(28,2);
+            put(999,3); put(19, 3); put(35,3);
+        }
+    };
 
 
     public SheetCreator() {
         urlGetter = new URLGetter();
+    }
+
+    public void init(ElementStyles2 elementStyles2, AmisExcelUtils amisExcelUtils) {
+        this.elementStyles2 = elementStyles2;
+        this.amisExcelUtils = amisExcelUtils;
+
     }
 
 
@@ -65,7 +84,7 @@ public class SheetCreator {
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "LAST SEASON: ", lastSeason);
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "DATASOURCE: ", dataSource);
 
-        rowCounter = AmisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
+        rowCounter = amisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
 
         return rowCounter;
     }
@@ -84,18 +103,18 @@ public class SheetCreator {
 
         if (header != null && headerValue == null) {
             Cell cell = row.createCell((short) 0);
-            cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyle(workbook, null));
+            cell.setCellStyle(amisExcelUtils.getBoldTextCellStyle(workbook, null));
             cell.setCellValue(header);
 
             row.createCell((short) 1).setCellValue("");
         } else {
 
             Cell cell = row.createCell((short) 0);
-            cell.setCellStyle(AmisExcelUtils.getRightAlignmentStyle());
+            cell.setCellStyle(amisExcelUtils.getRightAlignmentStyle());
             cell.setCellValue(header);
 
             cell = row.createCell((short) 1);
-            cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyle(workbook, null));
+            cell.setCellStyle(amisExcelUtils.getBoldTextCellStyle(workbook, null));
             cell.setCellValue(headerValue);
         }
 
@@ -113,9 +132,10 @@ public class SheetCreator {
         Row row = sheet.createRow(rowCounter++);
         this.cellMappers = new CellMapper();
         Cell cell = row.createCell((short) 0);
-        cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyle(workbook, null));
+        cell.setCellStyle(amisExcelUtils.getBoldTextCellStyle(workbook, null));
         cell.setCellValue(EVERY_SHEETS_TITLE.toUpperCase());
         sheet.autoSizeColumn(0);
+        rowCounter++;
 
         return rowCounter;
     }
@@ -138,6 +158,7 @@ public class SheetCreator {
 
         String title;
 
+
         if (type == NATIONAL) {
             title = NATIONAL_TITLE;
             this.nationalCodes = urlGetter.getOperandsFormulaNational();
@@ -152,7 +173,7 @@ public class SheetCreator {
 
         Row row = sheet.createRow(rowCounter++);
         Cell cell = row.createCell((short) columnNumber);
-        cell.setCellStyle(AmisExcelUtils.getBoldTextWithVerticalAl(workbook, null));
+        cell.setCellStyle(amisExcelUtils.getBoldTextWithVerticalAl(workbook, null));
         cell.setCellValue(title);
         sheet.setColumnWidth(100, columnNumber);
 
@@ -208,6 +229,7 @@ public class SheetCreator {
                                     Map<String, String> mapColumnsToView) {
 
         Set<Integer> codes = elements.keySet();
+        mapStyles = elementStyles2.getStyles();
 
         for (int code : codes) {
 
@@ -216,8 +238,15 @@ public class SheetCreator {
             Row row = sheet.createRow(rowCounter++);
 
             Cell cell = row.createCell((short) columnNumber);
-            cell.setCellStyle(AmisExcelUtils.getGreyCellStyle());
-            cell.setCellValue(elements.get(code));
+            CellStyle elemStyle = null;
+
+          /*  Font font = discoverFont(code);*/
+            elemStyle = mapStyles.get("a" + code).getStyleElementsKey();
+          /*  elemStyle.setFont(font);*/
+            cell.setCellStyle(elemStyle);
+
+            String value = setSpaceToElement(code,elements.get(code));
+            cell.setCellValue(value);
             // sheet.autoSizeColumn(columnNumber);
             sheet.setColumnWidth(200, columnNumber);
 
@@ -264,21 +293,21 @@ public class SheetCreator {
 
         row.setHeight((short) (3 * 260));
         Cell cell = row.createCell((short) columnNumber);
-        cell.setCellStyle(AmisExcelUtils.getBlueCellStyle());
+        cell.setCellStyle(amisExcelUtils.getBlueCellStyle());
         cell.setCellValue(reformatDate(date));
         sheet.autoSizeColumn(columnNumber);
 
         columnNumber++;
 
         Cell cell2 = row.createCell((short) columnNumber);
-        cell2.setCellStyle(AmisExcelUtils.getBlueCellStyle());
+        cell2.setCellStyle(amisExcelUtils.getBlueCellStyle());
         cell2.setCellValue(FLAG_HEADER);
         sheet.autoSizeColumn(columnNumber);
 
         columnNumber++;
 
         Cell cell3 = row.createCell((short) columnNumber);
-        cell3.setCellStyle(AmisExcelUtils.getBlueCellStyle());
+        cell3.setCellStyle(amisExcelUtils.getBlueCellStyle());
         cell3.setCellValue(NOTES_HEADER);
         sheet.autoSizeColumn(columnNumber);
 
@@ -300,7 +329,7 @@ public class SheetCreator {
 
         row.setHeight((short) (3 * 260));
         Cell cell = row.createCell((short) columnNumber);
-        cell.setCellStyle(AmisExcelUtils.getBlueCellStyle());
+        cell.setCellStyle(amisExcelUtils.getBlueCellStyle());
         cell.setCellValue(reformatDate(date));
         sheet.autoSizeColumn(columnNumber);
 
@@ -322,7 +351,7 @@ public class SheetCreator {
 
         row.setHeight((short) (3 * 260));
         Cell cell = row.createCell((short) columnNumber);
-        cell.setCellStyle(AmisExcelUtils.getBlueCellStyle());
+        cell.setCellStyle(amisExcelUtils.getBlueCellStyle());
         cell.setCellValue(reformatDate(date));
         sheet.autoSizeColumn(columnNumber);
 
@@ -339,7 +368,7 @@ public class SheetCreator {
 
         AmisExcelUtils.setHeaderHeight(row);
         Cell cell = row.createCell((short) columnNumber);
-        cell.setCellStyle(AmisExcelUtils.getBlueCellStyle());
+        cell.setCellStyle(amisExcelUtils.getBlueCellStyle());
         cell.setCellValue(reformatDate(date));
         sheet.autoSizeColumn(columnNumber);
         sheet.setColumnHidden(columnNumber, true);
@@ -363,7 +392,12 @@ public class SheetCreator {
 
             int value = (int) forecast.getValue();
             Cell cell = row.createCell((short) columnNumber);
-            cell.setCellStyle(AmisExcelUtils.getBasicWithBorders());
+            CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+
+            Font font = discoverFont(code, (HSSFCellStyle)cellStyle);
+      //      cellStyle.setFont(font);
+            cell.setCellStyle(cellStyle);
+
             if (value == -1) {
                 cell.setCellValue("");
             } else {
@@ -376,7 +410,7 @@ public class SheetCreator {
 
             // flags
             Cell cell1 = row.createCell((short) columnNumber);
-            cell1.setCellStyle(AmisExcelUtils.getBasicWithRightAlWithBorders());
+            cell1.setCellStyle(amisExcelUtils.getBasicWithRightAlWithBorders());
             cell1.setCellValue((forecast.getFlags().equals("null")) ? "" : forecast.getFlags());
 
             String indexLetter1 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -386,7 +420,7 @@ public class SheetCreator {
 
             // notes
             Cell cell2 = row.createCell((short) columnNumber);
-            cell2.setCellStyle(AmisExcelUtils.getBasicWithBorders());
+            cell2.setCellStyle(amisExcelUtils.getBasicWithBorders());
 
             cell2.setCellValue((forecast.getNotes() == null || forecast.getNotes().equals("null")) ? "" : forecast.getNotes());
             sheet.autoSizeColumn(columnNumber);
@@ -399,7 +433,12 @@ public class SheetCreator {
         } else {
 
             Cell cell = row.createCell((short) columnNumber);
-            cell.setCellStyle(AmisExcelUtils.getBasicWithBorders());
+            CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+
+            Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
+      //      cellStyle.setFont(font);
+            cell.setCellStyle(cellStyle);
+
             cell.setCellValue("");
 
             String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -410,7 +449,10 @@ public class SheetCreator {
             // flags
 
             Cell cell1 = row.createCell((short) columnNumber);
-            cell1.setCellStyle(AmisExcelUtils.getBasicWithRightAlWithBorders());
+            CellStyle cellStyleFlag = amisExcelUtils.getBasicWithRightAlWithBorders();
+            discoverFont(code,(HSSFCellStyle)cellStyleFlag);
+
+            cell1.setCellStyle(cellStyleFlag);
             cell1.setCellValue("");
 
             String indexLetter1 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -420,7 +462,10 @@ public class SheetCreator {
 
             // notes
             Cell cell2 = row.createCell((short) columnNumber);
-            cell2.setCellStyle(AmisExcelUtils.getBasicWithBorders());
+            CellStyle cellStyleNotes = amisExcelUtils.getBasicCellStyle();
+            discoverFont(code,(HSSFCellStyle)cellStyleNotes);
+
+            cell2.setCellStyle(cellStyleNotes);
             cell2.setCellValue("");
 
             String indexLetter2 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -443,7 +488,12 @@ public class SheetCreator {
 
             int value = (int) forecast.getValue();
             Cell cell = row.createCell((short) columnNumber);
-            cell.setCellStyle(AmisExcelUtils.getBasicWithBorders());
+            CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+
+            Font font = discoverFont(code, (HSSFCellStyle)cellStyle);
+        //    cellStyle.setFont(font);
+            cell.setCellStyle(cellStyle);
+
             if (value == -1) {
                 cell.setCellValue("");
             } else {
@@ -457,7 +507,11 @@ public class SheetCreator {
         } else {
 
             Cell cell = row.createCell((short) columnNumber);
-            cell.setCellStyle(AmisExcelUtils.getBasicWithBorders());
+            CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+
+            Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
+      //      cellStyle.setFont(font);
+            cell.setCellStyle(cellStyle);
             cell.setCellValue("");
 
             String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -479,7 +533,12 @@ public class SheetCreator {
 
             int value = (int) forecast.getValue();
             Cell cell = row.createCell((short) columnNumber);
-            cell.setCellStyle(AmisExcelUtils.getBasicWithBorders());
+            CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+
+            Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
+          //  cellStyle.setFont(font);
+            cell.setCellStyle(cellStyle);
+
             if (value == -1) {
                 cell.setCellValue("");
             } else {
@@ -493,7 +552,12 @@ public class SheetCreator {
         } else {
 
             Cell cell = row.createCell((short) columnNumber);
-            cell.setCellStyle(AmisExcelUtils.getBasicWithBorders());
+            CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+
+            Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
+          //  cellStyle.setFont(font);
+            cell.setCellStyle(cellStyle);
+
             cell.setCellValue("");
 
             String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -537,30 +601,11 @@ public class SheetCreator {
     }
 
 
-    private void putMeasurementUnitValues(HashMap<Integer, String> elements, String type, int columnNumber, int rowNumber, Sheet sheet) {
-
-        int startRowUnitsNat = 9;
-
-        Row row = null;
-        Cell cell = null;
-        int rowEnd = -1;
-
-        row = sheet.createRow(ROW_START_ELEMENTS + 1);
-        cell = row.createCell((short) columnNumber);
-        cell.setCellValue("Thousand tonnes");
-        cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
-        rowEnd = ROW_START_ELEMENTS + 1 + elements.size() - 1;
-        CellRangeAddress region = CellRangeAddress.valueOf("B" + ROW_START_ELEMENTS + 1 + ":B+" + rowEnd);
-        sheet.addMergedRegion(region);
-        rowStartingITY = rowEnd + 7;
-
-    }
-
     private int putMarketingYear(Sheet sheet, Workbook workbook, Row row, int columnNumber, String valueToPut) {
 
         columnNumber++;
         Cell cell = row.createCell((short) columnNumber);
-        cell.setCellStyle(AmisExcelUtils.getBoldTextCellStyleWithAlignment((HSSFWorkbook) workbook, null));
+        cell.setCellStyle(amisExcelUtils.getBoldTextCellStyleWithAlignment((HSSFWorkbook) workbook, null));
         String value = reformatMarketingYear(valueToPut);
 
         cell.setCellValue(value);
@@ -660,5 +705,44 @@ public class SheetCreator {
         result += splitted[1];
         return result;
     }
+
+
+    private String setSpaceToElement (int code, String value) {
+        String result = "";
+        if(SPACE_ELEMENT.get(code) != null) {
+            if(SPACE_ELEMENT.get(code) == 1) {
+                result += "  "+value;
+            }else if(SPACE_ELEMENT.get(code) == 2){
+                result += "    "+value;
+            }
+            else{
+                result = value;
+            }
+        }else{
+            result  =value;
+        }
+        return result;
+    }
+
+
+    private Font discoverFont (int code, HSSFCellStyle cellStyle) {
+        Font result =null;
+        if(SPACE_ELEMENT.get(code) != null) {
+            if (SPACE_ELEMENT.get(code) == 1) {
+                amisExcelUtils.putItalicFont(cellStyle);
+                result = amisExcelUtils.getItalicFont();
+            } else if (SPACE_ELEMENT.get(code) == 2) {
+                amisExcelUtils.getSmallTextCellStyle(cellStyle,true);
+                result = amisExcelUtils.getBoldSmallFont();
+            } else if (SPACE_ELEMENT.get(code) == 3) {
+                amisExcelUtils.getSmallTextCellStyle(cellStyle,true);
+                result = amisExcelUtils.getBoldFont();
+            }
+        }else{
+            result = amisExcelUtils.getBasicFont();
+        }
+        return result;
+    }
+
 
 }

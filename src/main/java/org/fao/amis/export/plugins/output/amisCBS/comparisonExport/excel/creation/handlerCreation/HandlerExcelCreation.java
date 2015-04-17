@@ -17,6 +17,7 @@ import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.utils.co
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.creator.SheetCreator;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.utils.AmisExcelUtils;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.utils.AmisStaticTables;
+import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.utils.ElementStyles2;
 
 import java.util.*;
 
@@ -30,12 +31,14 @@ public class HandlerExcelCreation {
     private final static String[] OTH_UM_RICE = {"1000s", "Thousand Ha", "%", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
     private final static String[] OTH_UM_OTH_COMM = {"1000s", "Thousand Ha", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
     private final String THOUSAND_TONNES = "Thousand tonnes";
-    private final static int NMY_START_ROW = 8;
+    private final static int NMY_START_ROW = 9;
     private final static int SPACE_SECTIONS = 7;
     private final String NATIONAL = "foodBalance";
     private final String INTERNATIONAL = "international";
     private final String OTHERS = "others";
     private AmisStaticTables amisStaticTables;
+    private ElementStyles2 elementStyles2;
+    private AmisExcelUtils amisExcelUtils;
 
 
     public HandlerExcelCreation() {
@@ -53,15 +56,17 @@ public class HandlerExcelCreation {
      */
     public HSSFWorkbook init(Forecast forecast, AMISQuery qvo, DataCreator dataModel, HashMap<String, NationalMarketingBean> marketingYearMap) {
 
+        amisExcelUtils = new AmisExcelUtils();
         // create the Excel file
         HSSFWorkbook workbook = new HSSFWorkbook();
 
-        AmisExcelUtils.initStyles((HSSFWorkbook) workbook);
+        amisExcelUtils.initStyles((HSSFWorkbook) workbook);
 
         //Initialize font
-        AmisExcelUtils.initializeHSSFFontStyles(workbook);
+        elementStyles2 = new ElementStyles2(amisExcelUtils);
+        elementStyles2.init();
         amisStaticTables = new AmisStaticTables(workbook);
-
+        sheetCreator.init(elementStyles2, amisExcelUtils);
 
         int[] commodityList = forecast.getCommodityList();
 
@@ -100,16 +105,16 @@ public class HandlerExcelCreation {
                 // Cell cellUM = sheet.createRow(rowUM).createCell((short) columnUM);
                 rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, elements.get(commodity), foodBalanceResults, this.mapColumnsToView);
 
-                Row row = sheet.getRow(8);
+                Row row = sheet.getRow(NMY_START_ROW);
                 Cell cell = row.createCell((short) 1);
                 cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
                 cell.getCellStyle().setVerticalAlignment(CellStyle.ALIGN_CENTER);
                 cell.getCellStyle().setRotation((short) 90);
 
                 cell.setCellValue(THOUSAND_TONNES);
-                int endNmy = 8 + elements.get(commodity).size();
+                int endNmy = NMY_START_ROW + elements.get(commodity).size();
                 System.out.println(endNmy);
-                CellRangeAddress region = new CellRangeAddress(8, endNmy - 1, 1, 1);
+                CellRangeAddress region = new CellRangeAddress(NMY_START_ROW, endNmy - 1, 1, 1);
                 sheet.addMergedRegion(region);
                 // CellUtil.setAlignment(cell, workbook, CellStyle.ALIGN_CENTER);
                 rowCounter++;
@@ -179,6 +184,7 @@ public class HandlerExcelCreation {
             }
 
             amisStaticTables.buildTables(sheet, rowCounter, workbook);
+            AmisExcelUtils.setLandscapeAndFitOnePg(sheet);
         }
 
         return workbook;

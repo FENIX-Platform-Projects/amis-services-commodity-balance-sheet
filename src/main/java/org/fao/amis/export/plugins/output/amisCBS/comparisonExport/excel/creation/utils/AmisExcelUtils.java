@@ -19,11 +19,13 @@ public class AmisExcelUtils {
     public static HSSFFont boldSmallFont;
     public static HSSFFont basicFont;
     private static HSSFPalette palette;
+    private static HSSFWorkbook workbookInstance;
 
     private static Map<String, HSSFCellStyle> styles;
 
 
     public static void initStyles(HSSFWorkbook workbook) {
+        workbookInstance = workbook;
         setCustomizedPalette(workbook);
         initializeHSSFFontStyles(workbook);
 
@@ -38,6 +40,12 @@ public class AmisExcelUtils {
         styles.put("blueStyle", createBlueCellStyle(workbook));
         styles.put("greyStyle", createGreyCellStyle(workbook));
         styles.put("centerAlignment", createCenterAlignmentStyle(workbook));
+        styles.put("greyBold", createGreyWithBold(workbook));
+        styles.put("greyItalic", createGreyWithItalic(workbook));
+        styles.put("greyBoldSmall", createGreyWithSmallBold(workbook));
+        styles.put("normalWithBold", createNormalWithBold(workbook));
+        styles.put("normalWithSmallBold", createNormalWithSmallBold(workbook));
+        styles.put("normalWithItalic", createNormalWithItalic(workbook));
     }
 
     public static int createEmptyRow(int rowCounter, Sheet sheet, Workbook workbook) {
@@ -46,6 +54,33 @@ public class AmisExcelUtils {
         row.createCell((short) 1).setCellValue("");
 
         return rowCounter;
+    }
+
+    private static HSSFCellStyle  createGreyWithBold (HSSFWorkbook workbook) {
+        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        cellStyle.setFillForegroundColor(HSSFColor.GREY_50_PERCENT.index);
+        getBordersStyle(workbook, cellStyle);
+        cellStyle.setFont(boldFont);
+        return cellStyle;
+    }
+
+    private static HSSFCellStyle  createGreyWithSmallBold (HSSFWorkbook workbook) {
+        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        cellStyle.setFillForegroundColor(HSSFColor.GREY_50_PERCENT.index);
+        getBordersStyle(workbook, cellStyle);
+        cellStyle.setFont(boldSmallFont);
+        return cellStyle;
+    }
+
+    private static HSSFCellStyle  createGreyWithItalic (HSSFWorkbook workbook) {
+        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        cellStyle.setFillForegroundColor(HSSFColor.GREY_50_PERCENT.index);
+        getBordersStyle(workbook, cellStyle);
+        cellStyle.setFont(italicFont);
+        return cellStyle;
     }
 
     public static void setCustomizedPalette(HSSFWorkbook workbook) {
@@ -127,14 +162,30 @@ public class AmisExcelUtils {
         HSSFCellStyle style =  workbook.createCellStyle();
         setNoBorderStyle(style);
         return style;
-
     }
 
     private static HSSFCellStyle createBasicWithBordersStyle(HSSFWorkbook workbook) {
         HSSFCellStyle style =  workbook.createCellStyle();
         setSimpleBorderStyle(style);
         return style;
+    }
 
+    private static HSSFCellStyle createNormalWithBold(HSSFWorkbook workbook) {
+        HSSFCellStyle style =  workbook.createCellStyle();
+        setSimpleBorderStyle(style);
+        return style;
+    }
+
+    private static HSSFCellStyle createNormalWithSmallBold(HSSFWorkbook workbook) {
+        HSSFCellStyle style =  workbook.createCellStyle();
+        setSimpleBorderStyle(style);
+        return style;
+    }
+
+    private static HSSFCellStyle createNormalWithItalic(HSSFWorkbook workbook) {
+        HSSFCellStyle style =  workbook.createCellStyle();
+        setSimpleBorderStyle(style);
+        return style;
     }
 
     private static HSSFCellStyle createBasicWithBordersStyleRigthAlig(HSSFWorkbook workbook) {
@@ -171,6 +222,31 @@ public class AmisExcelUtils {
 
     }
 
+    public static HSSFCellStyle getGreyBoldCellStyle() {
+        return createGreyWithBold(workbookInstance);
+    }
+
+    public static HSSFCellStyle getGreyWithSmallBold() {
+        return styles.get("greyBoldSmall");
+    }
+
+
+    public static  HSSFCellStyle getGreyItalicCellStyle () {
+        return styles.get("greyItalic");
+    }
+
+    public static  HSSFCellStyle getNormalWithBold () {
+        return styles.get("normalWithBold");
+    }
+
+    public static  HSSFCellStyle getNormalWithSmallBold () {
+        return styles.get("normalWithSmallBold");
+    }
+
+    public static  HSSFCellStyle getNormalWithItalic () {
+        return styles.get("normalWithItalic");
+    }
+
     private static HSSFCellStyle createGreyCellStyle(HSSFWorkbook workbook) {
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
@@ -187,8 +263,9 @@ public class AmisExcelUtils {
         }
 
         cellStyle.setFont(bigBoldFont);
-        cellStyle.setVerticalAlignment(HSSFCellStyle.ALIGN_CENTER);
-        cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        cellStyle.setWrapText(true);
+        cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
 
         return cellStyle;
 
@@ -214,14 +291,23 @@ public class AmisExcelUtils {
         }
 
         if (setBold)
-            cellStyle.setFont(boldSmallFont);
+            cellStyle.setFont(boldFont);
         else
-            cellStyle.setFont(smallFont);
+            cellStyle.setFont(boldSmallFont);
 
 
         return cellStyle;
 
     }
+
+    public HSSFCellStyle putItalicFont (HSSFCellStyle cellStyle) {
+        if (cellStyle == null) {
+            cellStyle = getBasicCellStyle();
+        }
+        cellStyle.setFont(italicFont);
+        return cellStyle;
+    }
+
 
     public static HSSFCellStyle getBoldTextCellStyle(HSSFWorkbook workbook, HSSFCellStyle cellStyle) {
 
@@ -242,8 +328,9 @@ public class AmisExcelUtils {
         }
 
         cellStyle.setFont(boldFont);
-        cellStyle.setVerticalAlignment(HSSFCellStyle.ALIGN_CENTER);
-        cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        cellStyle.setWrapText(true);
+        cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
 
         return cellStyle;
     }
@@ -259,8 +346,6 @@ public class AmisExcelUtils {
 
         return cellStyle;
     }
-
-
 
 
 
@@ -398,5 +483,16 @@ public class AmisExcelUtils {
 
     public static HSSFFont getBasicFont () {
         return basicFont;
+    }
+
+    public static void setLandscapeAndFitOnePg (Sheet sheet) {
+        //Fix to landscape
+        sheet.getPrintSetup().setLandscape(true);
+
+        //Fit to one page
+        HSSFPrintSetup ps = (HSSFPrintSetup) sheet.getPrintSetup();
+        sheet.setAutobreaks(true);
+        ps.setFitHeight((short)1);
+        ps.setFitWidth((short)1);
     }
 }

@@ -395,7 +395,7 @@ public class SheetCreator {
             CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
 
             Font font = discoverFont(code, (HSSFCellStyle)cellStyle);
-      //      cellStyle.setFont(font);
+            cellStyle.setFont(font);
             cell.setCellStyle(cellStyle);
 
             if (value == -1) {
@@ -410,7 +410,11 @@ public class SheetCreator {
 
             // flags
             Cell cell1 = row.createCell((short) columnNumber);
+
+            cell1.setCellStyle(getFlagAndNotesStyle(code,true));
+/*
             cell1.setCellStyle(amisExcelUtils.getBasicWithRightAlWithBorders());
+*/
             cell1.setCellValue((forecast.getFlags().equals("null")) ? "" : forecast.getFlags());
 
             String indexLetter1 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -420,7 +424,7 @@ public class SheetCreator {
 
             // notes
             Cell cell2 = row.createCell((short) columnNumber);
-            cell2.setCellStyle(amisExcelUtils.getBasicWithBorders());
+            cell2.setCellStyle(getFlagAndNotesStyle(code,false));
 
             cell2.setCellValue((forecast.getNotes() == null || forecast.getNotes().equals("null")) ? "" : forecast.getNotes());
             sheet.autoSizeColumn(columnNumber);
@@ -435,8 +439,6 @@ public class SheetCreator {
             Cell cell = row.createCell((short) columnNumber);
             CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
 
-            Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
-      //      cellStyle.setFont(font);
             cell.setCellStyle(cellStyle);
 
             cell.setCellValue("");
@@ -449,10 +451,8 @@ public class SheetCreator {
             // flags
 
             Cell cell1 = row.createCell((short) columnNumber);
-            CellStyle cellStyleFlag = amisExcelUtils.getBasicWithRightAlWithBorders();
-            discoverFont(code,(HSSFCellStyle)cellStyleFlag);
 
-            cell1.setCellStyle(cellStyleFlag);
+            cell1.setCellStyle(getFlagAndNotesStyle(code,true));
             cell1.setCellValue("");
 
             String indexLetter1 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -462,10 +462,9 @@ public class SheetCreator {
 
             // notes
             Cell cell2 = row.createCell((short) columnNumber);
-            CellStyle cellStyleNotes = amisExcelUtils.getBasicCellStyle();
-            discoverFont(code,(HSSFCellStyle)cellStyleNotes);
+            //discoverFont(code,(HSSFCellStyle)cellStyleNotes);
 
-            cell2.setCellStyle(cellStyleNotes);
+            cell2.setCellStyle(getFlagAndNotesStyle(code,false));
             cell2.setCellValue("");
 
             String indexLetter2 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -740,6 +739,28 @@ public class SheetCreator {
             }
         }else{
             result = amisExcelUtils.getBasicFont();
+        }
+        return result;
+    }
+
+
+    private HSSFCellStyle getFlagAndNotesStyle (int code,  boolean isFlag) {
+
+        HSSFCellStyle result =null;
+        if(SPACE_ELEMENT.get(code) != null) {
+            if (SPACE_ELEMENT.get(code) == 1) {
+                result = (isFlag)? amisExcelUtils.getFlagWithItalic(): amisExcelUtils.getNotesWithItalic();
+                amisExcelUtils.putItalicFont(result);
+
+            } else if (SPACE_ELEMENT.get(code) == 2) {
+                result = (isFlag)? amisExcelUtils.getFlagWithSmallBold(): amisExcelUtils.getNotesWithSmallBold();
+                amisExcelUtils.putSmallBoldFont(result);
+            } else if (SPACE_ELEMENT.get(code) == 3) {
+                result = (isFlag)? amisExcelUtils.getFlagWithBold(): amisExcelUtils.getNotesWithBold();
+                amisExcelUtils.putBoldFont(result);
+            }
+        }else{
+            result =  (isFlag)?amisExcelUtils.getRightAlignmentWithBordersStyle(): amisExcelUtils.getBasicWithBorders();
         }
         return result;
     }

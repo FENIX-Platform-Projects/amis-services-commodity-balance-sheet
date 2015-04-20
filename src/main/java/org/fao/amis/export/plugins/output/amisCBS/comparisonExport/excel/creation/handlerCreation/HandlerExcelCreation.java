@@ -4,7 +4,6 @@ package org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creati
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -31,6 +30,8 @@ public class HandlerExcelCreation {
     private final static String[] OTH_UM_RICE = {"1000s", "Thousand Ha", "%", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
     private final static String[] OTH_UM_OTH_COMM = {"1000s", "Thousand Ha", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
     private final String THOUSAND_TONNES = "Thousand tonnes";
+    private final String THOUSAND_TONNES_REGION = "                 Thousand tonnes";
+
     private final static int NMY_START_ROW = 9;
     private final static int SPACE_SECTIONS = 7;
     private final String NATIONAL = "foodBalance";
@@ -107,14 +108,15 @@ public class HandlerExcelCreation {
 
                 Row row = sheet.getRow(NMY_START_ROW);
                 Cell cell = row.createCell((short) 1);
-                cell.setCellStyle(AmisExcelUtils.getCenterAlignmentStyle());
-                cell.getCellStyle().setVerticalAlignment(CellStyle.ALIGN_CENTER);
-                cell.getCellStyle().setRotation((short) 90);
+                cell.setCellStyle(AmisExcelUtils.getBasicWithBordersOnRegion());
+              /*  cell.getCellStyle().setVerticalAlignment(CellStyle.ALIGN_CENTER);
+                cell.getCellStyle().setRotation((short) 90);*/
 
-                cell.setCellValue(THOUSAND_TONNES);
+                cell.setCellValue(THOUSAND_TONNES_REGION);
                 int endNmy = NMY_START_ROW + elements.get(commodity).size();
-                System.out.println(endNmy);
                 CellRangeAddress region = new CellRangeAddress(NMY_START_ROW, endNmy - 1, 1, 1);
+
+
                 sheet.addMergedRegion(region);
                 // CellUtil.setAlignment(cell, workbook, CellStyle.ALIGN_CENTER);
                 rowCounter++;
@@ -141,9 +143,12 @@ public class HandlerExcelCreation {
                 int startIty = endNmy + SPACE_SECTIONS;
                 Row rowIt = sheet.getRow(startIty - 1);
                 Cell cellIt1 = rowIt.createCell((short) 1);
+                cellIt1.setCellStyle(AmisExcelUtils.getBasicWithBorders());
                 cellIt1.setCellValue(THOUSAND_TONNES);
                 Row rowIt2 = sheet.getRow(startIty);
                 Cell cellIt2 = rowIt2.createCell((short) 1);
+                cellIt2.setCellStyle(AmisExcelUtils.getBasicWithBorders());
+
                 cellIt2.setCellValue(THOUSAND_TONNES);
                 int startOth = startIty + SPACE_SECTIONS;
 
@@ -174,16 +179,16 @@ public class HandlerExcelCreation {
                     for (int count = 0; count < elementsOTH.get(commodity).size(); count++) {
                         rowOth = sheet.getRow(startOth + count);
                         cellOth = rowOth.createCell((short) 1);
+                        cellOth.setCellStyle((AmisExcelUtils.getBasicWithBorders()));
                         cellOth.setCellValue(measuremntUnits[count]);
                     }
                     sheet.createFreezePane(2, 0, 2, 2);
                 } else {
                     this.sheetCreator.createNoDataAvailable(workbook, sheet);
                 }
-
             }
 
-            amisStaticTables.buildTables(sheet, rowCounter, workbook);
+            amisStaticTables.buildTable(sheet, rowCounter, workbook);
             AmisExcelUtils.setLandscapeAndFitOnePg(sheet);
         }
 

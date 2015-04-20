@@ -35,6 +35,7 @@ public class AmisExcelUtils {
         styles.put("leftAllignment", createLeftAlignmentStyle(workbook));
         styles.put("basicStyle", createBasicCellStyle(workbook));
         styles.put("borderBasicStyle", createBasicWithBordersStyle(workbook));
+        styles.put("borderBasicMergedRegion", createBasicWithBordersStyleOnMergedRegion(workbook));
         styles.put("borderBasicStyleRightAlignment", createBasicWithBordersStyleRigthAlig(workbook));
         styles.put("rightAllignmentWithBorders", createRightAlignmentWithBordersStyle(workbook));
         styles.put("blueStyle", createBlueCellStyle(workbook));
@@ -46,6 +47,14 @@ public class AmisExcelUtils {
         styles.put("normalWithBold", createNormalWithBold(workbook));
         styles.put("normalWithSmallBold", createNormalWithSmallBold(workbook));
         styles.put("normalWithItalic", createNormalWithItalic(workbook));
+
+        styles.put("flagWithBold", createFlagWithBold(workbook));
+        styles.put("flagWithSmallBold", createFlagWithSmallBold(workbook));
+        styles.put("flagWithItalic", createFlagWithItalic(workbook));
+
+        styles.put("notesWithBold", createNotesWithBold(workbook));
+        styles.put("notesWithSmallBold", createNotesWithSmallBold(workbook));
+        styles.put("notesWithItalic", createNotesWithItalic(workbook));
     }
 
     public static int createEmptyRow(int rowCounter, Sheet sheet, Workbook workbook) {
@@ -54,6 +63,48 @@ public class AmisExcelUtils {
         row.createCell((short) 1).setCellValue("");
 
         return rowCounter;
+    }
+
+    private static HSSFCellStyle createFlagWithBold(HSSFWorkbook workbook) {
+        HSSFCellStyle style =  workbook.createCellStyle();
+        setSimpleBorderStyle(style);
+        style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+        return style;
+    }
+
+    private static HSSFCellStyle createFlagWithSmallBold(HSSFWorkbook workbook) {
+        HSSFCellStyle style =  workbook.createCellStyle();
+        setSimpleBorderStyle(style);
+        style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+        return style;
+    }
+
+    private static HSSFCellStyle createNotesWithBold(HSSFWorkbook workbook) {
+        HSSFCellStyle style =  workbook.createCellStyle();
+        setSimpleBorderStyle(style);
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        return style;
+    }
+
+    private static HSSFCellStyle createNotesWithSmallBold(HSSFWorkbook workbook) {
+        HSSFCellStyle style =  workbook.createCellStyle();
+        setSimpleBorderStyle(style);
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        return style;
+    }
+
+    private static HSSFCellStyle createNotesWithItalic(HSSFWorkbook workbook) {
+        HSSFCellStyle style =  workbook.createCellStyle();
+        setSimpleBorderStyle(style);
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        return style;
+    }
+
+    private static HSSFCellStyle createFlagWithItalic(HSSFWorkbook workbook) {
+        HSSFCellStyle style =  workbook.createCellStyle();
+        setSimpleBorderStyle(style);
+        style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+        return style;
     }
 
     private static HSSFCellStyle  createGreyWithBold (HSSFWorkbook workbook) {
@@ -73,6 +124,8 @@ public class AmisExcelUtils {
         cellStyle.setFont(boldSmallFont);
         return cellStyle;
     }
+
+
 
     private static HSSFCellStyle  createGreyWithItalic (HSSFWorkbook workbook) {
         HSSFCellStyle cellStyle = workbook.createCellStyle();
@@ -125,6 +178,37 @@ public class AmisExcelUtils {
         return styles.get("leftAllignment");
     }
 
+    public static HSSFCellStyle getBasicWithBordersOnRegion() {
+        return styles.get("borderBasicMergedRegion");
+    }
+
+    public static HSSFCellStyle getFlagWithBold() {
+        return styles.get("flagWithBold");
+    }
+
+
+    public static HSSFCellStyle getFlagWithSmallBold() {
+        return styles.get("flagWithBold");
+    }
+
+    public static HSSFCellStyle getFlagWithItalic() {
+        return styles.get("flagWithBold");
+    }
+
+    public static HSSFCellStyle getNotesWithBold() {
+        return styles.get("notesWithBold");
+    }
+
+
+    public static HSSFCellStyle getNotesWithSmallBold() {
+        return styles.get("notesWithSmallBold");
+    }
+
+    public static HSSFCellStyle getNotesWithItalic() {
+        return styles.get("notesWithItalic");
+    }
+
+
     private static HSSFCellStyle createLeftAlignmentStyle(HSSFWorkbook workbook) {
         HSSFCellStyle style = workbook.createCellStyle();
         style.setAlignment(HSSFCellStyle.ALIGN_LEFT);
@@ -167,6 +251,15 @@ public class AmisExcelUtils {
     private static HSSFCellStyle createBasicWithBordersStyle(HSSFWorkbook workbook) {
         HSSFCellStyle style =  workbook.createCellStyle();
         setSimpleBorderStyle(style);
+        return style;
+    }
+
+    private static HSSFCellStyle createBasicWithBordersStyleOnMergedRegion(HSSFWorkbook workbook) {
+        HSSFCellStyle style =  workbook.createCellStyle();
+        setSimpleBorderStyle(style);
+        style.setVerticalAlignment(CellStyle.ALIGN_CENTER);
+        style.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setRotation((short) 90);
         return style;
     }
 
@@ -219,7 +312,6 @@ public class AmisExcelUtils {
 
     public static HSSFCellStyle getGreyCellStyle() {
         return styles.get("greyStyle");
-
     }
 
     public static HSSFCellStyle getGreyBoldCellStyle() {
@@ -305,6 +397,22 @@ public class AmisExcelUtils {
             cellStyle = getBasicCellStyle();
         }
         cellStyle.setFont(italicFont);
+        return cellStyle;
+    }
+
+    public HSSFCellStyle putSmallBoldFont (HSSFCellStyle cellStyle) {
+        if (cellStyle == null) {
+            cellStyle = getBasicCellStyle();
+        }
+        cellStyle.setFont(boldSmallFont);
+        return cellStyle;
+    }
+
+    public HSSFCellStyle putBoldFont (HSSFCellStyle cellStyle) {
+        if (cellStyle == null) {
+            cellStyle = getBasicCellStyle();
+        }
+        cellStyle.setFont(boldFont);
         return cellStyle;
     }
 

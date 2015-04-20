@@ -5,6 +5,10 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class AmisStaticTables {
 
     private static final String TABLE_TITLE = "List of forecasting methodologies";
@@ -21,22 +25,11 @@ public class AmisStaticTables {
     }
 
 
-    public void buildTables (Sheet sheet, int rowCounter, Workbook workbook) {
+    public void buildTable (Sheet sheet, int rowCounter, Workbook workbook) {
 
         rowCounter += 2;
-        rowCounter = createTitle(sheet,rowCounter, workbook);
-        for( FlagLabels f: FlagLabels.values()) {
-            Row row = sheet.createRow(rowCounter);
-            Cell cellLabel = row.createCell(0);
-            CellStyle cellStyleLabel = AmisExcelUtils.getGreyCellStyle();
-            cellLabel.setCellStyle(AmisExcelUtils.getGreyCellStyle());
-            cellLabel.setCellValue(f.getLabel());
-            Cell cellCode = row.createCell(1);
-            cellCode.setCellStyle(AmisExcelUtils.getGreyCellStyle());
-            cellCode.setCellValue(f.toString());
-
-            rowCounter++;
-        }
+        rowCounter = createTitle(sheet, rowCounter, workbook);
+        buildBody(rowCounter, sheet);
     }
 
 
@@ -64,6 +57,37 @@ public class AmisStaticTables {
         CellRangeAddress region = new CellRangeAddress(rowCounter-1, rowCounter-1,startColumnRange, endColumnRange);
         sheet.addMergedRegion(region);
         return rowCounter++;
+    }
+
+
+    private void buildBody (int rowCounter, Sheet sheet ) {
+
+        for( FlagLabels f: FlagLabels.values()) {
+            Row row = sheet.createRow(rowCounter);
+            Cell cellLabel = row.createCell(0);
+            cellLabel.setCellStyle(AmisExcelUtils.getGreyCellStyle());
+            cellLabel.setCellValue(f.getLabel());
+            Cell cellCode = row.createCell(1);
+            cellCode.setCellStyle(AmisExcelUtils.getGreyCellStyle());
+            cellCode.setCellValue(f.toString());
+            rowCounter++;
+        }
+        buildCreationDate(rowCounter,sheet);
+    }
+
+
+    private void buildCreationDate( int rowCounter, Sheet sheet) {
+
+        rowCounter++;
+        Date d = Calendar.getInstance().getTime(); // Current time
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // Set your date format
+        String currentData = sdf.format(d); // Get Date String according to date format
+        String valueCell = "Sheet created on  "+currentData;
+        CellStyle dateCreationStyle = AmisExcelUtils.getNormalWithItalic();
+        dateCreationStyle.setFont(AmisExcelUtils.getItalicFont());
+        Cell dateCreated =  sheet.createRow(rowCounter).createCell(0);
+        dateCreated.setCellStyle(dateCreationStyle);
+        dateCreated.setCellValue(valueCell);
     }
 
 }

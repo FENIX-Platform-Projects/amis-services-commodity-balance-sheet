@@ -751,7 +751,6 @@ public class SheetCreator {
             if (SPACE_ELEMENT.get(code) == 1) {
                 result = (isFlag)? amisExcelUtils.getFlagWithItalic(): amisExcelUtils.getNotesWithItalic();
                 amisExcelUtils.putItalicFont(result);
-
             } else if (SPACE_ELEMENT.get(code) == 2) {
                 result = (isFlag)? amisExcelUtils.getFlagWithSmallBold(): amisExcelUtils.getNotesWithSmallBold();
                 amisExcelUtils.putSmallBoldFont(result);

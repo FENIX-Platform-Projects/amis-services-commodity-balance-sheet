@@ -39,7 +39,7 @@ public class DatasetData
                     "  value ,\n" +
                     "  flag, \n" +
                     "  notes ,\n" +
-                    "  max(date) over (partition by season) as maxdate\n" +
+                    "  max(date) over (partition by season, product_code) as maxdate\n" +
                     "  from (SELECT    \n" +
                     "   t1.product_code,\n" +
                     "         t1.product_name,\n" +

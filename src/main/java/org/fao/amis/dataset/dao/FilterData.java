@@ -20,7 +20,7 @@ public class FilterData
     @Inject
     private ConnectionManager connectionManager;
     private static String queryDatabase = "select distinct database from national_forecast where region_code =? and database is not null";
-    private static String queryYears = "select distinct on (season) season, year from national_forecast where region_code = ? and product_code = ?  and season is not null and year is not null order by season DESC";
+    private static String queryYears = "select distinct on (season) season, year from national_forecast where region_code = ? and product_code = ?  and season is not null and year is not null order by season DESC, year DESC";
 
     public DatasourceObject getDatabase(FilterDatabase filter) throws Exception
     {

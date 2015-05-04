@@ -2,6 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="" />
+    <mapping directory="/var/www/amis-ui-balanceSheet" vcs="Git" />
   </component>
 </project>
-

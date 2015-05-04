@@ -3,7 +3,7 @@
 
 
     <!-- Local environment -->
-    <!--
+
     <context-param>
         <param-name>url</param-name>
         <param-value>jdbc:postgresql://localhost/amis-cbs-v3</param-value>
@@ -17,8 +17,10 @@
         <param-value>Qwaszx</param-value>
     </context-param>
 
-    -->
 
+
+
+    <!--
     <context-param>
         <param-name>url</param-name>
         <param-value>jdbc:postgresql://exlprfaostat1.ext.fao.org/amis-cbs-v3</param-value>
@@ -32,7 +34,7 @@
         <param-value>Qwaszx</param-value>
     </context-param>
 
-
+-->
     <!-- Temporary folder for file downloaded from export-->
     <context-param>
         <param-name>tmp.folder</param-name>

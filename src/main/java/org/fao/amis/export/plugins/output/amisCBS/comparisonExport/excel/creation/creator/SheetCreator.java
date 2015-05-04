@@ -78,6 +78,7 @@ public class SheetCreator {
         lastSeason = dataCreator.getSeason();
         String dataSource = dataCreator.getDatasource();
         String country = dataCreator.getCountry();
+        sheet.setColumnWidth(1, 3000);
 
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "COUNTRY: ", country);
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "COMMODITY: ", commodity);
@@ -608,7 +609,9 @@ public class SheetCreator {
         String value = reformatMarketingYear(valueToPut);
 
         cell.setCellValue(value);
-        //  sheet.autoSizeColumn(columnNumber);
+/*
+        sheet.autoSizeColumn(columnNumber);
+*/
 
         return columnNumber;
 

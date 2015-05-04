@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/amis-services.iml" filepath="$PROJECT_DIR$/amis-services.iml" />
+      <module fileurl="file:///var/www/amis-ui-balanceSheet/amis-ui-balanceSheet.iml" filepath="/var/www/amis-ui-balanceSheet/amis-ui-balanceSheet.iml" />
     </modules>
   </component>
 </project>

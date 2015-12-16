@@ -18,6 +18,7 @@ public class SupportData
 
     @Inject
     private ConnectionManager connectionManager;
+    private static String queryFunction = "select create_population_datasources()";
     private static String queryMostRecentDate = "select distinct date from national_forecast where region_code = ? and product_code =? and year = ? order by date";
     private static int[] queryInsertTypes = { 4, 4, 4, 4, 12, 12, 7, 12, 12 };
     private static String queryLoad = "select element_code, units, date, value, flag,  notes from national_forecast where region_code = ? and product_code = ? and year = ? and date =? and season=?";
@@ -90,6 +91,10 @@ public class SupportData
                 }
                 statement.executeBatch();
             }
+
+
+            statement = connection.prepareStatement(queryFunction);
+            statement.execute();
 
             connection.commit();
         } catch (Exception ex) {

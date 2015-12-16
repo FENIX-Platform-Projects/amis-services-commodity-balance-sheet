@@ -156,7 +156,6 @@ public class DatasetData
             }
 
             statement = connection.prepareStatement(queryFunction);
-
             statement.execute();
 
             connection.commit();
@@ -195,6 +194,9 @@ public class DatasetData
                 }
                 statement.executeBatch();
             }
+
+            statement = connection.prepareStatement(queryFunction);
+            statement.execute();
 
             connection.commit();
         } catch (Exception ex) {

@@ -4,7 +4,7 @@
 
     <!-- Local environment -->
 
-   <!-- <context-param>
+    <context-param>
         <param-name>url</param-name>
         <param-value>jdbc:postgresql://localhost/amis-cbs-v3</param-value>
     </context-param>
@@ -15,10 +15,12 @@
     <context-param>
         <param-name>psw</param-name>
         <param-value>postgres</param-value>
-    </context-param>-->
+    </context-param>
 
 
-    <context-param>
+<!--
+   AMIS ENVIRONMENT
+    *********************************<context-param>
         <param-name>url</param-name>
         <param-value>jdbc:postgresql://127.0.0.1/fenix</param-value>
     </context-param>
@@ -29,12 +31,15 @@
     <context-param>
         <param-name>psw</param-name>
         <param-value>Qwaszx</param-value>
-    </context-param>
+    </context-param>-->
 
 
 
 
     <!--
+
+    OLD ENVIRONMENT
+    *********************************
     <context-param>
         <param-name>url</param-name>
         <param-value>jdbc:postgresql://exlprfaostat1.ext.fao.org/amis-cbs-v3</param-value>

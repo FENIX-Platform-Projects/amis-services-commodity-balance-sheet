@@ -29,6 +29,14 @@ public class DatabaseUtils
         return result;
     }
 
+    public String getString(ResultSet source) throws SQLException {
+        String result = null;
+        if (source.next()) {
+            result = source.getString(1);
+        }
+        return result;
+    }
+
     public ArrayList<YearObject> getYear(ResultSet source) throws SQLException
     {
         ArrayList result = new ArrayList();

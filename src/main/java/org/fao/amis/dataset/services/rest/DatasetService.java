@@ -59,7 +59,7 @@ public class DatasetService
 
     @POST
     @Path("recentDate")
-    public Iterator<Object[]> getData(DateFilter filter) throws Exception {
+    public Iterator<Object[]> getData(MostRecentDateFilter filter) throws Exception {
         return this.dao2.getMostRecentForecastDate(filter);
     }
 

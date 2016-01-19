@@ -19,7 +19,11 @@ public class SupportData
     @Inject
     private ConnectionManager connectionManager;
     private static String queryFunction = "select create_population_datasources()";
-    private static String queryMostRecentDate = "select distinct date from national_forecast where region_code = ? and product_code =? and year = ? order by date";
+    private static String queryMostRecentDate = "select distinct date from national_forecast where\n" +
+            "region_code = ? and\n" +
+            "product_code = ? and\n" +
+            "year = ? and\n" +
+            "season = ? order by date desc limit 1";
     private static int[] queryInsertTypes = { 4, 4, 4, 4, 12, 12, 7, 12, 12 };
     private static String queryLoad = "select element_code, units, date, value, flag,  notes from national_forecast where region_code = ? and product_code = ? and year = ? and date =? and season=?";
     private static String queryCrops = "select crops_num from amis_crops where region_code =? and product_code =?";
@@ -29,13 +33,14 @@ public class SupportData
     private static String queryInsertPopulation = "insert into national_population (region_code, region_name, element_code, element_name, units,year,value,flag,notes) values (?,?,?,?,?,?,?,?,?)";
 
 
-    public Iterator<Object[]> getMostRecentForecastDate(DateFilter filter) throws Exception {
+    public Iterator<Object[]> getMostRecentForecastDate(MostRecentDateFilter filter) throws Exception {
         Connection connection = this.connectionManager.getConnection();
         PreparedStatement statement = connection.prepareStatement(queryMostRecentDate);
 
         statement.setInt(1, filter.getRegion().intValue());
         statement.setInt(2, filter.getProduct().intValue());
         statement.setInt(3, filter.getYear().intValue());
+        statement.setString(4,filter.getSeason());
 
         return this.utils.getDataIterator(statement.executeQuery());
     }

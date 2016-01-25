@@ -78,7 +78,6 @@ public class DatasetService
     @POST
     @Path("year")
     public ArrayList<YearObject> getData(FilterYear filter) throws Exception {
-        System.out.println("Start WS!!");
         return this.filterDao.getYears(filter);
     }
 

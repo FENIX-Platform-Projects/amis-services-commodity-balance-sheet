@@ -51,6 +51,12 @@ public class DatasetService
         this.dao.updNationalDataPreviousYear(data);
     }
 
+    @PUT
+    @Path("annual/national")
+    public void getData(DatasetAnnualForecast data) throws Exception {
+        this.dao.updateAnnualForecast(data);
+    }
+
     @POST
     @Path("population")
     public Iterator<Object[]> getData(DatasetNationalFilter filter) throws Exception {

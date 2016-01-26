@@ -11,14 +11,15 @@ import org.fao.amis.dataset.dto.*;
 import org.fao.amis.server.tools.jdbc.ConnectionManager;
 import org.fao.amis.server.tools.utils.DatabaseUtils;
 
-public class DatasetData
-{
+public class DatasetData {
 
     @Inject
     private DatabaseUtils utils;
 
     @Inject
     private ConnectionManager connectionManager;
+
+    private static String queryDeleteAll = "delete from national_forecast where region_code = ? and product_code = ? and (";
     private static String queryFunction = "select create_national_datasources()";
     private static String queryLoad = "select element_code, units, date, value, flag,  notes from national_forecast where region_code = ? and product_code = ? and year = ? and season =?";
     private static String queryLoadNational = "select element_code, units, value, flag,notes from national_population where region_code = ? and element_code = ? and year = ? ";
@@ -94,7 +95,7 @@ public class DatasetData
                     "order by product_code, season DESC, date DESC\n" +
                     ") and region_code = ? order by product_code, date, date DESC";
 
-    private static int[] queryInsertTypes = { Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.VARCHAR,Types.VARCHAR, Types.INTEGER, Types.VARCHAR, Types.VARCHAR, Types.REAL, Types.VARCHAR, Types.VARCHAR };
+    private static int[] queryInsertTypes = {Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.VARCHAR, Types.VARCHAR, Types.INTEGER, Types.VARCHAR, Types.VARCHAR, Types.REAL, Types.VARCHAR, Types.VARCHAR};
 
     public Iterator<Object[]> getNationalData(DatasetFilter filter) throws Exception {
         Connection connection = this.connectionManager.getConnection();
@@ -103,7 +104,7 @@ public class DatasetData
         statement.setInt(1, filter.getRegion().intValue());
         statement.setInt(2, filter.getProduct().intValue());
         statement.setInt(3, filter.getYear().intValue());
-        statement.setString(4,""+filter.getSeason());
+        statement.setString(4, "" + filter.getSeason());
 
         return this.utils.getDataIterator(statement.executeQuery());
     }
@@ -131,18 +132,18 @@ public class DatasetData
             statement.setString(4, data.getFilter().getSeason());
 
             System.out.println("--------------------------------------");
-            System.out.println("before delete!!!; statment is : "+ statement.toString() );
+            System.out.println("before delete!!!; statment is : " + statement.toString());
 
             statement.executeUpdate();
 
 
-            System.out.println("after delete!!!; statment is : "+ statement.toString() );
+            System.out.println("after delete!!!; statment is : " + statement.toString());
             System.out.println("--------------------------------------");
 
             if (data.getData() != null) {
                 statement = connection.prepareStatement(queryInsert);
                 for (Object[] row : data.getData()) {
-                    this.utils.fillStatement(statement, queryInsertTypes, new Object[] { data.getFilter().getRegion(), data.getFilter().getProduct(), data.getFilter().getYear(), data.getFilter().getSeason(), data.getFilter().getDatasource(), row[0], row[1], row[2], row[3], row[4], row[5] });
+                    this.utils.fillStatement(statement, queryInsertTypes, new Object[]{data.getFilter().getRegion(), data.getFilter().getProduct(), data.getFilter().getYear(), data.getFilter().getSeason(), data.getFilter().getDatasource(), row[0], row[1], row[2], row[3], row[4], row[5]});
 
                     statement.addBatch();
                 }
@@ -161,15 +162,73 @@ public class DatasetData
             connection.commit();
         } catch (Exception ex) {
 
-            System.out.println("INTO CATCH: the exception is: "+ex.toString());
+            System.out.println("INTO CATCH: the exception is: " + ex.toString());
             System.out.println("GET NEXT EXCEPTION: ");
-            System.out.println(  ((SQLException)ex).getNextException().toString());
+            System.out.println(((SQLException) ex).getNextException().toString());
             connection.rollback();
             throw ex;
         } finally {
             connection.setAutoCommit(true);
         }
     }
+
+
+    public void updateAnnualForecast(DatasetAnnualForecast data) throws Exception {
+
+        Connection connection = this.connectionManager.getConnection();
+        try {
+            PreparedStatement statement;
+            connection.setAutoCommit(false);
+            StringBuilder queryToFinish = new StringBuilder().append(queryDeleteAll);
+            if (data.getFilters() != null) {
+                for (int i = 0, length = data.getFilters().length; i < length; i++) {
+                    AnnualFilter filter = data.getFilters()[i];
+                    queryToFinish.append(" season = ").append(filter.getSeason().toString())
+                            .append(" AND date = ").append(filter.getDate().toString())
+                            .append(" AND year = ").append(filter.getYear().intValue())
+                            .append(" )");
+
+                    if (i == length - 1) {
+                        queryToFinish.append(" )");
+                    } else {
+                        queryToFinish.append(" OR (");
+                    }
+                }
+
+                statement = connection.prepareStatement(queryDeleteAll);
+                statement.setInt(1, data.getRegion().intValue());
+                statement.setString(2, data.getProduct().toString());
+                statement.executeUpdate();
+            }
+
+            if (data.getFilters() != null) {
+                statement = connection.prepareStatement(queryInsert);
+                for(AnnualFilter filter: data.getFilters()) {
+                    for (Object[] row : filter.getData()) {
+                        this.utils.fillStatement(statement, queryInsertTypes, new Object[]{data.getRegion(), data.getProduct(), filter.getYear(), filter.getSeason(), data.getDatasource(), row[0], row[1], row[2], row[3], row[4], row[5]});
+                        statement.addBatch();
+                    }
+                }
+
+                statement.executeBatch();
+            }
+
+            statement = connection.prepareStatement(queryFunction);
+            statement.execute();
+
+            connection.commit();
+
+
+
+        } catch (Exception ex) {
+            System.out.println("The Exception is: " + ex.toString());
+            connection.rollback();
+            throw ex;
+        } finally {
+            connection.setAutoCommit(true);
+        }
+    }
+
 
     public void updNationalDataPreviousYear(DatasetUpdatePrevSeason data) throws Exception {
         Connection connection = this.connectionManager.getConnection();
@@ -188,7 +247,7 @@ public class DatasetData
             if (data.getData() != null) {
                 statement = connection.prepareStatement(queryInsert);
                 for (Object[] row : data.getData()) {
-                    this.utils.fillStatement(statement, queryInsertTypes, new Object[] { data.getFilter().getRegion(), data.getFilter().getProduct(), data.getFilter().getYear(), data.getFilter().getSeason(), data.getFilter().getDatasource(), row[0], row[1], row[2], row[3], row[4], row[5] });
+                    this.utils.fillStatement(statement, queryInsertTypes, new Object[]{data.getFilter().getRegion(), data.getFilter().getProduct(), data.getFilter().getYear(), data.getFilter().getSeason(), data.getFilter().getDatasource(), row[0], row[1], row[2], row[3], row[4], row[5]});
 
                     statement.addBatch();
                 }
@@ -218,13 +277,13 @@ public class DatasetData
         return this.utils.getDataIterator(statement.executeQuery());
     }
 
-    public Iterator<Object[]> getAnnualExportData(FilterExport filter) throws Exception  {
+    public Iterator<Object[]> getAnnualExportData(FilterExport filter) throws Exception {
         Connection connection = this.connectionManager.getConnection();
         PreparedStatement statement = connection.prepareStatement(queryExportTotalAnnual);
 
-        Integer[] regionCodes =filter.getRegionCode();
-        for(int i=0; i<regionCodes.length ; i++)
-            statement.setInt(i+1, regionCodes[i].intValue());
+        Integer[] regionCodes = filter.getRegionCode();
+        for (int i = 0; i < regionCodes.length; i++)
+            statement.setInt(i + 1, regionCodes[i].intValue());
 
         return this.utils.getDataIterator(statement.executeQuery());
     }

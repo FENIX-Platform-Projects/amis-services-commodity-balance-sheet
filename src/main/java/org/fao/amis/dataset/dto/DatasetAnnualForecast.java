@@ -4,7 +4,7 @@ package org.fao.amis.dataset.dto;
 public class DatasetAnnualForecast {
 
     private Integer region;
-    private String product;
+    private Integer product;
     private String datasource;
 
     private AnnualFilter[] filters;
@@ -17,11 +17,11 @@ public class DatasetAnnualForecast {
         this.region = region;
     }
 
-    public String getProduct() {
+    public Integer getProduct() {
         return product;
     }
 
-    public void setProduct(String product) {
+    public void setProduct(Integer product) {
         this.product = product;
     }
 

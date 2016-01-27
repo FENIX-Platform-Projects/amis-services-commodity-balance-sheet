@@ -19,7 +19,7 @@ public class DatasetData {
     @Inject
     private ConnectionManager connectionManager;
 
-    private static String queryDeleteAll = "delete from national_forecast where region_code = ? and product_code = ? and (";
+    private static String queryDeleteAll = "delete from national_forecast where region_code = ? and product_code = ? and ( (";
     private static String queryFunction = "select create_national_datasources()";
     private static String queryLoad = "select element_code, units, date, value, flag,  notes from national_forecast where region_code = ? and product_code = ? and year = ? and season =?";
     private static String queryLoadNational = "select element_code, units, value, flag,notes from national_population where region_code = ? and element_code = ? and year = ? ";
@@ -162,16 +162,15 @@ public class DatasetData {
             connection.commit();
         } catch (Exception ex) {
 
-            System.out.println("INTO CATCH: the exception is: " + ex.toString());
             System.out.println("GET NEXT EXCEPTION: ");
+            System.out.println("INTO CATCH: the exception is: " + ex.toString());
             System.out.println(((SQLException) ex).getNextException().toString());
-            connection.rollback();
+            connection.rollback();PreparedStatement statement;
             throw ex;
         } finally {
-            connection.setAutoCommit(true);
+            connection.setAutoCommit(true);PreparedStatement statement;
         }
     }
-
 
     public void updateAnnualForecast(DatasetAnnualForecast data) throws Exception {
 
@@ -179,13 +178,14 @@ public class DatasetData {
         try {
             PreparedStatement statement;
             connection.setAutoCommit(false);
+            // Prepare the delete query
             StringBuilder queryToFinish = new StringBuilder().append(queryDeleteAll);
             if (data.getFilters() != null) {
                 for (int i = 0, length = data.getFilters().length; i < length; i++) {
                     AnnualFilter filter = data.getFilters()[i];
-                    queryToFinish.append(" season = ").append(filter.getSeason().toString())
-                            .append(" AND date = ").append(filter.getDate().toString())
-                            .append(" AND year = ").append(filter.getYear().intValue())
+                    queryToFinish.append(" season = '").append(filter.getSeason().toString())
+                            .append("' AND date = '").append(filter.getDate().toString())
+                            .append("' AND year = ").append(filter.getYear().intValue())
                             .append(" )");
 
                     if (i == length - 1) {
@@ -195,9 +195,9 @@ public class DatasetData {
                     }
                 }
 
-                statement = connection.prepareStatement(queryDeleteAll);
+                statement = connection.prepareStatement(queryToFinish.toString());
                 statement.setInt(1, data.getRegion().intValue());
-                statement.setString(2, data.getProduct().toString());
+                statement.setInt(2, data.getProduct());
                 statement.executeUpdate();
             }
 
@@ -209,17 +209,11 @@ public class DatasetData {
                         statement.addBatch();
                     }
                 }
-
                 statement.executeBatch();
             }
-
             statement = connection.prepareStatement(queryFunction);
             statement.execute();
-
             connection.commit();
-
-
-
         } catch (Exception ex) {
             System.out.println("The Exception is: " + ex.toString());
             connection.rollback();

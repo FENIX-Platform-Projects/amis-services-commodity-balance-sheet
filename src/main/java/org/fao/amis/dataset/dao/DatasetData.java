@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Iterator;
 import javax.inject.Inject;
 
@@ -19,6 +20,10 @@ public class DatasetData {
     @Inject
     private ConnectionManager connectionManager;
 
+
+    private static String queryMostRecentDateForEveryProduct = "select distinct max(date) over(partition by product_code) as date,product_code\n" +
+            "from national_forecast\n" +
+            "where region_code = ?;";
     private static String queryDeleteAll = "delete from national_forecast where region_code = ? and product_code = ? and ( (";
     private static String queryFunction = "select create_national_datasources()";
     private static String queryLoad = "select element_code, units, date, value, flag,  notes from national_forecast where region_code = ? and product_code = ? and year = ? and season =?";
@@ -280,6 +285,15 @@ public class DatasetData {
             statement.setInt(i + 1, regionCodes[i].intValue());
 
         return this.utils.getDataIterator(statement.executeQuery());
+    }
+
+    public ArrayList<MostRecentDateForProductResult> getMostRecentDateForProduct(RegionCodeFilter regionCodeFilter) throws  Exception {
+
+        Connection connection = this.connectionManager.getConnection();
+        PreparedStatement statement = connection.prepareStatement(queryMostRecentDateForEveryProduct);
+        statement.setInt(1, regionCodeFilter.getRegionCode());
+
+        return this.utils.getMostRecentDateForProduct(statement.executeQuery());
     }
 
 }

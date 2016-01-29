@@ -32,7 +32,7 @@ public class HandlerExcelCreation {
     private final String THOUSAND_TONNES = "Thousand tonnes";
     private final String THOUSAND_TONNES_REGION = "                 Thousand tonnes";
 
-    private final static int NMY_START_ROW = 9;
+    private final static int NMY_START_ROW = 10;
     private final static int SPACE_SECTIONS = 7;
     private final String NATIONAL = "foodBalance";
     private final String INTERNATIONAL = "international";

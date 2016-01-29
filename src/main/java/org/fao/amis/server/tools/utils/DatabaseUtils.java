@@ -1,5 +1,7 @@
 package org.fao.amis.server.tools.utils;
 
+import org.fao.amis.dataset.dto.MostRecentDateForProductResult;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -33,6 +35,18 @@ public class DatabaseUtils
         String result = null;
         if (source.next()) {
             result = source.getString(1);
+        }
+        return result;
+    }
+
+
+    public ArrayList<MostRecentDateForProductResult> getMostRecentDateForProduct(ResultSet source) throws SQLException {
+        ArrayList<MostRecentDateForProductResult> result = new ArrayList<MostRecentDateForProductResult>();
+        while (source.next()) {
+            MostRecentDateForProductResult mostRecentDateForProductResult = new MostRecentDateForProductResult();
+            mostRecentDateForProductResult.setDate(source.getString(1));
+            mostRecentDateForProductResult.setProductCode(Integer.valueOf(source.getInt(2)));
+            result.add(mostRecentDateForProductResult);
         }
         return result;
     }

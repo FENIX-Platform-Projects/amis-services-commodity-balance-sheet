@@ -108,7 +108,14 @@ public class DatasetService
     @Path("annualExport")
     public Iterator<Object[]> getData(FilterExport filter) throws Exception { return this.dao.getAnnualExportData(filter); }
 
+    @POST
+    @Path("mostRecentDateForYears")
+    public ArrayList<MostRecentDateForProductResult> getMostRecentDataForProduct (RegionCodeFilter regionCode)throws Exception { return this.dao.getMostRecentDateForProduct(regionCode); }
+
+
     /*
+
+
 
 
     @PUT

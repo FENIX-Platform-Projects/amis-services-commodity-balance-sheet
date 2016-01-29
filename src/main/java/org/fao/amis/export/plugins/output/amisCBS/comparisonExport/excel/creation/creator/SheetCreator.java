@@ -28,10 +28,6 @@ public class SheetCreator {
     private final String FLAG_HEADER = "Forecasting \n Methodology";
     private final String NOTES_HEADER = "Notes";
     private HashMap<String, StylesFont> mapStyles;
-
-    private CellStyle prova;
-    private HSSFFont privaFont;
-
     private static final int ROW_START_ELEMENTS = 9;
     private static final String EVERY_SHEETS_TITLE = "amis commodity forecasts";
     private String[] nationalCodes;
@@ -78,12 +74,15 @@ public class SheetCreator {
         lastSeason = dataCreator.getSeason();
         String dataSource = dataCreator.getDatasource();
         String country = dataCreator.getCountry();
+        HashMap<String,String> mapProductDate = dataCreator.getMapProductDate();
         sheet.setColumnWidth(1, 3000);
 
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "COUNTRY: ", country);
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "COMMODITY: ", commodity);
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "LAST SEASON: ", lastSeason);
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "DATASOURCE: ", dataSource);
+        rowCounter = createLegendRow(rowCounter, sheet, workbook, "Data Last Updated on: ", mapProductDate.get(commodity));
+
 
         rowCounter = amisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
 

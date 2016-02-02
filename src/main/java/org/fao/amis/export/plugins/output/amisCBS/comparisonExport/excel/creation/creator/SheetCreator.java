@@ -14,6 +14,8 @@ import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.natMarkB
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.utils.*;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.formula.translator.CellMapper;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormatSymbols;
 import java.util.*;
 
@@ -390,7 +392,10 @@ public class SheetCreator {
         if (forecast != null) {
             // value
 
-            int value = (int) forecast.getValue();
+            double value = forecast.getValue();
+            value = new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+
             Cell cell = row.createCell((short) columnNumber);
             CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
 
@@ -485,7 +490,10 @@ public class SheetCreator {
         if (forecast != null) {
             // value
 
-            int value = (int) forecast.getValue();
+            double value = forecast.getValue();
+            value = new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+
             Cell cell = row.createCell((short) columnNumber);
             CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
 
@@ -530,7 +538,12 @@ public class SheetCreator {
         if (forecast != null) {
             // value
 
-            int value = (int) forecast.getValue();
+            double value = forecast.getValue();
+            value = new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            System.out.println("value: "+value);
+
+
             Cell cell = row.createCell((short) columnNumber);
             CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
 
@@ -539,6 +552,7 @@ public class SheetCreator {
             cell.setCellStyle(cellStyle);
 
             if (value == -1) {
+
                 cell.setCellValue("");
             } else {
                 cell.setCellValue(value);
@@ -691,7 +705,7 @@ public class SheetCreator {
 
         String[] forecastDate = splitted[1].split("-");
         result += "(";
-        result += new DateFormatSymbols().getMonths()[Integer.parseInt(forecastDate[1]) - 1] + " ";
+        result += new DateFormatSymbols(new Locale("en", "GB")).getMonths()[Integer.parseInt(forecastDate[1]) - 1] + " ";
         result += forecastDate[0] + ")";
         return result;
     }

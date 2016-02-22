@@ -29,16 +29,17 @@ public class OutputFactory {
     private Map<String, Class<Output>> pluginsClass = new HashMap<>();
 
     private OutputFactory() throws Exception {
+        }
+
+
+    //logic
+    public Output getPlugin(PluginConfig config) throws Exception {
         String inputPluginsURL = ConfiguratorURL.getInstance().getOutputProperties();
         Properties pluginsClassName = PropertiesReader.getInstance().getProperties(inputPluginsURL);
 
         for (Map.Entry<Object, Object> entry : pluginsClassName.entrySet())
             pluginsClass.put((String)entry.getKey(), (Class<Output>)Class.forName((String)entry.getValue()));
-    }
 
-
-    //logic
-    public Output getPlugin(PluginConfig config) throws Exception {
         Output plugin = pluginsClass.get(config.getPlugin()).newInstance();
         plugin.init(config.getConfig());
         return plugin;

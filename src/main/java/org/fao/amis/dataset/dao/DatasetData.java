@@ -20,6 +20,8 @@ public class DatasetData {
     @Inject
     private ConnectionManager connectionManager;
 
+    @Inject
+    private DBProcess dbProcess;
 
     private static String queryMostRecentDateForEveryProduct = "select distinct max(date) over(partition by product_code) as date,product_code\n" +
             "from national_forecast\n" +
@@ -216,9 +218,15 @@ public class DatasetData {
                 }
                 statement.executeBatch();
             }
-            statement = connection.prepareStatement(queryFunction);
-            statement.execute();
+            dbProcess.init(queryFunction,this.connectionManager.getConnection());
+            Thread functionThread = new Thread(dbProcess);
+            functionThread.start();
             connection.commit();
+           /* dbProcess.run();*/
+            System.out.println("ciao");
+            /*statement = connection.prepareStatement(queryFunction);
+            statement.execute();*/
+
         } catch (Exception ex) {
             System.out.println("The Exception is: " + ex.toString());
             connection.rollback();

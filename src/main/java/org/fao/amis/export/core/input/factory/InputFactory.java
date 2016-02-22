@@ -38,16 +38,18 @@ public class InputFactory {
 
 
     private InputFactory() throws Exception {
-        String inputPluginsURL = ConfiguratorURL.getInstance().getInputProperties();
-        Properties pluginsClassName = PropertiesReader.getInstance().getProperties(inputPluginsURL);
 
-        for (Map.Entry<Object, Object> entry : pluginsClassName.entrySet())
-            pluginsClass.put((String)entry.getKey(), (Class<Input>)Class.forName((String)entry.getValue()));
     }
 
 
     //logic
     public Input getPlugin(PluginConfig config, Resource resource) throws Exception {
+
+        String inputPluginsURL = ConfiguratorURL.getInstance().getInputProperties();
+        Properties pluginsClassName = PropertiesReader.getInstance().getProperties(inputPluginsURL);
+
+        for (Map.Entry<Object, Object> entry : pluginsClassName.entrySet())
+            pluginsClass.put((String)entry.getKey(), (Class<Input>)Class.forName((String)entry.getValue()));
         LOGGER.warn("start");
         Input plugin = pluginsClass.get(config.getPlugin()).newInstance();
         LOGGER.warn("plugin created");

@@ -98,9 +98,7 @@ public class SupportData
             }
 
 
-/*
             statement = connection.prepareStatement(queryFunction);
-*/
             statement.execute();
 
             connection.commit();

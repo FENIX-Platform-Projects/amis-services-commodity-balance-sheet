@@ -271,6 +271,11 @@ public class SheetCreator {
                         columnNumber = fillForecastElementsWithFlagsAndComments(columnNumber, row, foodBalanceResults.get(date), code, sheet, date);
                         break;
 
+                    case "showOnly" :
+                        System.out.println("here");
+                        columnNumber = fillForecastForFirstSeasonToShow(columnNumber, row, foodBalanceResults.get(date), code, date);
+                        break;
+
                     default:
                         columnNumber = fillForecastElementsShowOnlyAndDefault(columnNumber, row, foodBalanceResults.get(date), code, date);
                         break;
@@ -376,9 +381,9 @@ public class SheetCreator {
         sheet.setColumnHidden(columnNumber, true);
 
         // set the "blank" column to hidden
-        columnNumber++;
+        /*columnNumber++;
         sheet.setColumnHidden(columnNumber, true);
-
+*/
         columnNumber++;
 
         return columnNumber;
@@ -529,6 +534,53 @@ public class SheetCreator {
         return columnNumber;
     }
 
+    private int fillForecastForFirstSeasonToShow(int columnNumber, Row row, LinkedHashMap<String, DaoForecastValue> elements, int code, String date) {
+
+        DaoForecastValue forecast = elements.get("" + code);
+
+        if (forecast != null) {
+            // value
+
+            double value = forecast.getValue();
+            value = new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+
+            Cell cell = row.createCell((short) columnNumber);
+            CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+
+            Font font = discoverFont(code, (HSSFCellStyle)cellStyle);
+            //    cellStyle.setFont(font);
+            cell.setCellStyle(cellStyle);
+
+            if (value == -1) {
+                cell.setCellValue("");
+            } else {
+                cell.setCellValue(value);
+            }
+            String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
+            cellMappers.putData(date, "" + code, "value", indexLetter);
+
+            columnNumber+=2;
+
+        } else {
+
+            Cell cell = row.createCell((short) columnNumber);
+            CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+
+            Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
+            //      cellStyle.setFont(font);
+            cell.setCellStyle(cellStyle);
+            cell.setCellValue("");
+
+            String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
+            cellMappers.putData(date, "" + code, "value", indexLetter);
+            columnNumber+=2;
+        }
+
+        return columnNumber;
+    }
+
+
 
     private int fillForecastElementsShowOnlyAndDefault(int columnNumber, Row row, LinkedHashMap<String,
             DaoForecastValue> elements, int code, String date) {
@@ -540,8 +592,6 @@ public class SheetCreator {
 
             double value = forecast.getValue();
             value = new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
-
-            System.out.println("value: "+value);
 
 
             Cell cell = row.createCell((short) columnNumber);
@@ -560,7 +610,7 @@ public class SheetCreator {
             String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
             cellMappers.putData(date, "" + code, "value", indexLetter);
 
-            columnNumber += 2;
+            columnNumber += 1;
 
         } else {
 
@@ -576,7 +626,7 @@ public class SheetCreator {
             String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
             cellMappers.putData(date, "" + code, "value", indexLetter);
 
-            columnNumber += 2;
+            columnNumber += 1;
         }
 
         return columnNumber;
@@ -619,7 +669,7 @@ public class SheetCreator {
         columnNumber++;
         Cell cell = row.createCell((short) columnNumber);
         cell.setCellStyle(amisExcelUtils.getBoldTextCellStyleWithAlignment((HSSFWorkbook) workbook, null));
-        String value = reformatMarketingYear(valueToPut);
+        String value = valueToPut != null && !valueToPut.equals("-1") && !valueToPut.equals(-1) ? reformatMarketingYear(valueToPut): "";
 
         cell.setCellValue(value);
 /*
@@ -659,7 +709,8 @@ public class SheetCreator {
                 }
 
                 if (!startingCropsMonths.equals("-1") && !startingYearCrops.equals("-1") && !endingCropsMonths.equals("-1") && !endingYearCrops.equals("-1")) {
-                    footerValue += " and refers to the crop that is harvested mainly from " + startingCropsMonths + " " + startingYearCrops +
+                    footerValue+= footerValue.length() ==0? "It": " and";
+                            footerValue += " refers to the crop that is harvested mainly from " + startingCropsMonths + " " + startingYearCrops +
                             " to " + endingCropsMonths + " " + endingYearCrops;
                 }
                 break;

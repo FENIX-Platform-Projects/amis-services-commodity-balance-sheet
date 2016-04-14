@@ -25,9 +25,6 @@ public class DataCreator {
         this.season = filterData.get("season").toString();
         this.country = filterData.get("region").toString();
         fillMapProductDate((ArrayList<Object>)filterData.get("mostRecentDateByProducts"));
-/*
-        System.out.println(filterData.get("mostRecentDateByProducts")))
-*/
 
     }
 

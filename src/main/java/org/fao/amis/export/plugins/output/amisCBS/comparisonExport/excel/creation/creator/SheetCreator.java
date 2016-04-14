@@ -272,7 +272,6 @@ public class SheetCreator {
                         break;
 
                     case "showOnly" :
-                        System.out.println("here");
                         columnNumber = fillForecastForFirstSeasonToShow(columnNumber, row, foodBalanceResults.get(date), code, date);
                         break;
 

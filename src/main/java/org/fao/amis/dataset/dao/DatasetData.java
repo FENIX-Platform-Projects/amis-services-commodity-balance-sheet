@@ -8,11 +8,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.fao.amis.dataset.dto.*;
 import org.fao.amis.server.tools.jdbc.ConnectionManager;
 import org.fao.amis.server.tools.utils.DatabaseUtils;
 
 public class DatasetData {
+
+    private static final Logger LOGGER = Logger.getLogger("export");
 
     @Inject
     private DatabaseUtils utils;
@@ -138,14 +141,14 @@ public class DatasetData {
             statement.setInt(3, data.getFilter().getYear().intValue());
             statement.setString(4, data.getFilter().getSeason());
 
-            System.out.println("--------------------------------------");
-            System.out.println("before delete!!!; statment is : " + statement.toString());
+            LOGGER.info("--------------------------------------");
+            LOGGER.info("before delete!!!; statment is : " + statement.toString());
 
             statement.executeUpdate();
 
 
-            System.out.println("after delete!!!; statment is : " + statement.toString());
-            System.out.println("--------------------------------------");
+            LOGGER.info("after delete!!!; statment is : " + statement.toString());
+            LOGGER.info("--------------------------------------");
 
             if (data.getData() != null) {
                 statement = connection.prepareStatement(queryInsert);
@@ -155,10 +158,10 @@ public class DatasetData {
                     statement.addBatch();
                 }
 
-                System.out.println("*************************************************************");
-                System.out.println("THIS IS THE QUERY: ");
-                System.out.println(statement.toString());
-                System.out.println("*************************************************************");
+                LOGGER.info("*************************************************************");
+                LOGGER.info("THIS IS THE QUERY: ");
+                LOGGER.info(statement.toString());
+                LOGGER.info("*************************************************************");
 
                 statement.executeBatch();
             }
@@ -169,9 +172,9 @@ public class DatasetData {
             connection.commit();
         } catch (Exception ex) {
 
-            System.out.println("GET NEXT EXCEPTION: ");
-            System.out.println("INTO CATCH: the exception is: " + ex.toString());
-            System.out.println(((SQLException) ex).getNextException().toString());
+            LOGGER.info("GET NEXT EXCEPTION: ");
+            LOGGER.info("INTO CATCH: the exception is: " + ex.toString());
+            LOGGER.info(((SQLException) ex).getNextException().toString());
             connection.rollback();PreparedStatement statement;
             throw ex;
         } finally {
@@ -223,12 +226,11 @@ public class DatasetData {
             functionThread.start();
             connection.commit();
            /* dbProcess.run();*/
-            System.out.println("ciao");
             /*statement = connection.prepareStatement(queryFunction);
             statement.execute();*/
 
         } catch (Exception ex) {
-            System.out.println("The Exception is: " + ex.toString());
+            LOGGER.error("The Exception is: " + ex.toString());
             connection.rollback();
             throw ex;
         } finally {

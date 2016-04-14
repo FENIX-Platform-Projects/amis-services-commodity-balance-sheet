@@ -26,7 +26,7 @@ public class FormulaHandler {
                 domesticSupplyFormula(dateForecasts);
                 totalSupplyFormula(dateForecasts);
                 yieldFormula(dateForecasts, commodity);
-                domUtilizationFormula(dateForecasts);
+                domUtilizationFormula(dateForecasts, commodity);
                 totalUtilizationFormula(dateForecasts);
                 unbalancedFormula(dateForecasts);
                 perCapFoodUseFormula(dateForecasts);
@@ -102,12 +102,24 @@ public class FormulaHandler {
     }
 
 
-    private void domUtilizationFormula (LinkedHashMap<String, DaoForecastValue> dateForecasts){
+    private void domUtilizationFormula (LinkedHashMap<String, DaoForecastValue> dateForecasts, String commodity){
 
-        if(formulaUtils.checkIfOk("14",dateForecasts) && formulaUtils.checkIfOk("13",dateForecasts) && formulaUtils.checkIfOk("15",dateForecasts)){
-            double finalValue = dateForecasts.get("13").getValue() + dateForecasts.get("14").getValue()  + dateForecasts.get("15").getValue();
-            DaoForecastValue newValue = new DaoForecastValue(null,"C",finalValue);
-            dateForecasts.put("20", newValue);
+        // if different from soybean
+        if(!commodity.equals("6")) {
+            if (formulaUtils.checkIfOk("14", dateForecasts) && formulaUtils.checkIfOk("13", dateForecasts) && formulaUtils.checkIfOk("15", dateForecasts)) {
+                double finalValue = dateForecasts.get("13").getValue() + dateForecasts.get("14").getValue() + dateForecasts.get("15").getValue();
+                DaoForecastValue newValue = new DaoForecastValue(null, "C", finalValue);
+                dateForecasts.put("20", newValue);
+            }
+        }
+        else {
+            if (formulaUtils.checkIfOk("14", dateForecasts) && formulaUtils.checkIfOk("13", dateForecasts) && formulaUtils.checkIfOk("15", dateForecasts)
+                    && formulaUtils.checkIfOk("36", dateForecasts)) {
+                double finalValue = dateForecasts.get("13").getValue() + dateForecasts.get("14").getValue() + dateForecasts.get("15").getValue()
+                        +dateForecasts.get("36").getValue();
+                DaoForecastValue newValue = new DaoForecastValue(null, "C", finalValue);
+                dateForecasts.put("20", newValue);
+            }
         }
 
     }

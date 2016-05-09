@@ -1,6 +1,7 @@
 package org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.creator;
 
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -397,7 +398,8 @@ public class SheetCreator {
             // value
 
             double value = forecast.getValue();
-            value = new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            value =  ((Object)value != null && !Double.isNaN(value))?new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue(): -1;
+
 
 
             Cell cell = row.createCell((short) columnNumber);
@@ -495,7 +497,9 @@ public class SheetCreator {
             // value
 
             double value = forecast.getValue();
-            value = new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            value =  ((Object)value != null && !Double.isNaN(value))?new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue(): -1;
+
 
 
             Cell cell = row.createCell((short) columnNumber);
@@ -541,7 +545,8 @@ public class SheetCreator {
             // value
 
             double value = forecast.getValue();
-            value = new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            value = ((Object)value != null && !Double.isNaN(value))?new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue(): -1;
 
 
             Cell cell = row.createCell((short) columnNumber);
@@ -590,9 +595,8 @@ public class SheetCreator {
             // value
 
             double value = forecast.getValue();
-            value = new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
-
-
+            value =  ((Object)value != null && !Double.isNaN(value))?new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue(): -1;
+            
             Cell cell = row.createCell((short) columnNumber);
             CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
 

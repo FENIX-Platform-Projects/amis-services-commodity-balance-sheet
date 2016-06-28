@@ -9,12 +9,13 @@ import org.fao.amis.server.tools.utils.YearObject;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 @Path("dataset")
-@Produces({"application/json"})
-@Consumes({"application/json"})
+@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
+@Consumes(MediaType.APPLICATION_JSON)
 public class DatasetService
 {
 
@@ -31,7 +32,7 @@ public class DatasetService
     private FilterCrops filterCrops;
 
     @POST
-    @Consumes({"application/json"})
+    @Consumes(MediaType.APPLICATION_JSON)
     @Path("national")
     public Iterator<Object[]> getData(DatasetFilter filter)
             throws Exception

@@ -4,7 +4,7 @@
 
     <!-- Local environment -->
 
-   <!-- <context-param>
+    <context-param>
         <param-name>url</param-name>
         <param-value>jdbc:postgresql://localhost/amis-cbs-v3</param-value>
     </context-param>
@@ -32,12 +32,12 @@
         <env-entry-name>psw_n</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
         <env-entry-value>postgres</env-entry-value>
-    </env-entry>-->
+    </env-entry>
 
 
 <!--   AMIS ENVIRONMENT
    *********************************&ndash;&gt;-->
-    <context-param>
+ <!--   <context-param>
         <param-name>url</param-name>
         <param-value>jdbc:postgresql://127.0.0.1/fenix</param-value>
     </context-param>
@@ -66,7 +66,7 @@
         <env-entry-type>java.lang.String</env-entry-type>
         <env-entry-value>Qwaszx</env-entry-value>
     </env-entry>
-
+-->
 <!--
  FAOSTAT ENVIRONMENT
    *********************************&ndash;&gt;

@@ -5,7 +5,6 @@ import org.fao.amis.export.core.controller.GeneralController;
 import org.fao.amis.export.core.dto.CoreConfig;
 import org.fao.amis.export.core.dto.CoreOutputHeader;
 import org.fao.amis.export.core.utils.parser.JSONParser;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

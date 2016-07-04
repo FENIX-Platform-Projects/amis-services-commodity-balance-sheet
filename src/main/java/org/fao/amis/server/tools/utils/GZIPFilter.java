@@ -1,15 +1,18 @@
-package org.fao.amis.server.tools.utils;
+package org.fao.fenix.commons.utils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.zip.GZIPOutputStream;
 
 @WebFilter(urlPatterns = "/*")
 public class GZIPFilter implements Filter {
@@ -37,7 +40,6 @@ public class GZIPFilter implements Filter {
         // noop
     }
 }
-
 /*
  * Copyright 2003 Jayson Falkner (jayson@jspinsider.com)
  * This code is from "Servlets and JavaServer pages; the J2EE Web Tier",

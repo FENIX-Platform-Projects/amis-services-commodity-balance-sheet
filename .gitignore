@@ -6,7 +6,5 @@
 *.iml
 *.war
 **/target/**
-**/.idea/**
-.idea/workspace.xml
 .idea/*
 /target/

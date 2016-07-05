@@ -29,7 +29,6 @@ public class HandlerExcelCreation {
     private List<String> datesList; // order ASC
     private final static String[] OTH_UM_RICE = {"1000s", "Thousand Ha", "%", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
     private final static String[] OTH_UM_OTH_COMM = {"1000s", "Thousand Ha", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
-    private final String THOUSAND_TONNES = "Thousand tonnes";
     private final String THOUSAND_TONNES_ITY = "Thousand \n tonnes";
     private final String THOUSAND_TONNES_REGION = "                 Thousand tonnes";
 

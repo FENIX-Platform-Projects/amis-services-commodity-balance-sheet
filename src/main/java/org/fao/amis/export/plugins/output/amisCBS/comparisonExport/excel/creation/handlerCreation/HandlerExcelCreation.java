@@ -98,9 +98,6 @@ public class HandlerExcelCreation {
 
                 rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, foodBalanceResults, NATIONAL, this.mapColumnsToView, marketingYearMap.get(commodityString).getNmyMonths());
 
-
-                System.out.println("here");
-                System.out.println(rowCounter);
                 // list of elements to show on the left
                 HashMap<Integer, LinkedHashMap<Integer, String>> elements = qvo.getFoodBalanceElements();
                 rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, elements.get(commodity), foodBalanceResults, this.mapColumnsToView);

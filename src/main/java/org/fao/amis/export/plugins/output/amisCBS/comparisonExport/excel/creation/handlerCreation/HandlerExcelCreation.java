@@ -30,10 +30,11 @@ public class HandlerExcelCreation {
     private final static String[] OTH_UM_RICE = {"1000s", "Thousand Ha", "%", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
     private final static String[] OTH_UM_OTH_COMM = {"1000s", "Thousand Ha", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
     private final String THOUSAND_TONNES = "Thousand tonnes";
+    private final String THOUSAND_TONNES_ITY = "Thousand \n tonnes";
     private final String THOUSAND_TONNES_REGION = "                 Thousand tonnes";
 
-    private final static int NMY_START_ROW = 10;
-    private final static int SPACE_SECTIONS = 7;
+    private final static int NMY_START_ROW = 9;
+    private final static int SPACE_SECTIONS = 6;
     private final String NATIONAL = "foodBalance";
     private final String INTERNATIONAL = "international";
     private final String OTHERS = "others";
@@ -77,10 +78,7 @@ public class HandlerExcelCreation {
         for (int commodity : commodityList) {
 
             String commodityString = "" + commodity;
-
-
             String commodityLabel = commParser.getCommodityLabel(commodityString);
-
             Sheet sheet = workbook.createSheet(commodityLabel);
 
             int rowCounter = 0;
@@ -100,29 +98,25 @@ public class HandlerExcelCreation {
 
                 rowCounter = this.sheetCreator.createHeadersGroup(rowCounter, sheet, workbook, foodBalanceResults, NATIONAL, this.mapColumnsToView, marketingYearMap.get(commodityString).getNmyMonths());
 
+
+                System.out.println("here");
+                System.out.println(rowCounter);
                 // list of elements to show on the left
                 HashMap<Integer, LinkedHashMap<Integer, String>> elements = qvo.getFoodBalanceElements();
-
-                // Cell cellUM = sheet.createRow(rowUM).createCell((short) columnUM);
                 rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, elements.get(commodity), foodBalanceResults, this.mapColumnsToView);
 
-                Row row = sheet.getRow(NMY_START_ROW);
+                // for UM column ONLY
+                Row row = sheet.getRow(NMY_START_ROW)== null? sheet.createRow(NMY_START_ROW):sheet.getRow(NMY_START_ROW);
                 Cell cell = row.createCell((short) 1);
                 cell.setCellStyle(AmisExcelUtils.getBasicWithBordersOnRegion());
-              /*  cell.getCellStyle().setVerticalAlignment(CellStyle.ALIGN_CENTER);
-                cell.getCellStyle().setRotation((short) 90);*/
 
                 cell.setCellValue(THOUSAND_TONNES_REGION);
                 int endNmy = NMY_START_ROW + elements.get(commodity).size();
                 CellRangeAddress region = new CellRangeAddress(NMY_START_ROW, endNmy - 1, 1, 1);
-
-
                 sheet.addMergedRegion(region);
-                // CellUtil.setAlignment(cell, workbook, CellStyle.ALIGN_CENTER);
+
                 rowCounter++;
-
                 rowCounter = this.sheetCreator.createFooterMarketingYear(rowCounter, sheet, workbook, marketingYearMap.get(commodityString), "national", this.mapColumnsToView);
-
                 rowCounter++;
 
               /*
@@ -137,25 +131,23 @@ public class HandlerExcelCreation {
                 HashMap<Integer, LinkedHashMap<Integer, String>> elementsITY = qvo.getItyElements();
 
                 // put on the excel the elements and the values
-                //     this.sheetCreator.putMeasurementUnitValues(elementsITY.get(commodity), "international", 1, rowCounter, sheet);
                 rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, elementsITY.get(commodity), ityResults, this.mapColumnsToView);
 
                 int startIty = endNmy + SPACE_SECTIONS;
-                Row rowIt = sheet.getRow(startIty - 1);
+                Row rowIt = sheet.getRow(startIty - 1)== null? sheet.createRow(startIty - 1): sheet.getRow(startIty - 1);
                 Cell cellIt1 = rowIt.createCell((short) 1);
                 cellIt1.setCellStyle(AmisExcelUtils.getBasicWithBorders());
-                cellIt1.setCellValue(THOUSAND_TONNES);
-                Row rowIt2 = sheet.getRow(startIty);
-                Cell cellIt2 = rowIt2.createCell((short) 1);
-                cellIt2.setCellStyle(AmisExcelUtils.getBasicWithBorders());
+                cellIt1.setCellValue(THOUSAND_TONNES_ITY);
+                CellRangeAddress regionITY = new CellRangeAddress(startIty-1, startIty , 1, 1);
+                sheet.addMergedRegion(regionITY);
 
-                cellIt2.setCellValue(THOUSAND_TONNES);
+
+
+
                 int startOth = startIty + SPACE_SECTIONS;
 
                 rowCounter++;
-
                 rowCounter = this.sheetCreator.createFooterMarketingYear(rowCounter, sheet, workbook, marketingYearMap.get(commodityString), "ity", this.mapColumnsToView);
-
                 rowCounter++;
               /*
                 -------------------------    OTHERS   -------------------------------------------------
@@ -169,7 +161,6 @@ public class HandlerExcelCreation {
                 HashMap<Integer, LinkedHashMap<Integer, String>> elementsOTH = qvo.getOtherElements();
 
                 // put on the excel the elements and the values
-                //   this.sheetCreator.putMeasurementUnitValues(elementsOTH.get(commodity), "others", 1, rowCounter, sheet);
                 rowCounter = this.sheetCreator.createDataTableGroup(rowCounter, sheet, elementsOTH.get(commodity), otherResults, this.mapColumnsToView);
                 Row rowOth;
                 Cell cellOth;
@@ -177,7 +168,7 @@ public class HandlerExcelCreation {
                     String[] measuremntUnits = (elementsOTH.get(commodity).size() > 5) ? OTH_UM_RICE : OTH_UM_OTH_COMM;
 
                     for (int count = 0; count < elementsOTH.get(commodity).size(); count++) {
-                        rowOth = sheet.getRow(startOth + count);
+                        rowOth = sheet.getRow(startOth + count)== null? sheet.createRow(startOth + count): sheet.getRow(startOth + count);;;
                         cellOth = rowOth.createCell((short) 1);
                         cellOth.setCellStyle((AmisExcelUtils.getBasicWithBorders()));
                         cellOth.setCellValue(measuremntUnits[count]);

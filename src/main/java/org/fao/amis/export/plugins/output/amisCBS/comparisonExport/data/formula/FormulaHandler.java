@@ -23,7 +23,9 @@ public class FormulaHandler {
 
             for (String date : commForecast.keySet()) {
                 LinkedHashMap<String, DaoForecastValue> dateForecasts = commForecast.get(date);
+/*
                 domesticSupplyFormula(dateForecasts);
+*/
                 totalSupplyFormula(dateForecasts);
                 yieldFormula(dateForecasts, commodity);
                 domUtilizationFormula(dateForecasts, commodity);
@@ -35,23 +37,35 @@ public class FormulaHandler {
     }
 
 
-    private void domesticSupplyFormula ( LinkedHashMap<String, DaoForecastValue> dateForecasts){
+  /*  private void domesticSupplyFormula ( LinkedHashMap<String, DaoForecastValue> dateForecasts){
 
        if(formulaUtils.checkIfOk("18",dateForecasts) && formulaUtils.checkIfOk("5",dateForecasts)){
            double finalValue = dateForecasts.get("18").getValue() + dateForecasts.get("5").getValue();
            DaoForecastValue newValue = new DaoForecastValue(null,"C",finalValue);
            dateForecasts.put("27", newValue);
        }
-    }
+    }*/
 
 
     private void totalSupplyFormula(LinkedHashMap<String, DaoForecastValue> dateForecasts){
 
+        if(
+                formulaUtils.checkIfOk("18",dateForecasts) &&
+                        formulaUtils.checkIfOk("5",dateForecasts) &&
+                        formulaUtils.checkIfOk("7",dateForecasts) ){
+
+            double finalValue =  dateForecasts.get("18").getValue() + dateForecasts.get("5").getValue() + dateForecasts.get("7").getValue();
+            DaoForecastValue newValue = new DaoForecastValue(null,"C",finalValue);
+            dateForecasts.put("19", newValue);
+        }
+
+
+/*
         if(formulaUtils.checkIfOk("27",dateForecasts) && formulaUtils.checkIfOk("7",dateForecasts)){
             double finalValue = dateForecasts.get("27").getValue() + dateForecasts.get("7").getValue();
             DaoForecastValue newValue = new DaoForecastValue(null,"C",finalValue);
             dateForecasts.put("19", newValue);
-        }
+        }*/
     }
 
 

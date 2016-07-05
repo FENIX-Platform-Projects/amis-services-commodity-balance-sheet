@@ -212,7 +212,6 @@ public class SheetCreator {
                     break;
             }
         }
-        rowCounter++;
         return rowCounter;
     }
 
@@ -332,7 +331,7 @@ public class SheetCreator {
      * @param sheet
      * @return the number of column used
      */
-     private int createHeadersValuesSimpleShow(String date, int columnNumber, Row row, Sheet sheet) {
+    private int createHeadersValuesSimpleShow(String date, int columnNumber, Row row, Sheet sheet) {
 
         row.setHeight((short) (3 * 260));
         Cell cell = row.createCell((short) columnNumber);
@@ -498,15 +497,16 @@ public class SheetCreator {
 
             double value = forecast.getValue();
 
-            value =  ((Object)value != null && !Double.isNaN(value))?new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue(): -1;
+            LOGGER.debug("VALUE: "+value);
 
+            value =  (!Double.isInfinite(value) && (Object)value != null && !Double.isNaN(value))?new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue(): -1;
 
 
             Cell cell = row.createCell((short) columnNumber);
             CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
 
             Font font = discoverFont(code, (HSSFCellStyle)cellStyle);
-        //    cellStyle.setFont(font);
+            //    cellStyle.setFont(font);
             cell.setCellStyle(cellStyle);
 
             if (value == -1) {
@@ -525,7 +525,7 @@ public class SheetCreator {
             CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
 
             Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
-      //      cellStyle.setFont(font);
+            //      cellStyle.setFont(font);
             cell.setCellStyle(cellStyle);
             cell.setCellValue("");
 
@@ -596,12 +596,12 @@ public class SheetCreator {
 
             double value = forecast.getValue();
             value =  ((Object)value != null && !Double.isNaN(value))?new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue(): -1;
-            
+
             Cell cell = row.createCell((short) columnNumber);
             CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
 
             Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
-          //  cellStyle.setFont(font);
+            //  cellStyle.setFont(font);
             cell.setCellStyle(cellStyle);
 
             if (value == -1) {
@@ -621,7 +621,7 @@ public class SheetCreator {
             CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
 
             Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
-          //  cellStyle.setFont(font);
+            //  cellStyle.setFont(font);
             cell.setCellStyle(cellStyle);
 
             cell.setCellValue("");
@@ -713,7 +713,7 @@ public class SheetCreator {
 
                 if (!startingCropsMonths.equals("-1") && !startingYearCrops.equals("-1") && !endingCropsMonths.equals("-1") && !endingYearCrops.equals("-1")) {
                     footerValue+= footerValue.length() ==0? "It": " and";
-                            footerValue += " refers to the crop that is harvested mainly from " + startingCropsMonths + " " + startingYearCrops +
+                    footerValue += " refers to the crop that is harvested mainly from " + startingCropsMonths + " " + startingYearCrops +
                             " to " + endingCropsMonths + " " + endingYearCrops;
                 }
                 break;

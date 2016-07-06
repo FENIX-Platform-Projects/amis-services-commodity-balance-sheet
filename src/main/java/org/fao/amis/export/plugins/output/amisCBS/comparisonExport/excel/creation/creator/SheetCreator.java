@@ -1,10 +1,7 @@
 package org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creation.creator;
 
-
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.*;
@@ -41,10 +38,18 @@ public class SheetCreator {
     private URLGetter urlGetter;
     private ElementStyles2 elementStyles2;
     private ArrayList<Integer> firstYearSeason;
-    private static  final HashMap<Integer,Integer>  SPACE_ELEMENT = new HashMap<Integer,Integer>(){
-        {put(13,1); put(14,1); put(15,1); put(36,1);
-            put(21,2);put(34,2);put(28,2);
-            put(999,3); put(19, 3); put(35,3);
+    private static final HashMap<Integer, Integer> SPACE_ELEMENT = new HashMap<Integer, Integer>() {
+        {
+            put(13, 1);
+            put(14, 1);
+            put(15, 1);
+            put(36, 1);
+            put(21, 2);
+            put(34, 2);
+            put(28, 2);
+            put(999, 3);
+            put(19, 3);
+            put(35, 3);
         }
     };
 
@@ -56,12 +61,12 @@ public class SheetCreator {
     public void init(ElementStyles2 elementStyles2, AmisExcelUtils amisExcelUtils) {
         this.elementStyles2 = elementStyles2;
         this.amisExcelUtils = amisExcelUtils;
-
     }
 
 
     /**
      * Create the summary
+     *
      * @param rowCounter
      * @param sheet
      * @param workbook
@@ -77,7 +82,7 @@ public class SheetCreator {
         lastSeason = dataCreator.getSeason();
         String dataSource = dataCreator.getDatasource();
         String country = dataCreator.getCountry();
-        HashMap<String,String> mapProductDate = dataCreator.getMapProductDate();
+        HashMap<String, String> mapProductDate = dataCreator.getMapProductDate();
         sheet.setColumnWidth(1, 3000);
 
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "COUNTRY: ", country);
@@ -86,14 +91,14 @@ public class SheetCreator {
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "DATASOURCE: ", dataSource);
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "Data Last Updated on: ", mapProductDate.get(commodity));
 
-
         rowCounter = amisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
 
         return rowCounter;
     }
 
     /**
-     *Create the legend with country, commodity, last season, and datasource
+     * Create the legend with country, commodity, last season, and datasource
+     *
      * @param rowCounter
      * @param sheet
      * @param workbook
@@ -126,6 +131,7 @@ public class SheetCreator {
 
     /**
      * Create the title of each sheet
+     *
      * @param rowCounter
      * @param sheet
      * @param workbook
@@ -146,6 +152,7 @@ public class SheetCreator {
 
     /**
      * Create the header of each forecast
+     *
      * @param rowCounter
      * @param sheet
      * @param workbook
@@ -182,7 +189,7 @@ public class SheetCreator {
 
         //MARKETING YEAR
         if (months != null) {
-            columnNumber = putMarketingYear(sheet, workbook, row, columnNumber, months);
+            columnNumber = putMarketingYear(workbook, row, columnNumber, months);
             columnNumber++;
         } else {
             columnNumber += 2;
@@ -218,6 +225,7 @@ public class SheetCreator {
 
     /**
      * Create the body of the sheet, including the list of elements and the forecasts
+     *
      * @param rowCounter
      * @param sheet
      * @param elements
@@ -240,16 +248,13 @@ public class SheetCreator {
             Row row = sheet.createRow(rowCounter++);
 
             Cell cell = row.createCell((short) columnNumber);
-            CellStyle elemStyle = null;
+            CellStyle elemStyle;
 
-          /*  Font font = discoverFont(code);*/
             elemStyle = mapStyles.get("a" + code).getStyleElementsKey();
-          /*  elemStyle.setFont(font);*/
             cell.setCellStyle(elemStyle);
 
-            String value = setSpaceToElement(code,elements.get(code));
+            String value = setSpaceToElement(code, elements.get(code));
             cell.setCellValue(value);
-            // sheet.autoSizeColumn(columnNumber);
             sheet.setColumnWidth(200, columnNumber);
 
             columnNumber += 2;
@@ -271,7 +276,7 @@ public class SheetCreator {
                         columnNumber = fillForecastElementsWithFlagsAndComments(columnNumber, row, foodBalanceResults.get(date), code, sheet, date);
                         break;
 
-                    case "showOnly" :
+                    case "showOnly":
                         columnNumber = fillForecastForFirstSeasonToShow(columnNumber, row, foodBalanceResults.get(date), code, date);
                         break;
 
@@ -288,6 +293,7 @@ public class SheetCreator {
 
     /**
      * Create the headers complete, with flags and comments, for the last forecast of the last season and last season -1
+     *
      * @param date
      * @param columnNumber
      * @param row
@@ -325,6 +331,7 @@ public class SheetCreator {
 
     /**
      * Create the headers with only value, for the last forecast -1 of last season and last season -1
+     *
      * @param date
      * @param columnNumber
      * @param row
@@ -346,6 +353,7 @@ public class SheetCreator {
 
     /**
      * Create the header for only value to show for the last season -2
+     *
      * @param date
      * @param columnNumber
      * @param row
@@ -378,11 +386,6 @@ public class SheetCreator {
         cell.setCellValue(reformatDate(date));
         sheet.autoSizeColumn(columnNumber);
         sheet.setColumnHidden(columnNumber, true);
-
-        // set the "blank" column to hidden
-        /*columnNumber++;
-        sheet.setColumnHidden(columnNumber, true);
-*/
         columnNumber++;
 
         return columnNumber;
@@ -397,14 +400,22 @@ public class SheetCreator {
             // value
 
             double value = forecast.getValue();
-            value =  ((Object)value != null && !Double.isNaN(value))?new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue(): -1;
-
-
+            value = (!Double.isInfinite(value) && (Object) value != null && !Double.isNaN(value)) ? (value % 1 != 0) ? new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue() : Double.parseDouble(String.valueOf(value)) : -1;
 
             Cell cell = row.createCell((short) columnNumber);
-            CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+            CellStyle cellStyle;
 
-            Font font = discoverFont(code, (HSSFCellStyle)cellStyle);
+            // uniform the decimal number of digits
+            if (value % 1 == 0) {
+                cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+            } else {
+                cellStyle = row.getSheet().getWorkbook().createCellStyle();
+                cellStyle.cloneStyleFrom(mapStyles.get("a" + code).getStyleBodyElement());
+                cellStyle.setDataFormat(row.getSheet().getWorkbook().createDataFormat().getFormat("0.00"));
+            }
+
+            Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
+
             cellStyle.setFont(font);
             cell.setCellStyle(cellStyle);
 
@@ -421,10 +432,8 @@ public class SheetCreator {
             // flags
             Cell cell1 = row.createCell((short) columnNumber);
 
-            cell1.setCellStyle(getFlagAndNotesStyle(code,true));
-/*
-            cell1.setCellStyle(amisExcelUtils.getBasicWithRightAlWithBorders());
-*/
+            cell1.setCellStyle(getFlagAndNotesStyle(code, true));
+
             cell1.setCellValue((forecast.getFlags().equals("null")) ? "" : forecast.getFlags());
 
             String indexLetter1 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -434,7 +443,7 @@ public class SheetCreator {
 
             // notes
             Cell cell2 = row.createCell((short) columnNumber);
-            cell2.setCellStyle(getFlagAndNotesStyle(code,false));
+            cell2.setCellStyle(getFlagAndNotesStyle(code, false));
 
             cell2.setCellValue((forecast.getNotes() == null || forecast.getNotes().equals("null")) ? "" : forecast.getNotes());
             sheet.autoSizeColumn(columnNumber);
@@ -462,7 +471,7 @@ public class SheetCreator {
 
             Cell cell1 = row.createCell((short) columnNumber);
 
-            cell1.setCellStyle(getFlagAndNotesStyle(code,true));
+            cell1.setCellStyle(getFlagAndNotesStyle(code, true));
             cell1.setCellValue("");
 
             String indexLetter1 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
@@ -472,16 +481,14 @@ public class SheetCreator {
 
             // notes
             Cell cell2 = row.createCell((short) columnNumber);
-            //discoverFont(code,(HSSFCellStyle)cellStyleNotes);
 
-            cell2.setCellStyle(getFlagAndNotesStyle(code,false));
+            cell2.setCellStyle(getFlagAndNotesStyle(code, false));
             cell2.setCellValue("");
 
             String indexLetter2 = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
             cellMappers.putData(date, "" + code, "notes", indexLetter2);
 
             columnNumber += 2;
-
         }
 
         return columnNumber;
@@ -497,18 +504,21 @@ public class SheetCreator {
 
             double value = forecast.getValue();
 
-            LOGGER.debug("VALUE: "+value);
+            LOGGER.debug("VALUE: " + value);
 
-            value =  (!Double.isInfinite(value) && (Object)value != null && !Double.isNaN(value))?new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue(): -1;
-
+            value = (!Double.isInfinite(value) && (Object) value != null && !Double.isNaN(value)) ? (value % 1 != 0) ? new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue() : Double.parseDouble(String.valueOf(value)) : -1;
 
             Cell cell = row.createCell((short) columnNumber);
-            CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+            CellStyle cellStyle;
+            if (value % 1 == 0) {
+                cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+            } else {
+                cellStyle = row.getSheet().getWorkbook().createCellStyle();
+                cellStyle.cloneStyleFrom(mapStyles.get("a" + code).getStyleBodyElement());
+                cellStyle.setDataFormat(row.getSheet().getWorkbook().createDataFormat().getFormat("0.00"));
+            }
 
-            Font font = discoverFont(code, (HSSFCellStyle)cellStyle);
-            //    cellStyle.setFont(font);
             cell.setCellStyle(cellStyle);
-
             if (value == -1) {
                 cell.setCellValue("");
             } else {
@@ -524,8 +534,6 @@ public class SheetCreator {
             Cell cell = row.createCell((short) columnNumber);
             CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
 
-            Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
-            //      cellStyle.setFont(font);
             cell.setCellStyle(cellStyle);
             cell.setCellValue("");
 
@@ -546,16 +554,18 @@ public class SheetCreator {
 
             double value = forecast.getValue();
 
-            value = ((Object)value != null && !Double.isNaN(value))?new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue(): -1;
-
+            value = (!Double.isInfinite(value) && (Object) value != null && !Double.isNaN(value)) ? (value % 1 != 0) ? new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue() : Double.parseDouble(String.valueOf(value)) : -1;
 
             Cell cell = row.createCell((short) columnNumber);
-            CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
-
-            Font font = discoverFont(code, (HSSFCellStyle)cellStyle);
-            //    cellStyle.setFont(font);
+            CellStyle cellStyle;
+            if (value % 1 == 0) {
+                cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+            } else {
+                cellStyle = row.getSheet().getWorkbook().createCellStyle();
+                cellStyle.cloneStyleFrom(mapStyles.get("a" + code).getStyleBodyElement());
+                cellStyle.setDataFormat(row.getSheet().getWorkbook().createDataFormat().getFormat("0.00"));
+            }
             cell.setCellStyle(cellStyle);
-
             if (value == -1) {
                 cell.setCellValue("");
             } else {
@@ -564,26 +574,23 @@ public class SheetCreator {
             String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
             cellMappers.putData(date, "" + code, "value", indexLetter);
 
-            columnNumber+=2;
+            columnNumber += 2;
 
         } else {
 
             Cell cell = row.createCell((short) columnNumber);
             CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
 
-            Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
-            //      cellStyle.setFont(font);
             cell.setCellStyle(cellStyle);
             cell.setCellValue("");
 
             String indexLetter = CellReference.convertNumToColString(columnNumber) + "" + (cell.getRowIndex() + 1);
             cellMappers.putData(date, "" + code, "value", indexLetter);
-            columnNumber+=2;
+            columnNumber += 2;
         }
 
         return columnNumber;
     }
-
 
 
     private int fillForecastElementsShowOnlyAndDefault(int columnNumber, Row row, LinkedHashMap<String,
@@ -595,15 +602,19 @@ public class SheetCreator {
             // value
 
             double value = forecast.getValue();
-            value =  ((Object)value != null && !Double.isNaN(value))?new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue(): -1;
+            value = (!Double.isInfinite(value) && (Object) value != null && !Double.isNaN(value)) ? (value % 1 != 0) ? new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue() : Double.parseDouble(String.valueOf(value)) : -1;
 
             Cell cell = row.createCell((short) columnNumber);
-            CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+            CellStyle cellStyle;
+            if (value % 1 == 0) {
+                cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
+            } else {
+                cellStyle = row.getSheet().getWorkbook().createCellStyle();
+                cellStyle.cloneStyleFrom(mapStyles.get("a" + code).getStyleBodyElement());
+                cellStyle.setDataFormat(row.getSheet().getWorkbook().createDataFormat().getFormat("0.00"));
+            }
 
-            Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
-            //  cellStyle.setFont(font);
             cell.setCellStyle(cellStyle);
-
             if (value == -1) {
 
                 cell.setCellValue("");
@@ -619,9 +630,6 @@ public class SheetCreator {
 
             Cell cell = row.createCell((short) columnNumber);
             CellStyle cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
-
-            Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
-            //  cellStyle.setFont(font);
             cell.setCellStyle(cellStyle);
 
             cell.setCellValue("");
@@ -633,23 +641,6 @@ public class SheetCreator {
         }
 
         return columnNumber;
-    }
-
-
-    private boolean checkIfExist(String addendumCode, Sheet sheet) {
-
-        boolean result = true;
-
-        Cell cell;
-        CellReference referenceValue = new CellReference(addendumCode);
-        Row rowIndex = sheet.getRow(referenceValue.getRow());
-        cell = rowIndex.getCell(referenceValue.getCol());
-
-        if (cell.getCellType() == 1 && cell.getStringCellValue() == "" || cell.getCellType() == 0 && cell.getNumericCellValue() == 0.0) {
-            result = false;
-        }
-
-        return result;
     }
 
 
@@ -667,17 +658,13 @@ public class SheetCreator {
     }
 
 
-    private int putMarketingYear(Sheet sheet, Workbook workbook, Row row, int columnNumber, String valueToPut) {
+    private int putMarketingYear(Workbook workbook, Row row, int columnNumber, String valueToPut) {
 
         columnNumber++;
         Cell cell = row.createCell((short) columnNumber);
         cell.setCellStyle(amisExcelUtils.getBoldTextCellStyleWithAlignment((HSSFWorkbook) workbook, null));
-        String value = valueToPut != null && !valueToPut.equals("-1") && !valueToPut.equals(-1) ? reformatMarketingYear(valueToPut): "";
-
+        String value = valueToPut != null && !valueToPut.equals("-1") && !valueToPut.equals(-1) ? reformatMarketingYear(valueToPut) : "";
         cell.setCellValue(value);
-/*
-        sheet.autoSizeColumn(columnNumber);
-*/
 
         return columnNumber;
 
@@ -691,7 +678,7 @@ public class SheetCreator {
 
         String footerValue = "";
         String lastSeasonStart = lastSeason.split("/")[0];
-        String months, cropsMonths, startingYear, endingYear, startingYearCrops, endingYearCrops;
+        String months, startingYear, endingYear, startingYearCrops, endingYearCrops;
 
         switch (type) {
             case "national":
@@ -712,7 +699,7 @@ public class SheetCreator {
                 }
 
                 if (!startingCropsMonths.equals("-1") && !startingYearCrops.equals("-1") && !endingCropsMonths.equals("-1") && !endingYearCrops.equals("-1")) {
-                    footerValue+= footerValue.length() ==0? "It": " and";
+                    footerValue += footerValue.length() == 0 ? "It" : " and";
                     footerValue += " refers to the crop that is harvested mainly from " + startingCropsMonths + " " + startingYearCrops +
                             " to " + endingCropsMonths + " " + endingYearCrops;
                 }
@@ -776,63 +763,61 @@ public class SheetCreator {
     }
 
 
-    private String setSpaceToElement (int code, String value) {
+    private String setSpaceToElement(int code, String value) {
         String result = "";
-        if(SPACE_ELEMENT.get(code) != null) {
-            if(SPACE_ELEMENT.get(code) == 1) {
-                result += "  "+value;
-            }else if(SPACE_ELEMENT.get(code) == 2){
-                result += "    "+value;
-            }
-            else{
+        if (SPACE_ELEMENT.get(code) != null) {
+            if (SPACE_ELEMENT.get(code) == 1) {
+                result += "  " + value;
+            } else if (SPACE_ELEMENT.get(code) == 2) {
+                result += "    " + value;
+            } else {
                 result = value;
             }
-        }else{
-            result  =value;
+        } else {
+            result = value;
         }
         return result;
     }
 
 
-    private Font discoverFont (int code, HSSFCellStyle cellStyle) {
-        Font result =null;
-        if(SPACE_ELEMENT.get(code) != null) {
+    private Font discoverFont(int code, HSSFCellStyle cellStyle) {
+        Font result = null;
+        if (SPACE_ELEMENT.get(code) != null) {
             if (SPACE_ELEMENT.get(code) == 1) {
                 amisExcelUtils.putItalicFont(cellStyle);
                 result = amisExcelUtils.getItalicFont();
             } else if (SPACE_ELEMENT.get(code) == 2) {
-                amisExcelUtils.getSmallTextCellStyle(cellStyle,true);
+                amisExcelUtils.getSmallTextCellStyle(cellStyle, true);
                 result = amisExcelUtils.getBoldSmallFont();
             } else if (SPACE_ELEMENT.get(code) == 3) {
-                amisExcelUtils.getSmallTextCellStyle(cellStyle,true);
+                amisExcelUtils.getSmallTextCellStyle(cellStyle, true);
                 result = amisExcelUtils.getBoldFont();
             }
-        }else{
+        } else {
             result = amisExcelUtils.getBasicFont();
         }
         return result;
     }
 
 
-    private HSSFCellStyle getFlagAndNotesStyle (int code,  boolean isFlag) {
+    private HSSFCellStyle getFlagAndNotesStyle(int code, boolean isFlag) {
 
-        HSSFCellStyle result =null;
-        if(SPACE_ELEMENT.get(code) != null) {
+        HSSFCellStyle result = null;
+        if (SPACE_ELEMENT.get(code) != null) {
             if (SPACE_ELEMENT.get(code) == 1) {
-                result = (isFlag)? amisExcelUtils.getFlagWithItalic(): amisExcelUtils.getNotesWithItalic();
+                result = (isFlag) ? amisExcelUtils.getFlagWithItalic() : amisExcelUtils.getNotesWithItalic();
                 amisExcelUtils.putItalicFont(result);
             } else if (SPACE_ELEMENT.get(code) == 2) {
-                result = (isFlag)? amisExcelUtils.getFlagWithSmallBold(): amisExcelUtils.getNotesWithSmallBold();
+                result = (isFlag) ? amisExcelUtils.getFlagWithSmallBold() : amisExcelUtils.getNotesWithSmallBold();
                 amisExcelUtils.putSmallBoldFont(result);
             } else if (SPACE_ELEMENT.get(code) == 3) {
-                result = (isFlag)? amisExcelUtils.getFlagWithBold(): amisExcelUtils.getNotesWithBold();
+                result = (isFlag) ? amisExcelUtils.getFlagWithBold() : amisExcelUtils.getNotesWithBold();
                 amisExcelUtils.putBoldFont(result);
             }
-        }else{
-            result =  (isFlag)?amisExcelUtils.getRightAlignmentWithBordersStyle(): amisExcelUtils.getBasicWithBorders();
+        } else {
+            result = (isFlag) ? amisExcelUtils.getRightAlignmentWithBordersStyle() : amisExcelUtils.getBasicWithBorders();
         }
         return result;
     }
-
 
 }

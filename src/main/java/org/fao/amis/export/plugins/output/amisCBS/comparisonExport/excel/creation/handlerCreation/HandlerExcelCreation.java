@@ -204,7 +204,9 @@ public class HandlerExcelCreation {
 
         int lastYear = Integer.parseInt(lastDate.substring(0, 4));
 
-        String otherDate = datesList.get(datesSize - counter);
+        int index = (datesSize-counter>0)? datesSize-counter: 0;
+
+        String otherDate = datesList.get(index);
 
         int year = Integer.parseInt(otherDate.substring(0, 4));
 

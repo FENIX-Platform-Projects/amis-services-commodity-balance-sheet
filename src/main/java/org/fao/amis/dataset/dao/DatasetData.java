@@ -22,9 +22,9 @@ public class DatasetData {
 
     @Inject
     private ConnectionManager connectionManager;
-
+/*
     @Inject
-    private DBProcess dbProcess;
+    private DBProcess dbProcess;*/
 
     private static String queryMostRecentDateForEveryProduct = "select distinct max(date) over(partition by product_code) as date,product_code\n" +
             "from national_forecast\n" +
@@ -166,8 +166,8 @@ public class DatasetData {
                 statement.executeBatch();
             }
 
-          /*  statement = connection.prepareStatement(queryFunction);
-            statement.execute();*/
+            statement = connection.prepareStatement(queryFunction);
+            statement.execute();
 
             connection.commit();
         } catch (Exception ex) {
@@ -175,10 +175,10 @@ public class DatasetData {
             LOGGER.info("GET NEXT EXCEPTION: ");
             LOGGER.info("INTO CATCH: the exception is: " + ex.toString());
             LOGGER.info(((SQLException) ex).getNextException().toString());
-            connection.rollback();PreparedStatement statement;
+            connection.rollback();
             throw ex;
         } finally {
-            connection.setAutoCommit(true);PreparedStatement statement;
+            connection.setAutoCommit(true);
         }
     }
 
@@ -221,13 +221,15 @@ public class DatasetData {
                 }
                 statement.executeBatch();
             }
-            dbProcess.init(queryFunction,this.connectionManager.getConnection());
+        /*    dbProcess.init(queryFunction,this.connectionManager.getConnection());
             Thread functionThread = new Thread(dbProcess);
             functionThread.start();
-            connection.commit();
+            connection.commit();*/
            /* dbProcess.run();*/
-            /*statement = connection.prepareStatement(queryFunction);
-            statement.execute();*/
+            statement = connection.prepareStatement(queryFunction);
+            statement.execute();
+
+            connection.commit();
 
         } catch (Exception ex) {
             LOGGER.error("The Exception is: " + ex.toString());

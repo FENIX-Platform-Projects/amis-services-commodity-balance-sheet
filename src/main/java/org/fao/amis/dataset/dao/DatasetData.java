@@ -15,7 +15,7 @@ import org.fao.amis.server.tools.utils.DatabaseUtils;
 
 public class DatasetData {
 
-    private static final Logger LOGGER = Logger.getLogger("export");
+    private static final Logger LOGGER = Logger.getLogger(DatasetData.class);
 
     @Inject
     private DatabaseUtils utils;
@@ -131,6 +131,9 @@ public class DatasetData {
     }
 
     public void updNationalData(DatasetUpdate data) throws Exception {
+        LOGGER.debug("starting update national data");
+        LOGGER.info("*****************************************");
+
         Connection connection = this.connectionManager.getConnection();
         try {
             connection.setAutoCommit(false);
@@ -168,13 +171,14 @@ public class DatasetData {
 
             statement = connection.prepareStatement(queryFunction);
             statement.execute();
+            LOGGER.info("Updated the view");
 
             connection.commit();
         } catch (Exception ex) {
 
-            LOGGER.info("GET NEXT EXCEPTION: ");
-            LOGGER.info("INTO CATCH: the exception is: " + ex.toString());
-            LOGGER.info(((SQLException) ex).getNextException().toString());
+            LOGGER.error("GET NEXT EXCEPTION: ");
+            LOGGER.error("INTO CATCH: the exception is: " + ex.toString());
+            LOGGER.error(((SQLException) ex).getNextException().toString());
             connection.rollback();
             throw ex;
         } finally {

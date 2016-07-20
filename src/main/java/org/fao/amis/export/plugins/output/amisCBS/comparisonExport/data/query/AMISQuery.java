@@ -83,10 +83,7 @@ public class AMISQuery {
              prop.load(inputStream);
 
              dataUtils.fillMap(this.ityElements,COMMODITIES,MAIZE_AND_WHEAT_FOOD,RICE_FOOD,SOYBEANS_FOOD, prop);
-             LOGGER.debug("*****************************************");
-             LOGGER.debug("ITY ELEMENTS");
 
-             LOGGER.debug(this.ityElements.toString());
 
          }
 
@@ -97,9 +94,7 @@ public class AMISQuery {
              InputStream inputStream = getClass().getClassLoader().getResourceAsStream(URL_OTHERS);
 
              prop.load(inputStream);
-             LOGGER.debug("*****************************************");
-             LOGGER.debug("OTHERS ELEMENTS PROPERTIES");
-             LOGGER.debug(prop.toString());
+
              dataUtils.fillMap(this.otherElements,COMMODITIES,MAIZE_AND_WHEAT_FOOD,RICE_FOOD,SOYBEANS_FOOD, prop);
          }
     }

@@ -112,11 +112,6 @@ public class Forecast {
             unorderedMap.put(commodityCode, semiMap);
         }
 
-
-        LOGGER.debug("***************************************");
-        LOGGER.debug("UNORDERED MAP");
-        LOGGER.debug(unorderedMap);
-
     }
 
     // OK

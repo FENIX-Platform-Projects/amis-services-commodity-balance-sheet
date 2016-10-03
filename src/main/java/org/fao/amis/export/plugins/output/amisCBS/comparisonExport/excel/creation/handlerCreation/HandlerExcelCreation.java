@@ -2,11 +2,13 @@ package org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creati
 
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.configurations.dataCreator.DataCreator;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.daoValue.DaoForecastValue;
 import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.data.forecast.Forecast;
@@ -27,8 +29,8 @@ public class HandlerExcelCreation {
     private SheetCreator sheetCreator;
     private Map<String, String> mapColumnsToView;
     private List<String> datesList; // order ASC
-    private final static String[] OTH_UM_RICE = {"1000s", "Thousand Ha", "%", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
-    private final static String[] OTH_UM_OTH_COMM = {"1000s", "Thousand Ha", "Tonnes/Ha", "Thousand Ha", "Kg/Yr"};
+    private final static String[] OTH_UM_RICE = {"1000s", "Thousand Ha", "Thousand Ha", "Tonnes/Ha", "%", "Kg/Yr"};
+    private final static String[] OTH_UM_OTH_COMM = {"1000s", "Thousand Ha", "Thousand Ha","Tonnes/Ha",  "Kg/Yr"};
     private final String THOUSAND_TONNES_ITY = "Thousand \n tonnes";
     private final String THOUSAND_TONNES_REGION = "                 Thousand tonnes";
 
@@ -106,9 +108,12 @@ public class HandlerExcelCreation {
                 Cell cell = row.createCell((short) 1);
                 cell.setCellStyle(AmisExcelUtils.getBasicWithBordersOnRegion());
 
+
                 cell.setCellValue(THOUSAND_TONNES_REGION);
                 int endNmy = NMY_START_ROW + elements.get(commodity).size();
                 CellRangeAddress region = new CellRangeAddress(NMY_START_ROW, endNmy - 1, 1, 1);
+                AmisExcelUtils.setRegionBorders(region,sheet,workbook);
+
                 sheet.addMergedRegion(region);
 
                 rowCounter++;
@@ -132,12 +137,14 @@ public class HandlerExcelCreation {
                 int startIty = endNmy + SPACE_SECTIONS;
                 Row rowIt = sheet.getRow(startIty - 1)== null? sheet.createRow(startIty - 1): sheet.getRow(startIty - 1);
                 Cell cellIt1 = rowIt.createCell((short) 1);
-                cellIt1.setCellStyle(AmisExcelUtils.getBasicWithBorders());
-                cellIt1.setCellValue(THOUSAND_TONNES_ITY);
+                cellIt1.setCellValue("Thousand \n cioa");
+                Row rowItEnd = sheet.getRow(startIty );
+                Cell cellIt2 = rowItEnd.createCell((short) 1);
+                cellIt2.setCellStyle(AmisExcelUtils.getBasicWithBorders());
+                cellIt2.setCellValue("To");
                 CellRangeAddress regionITY = new CellRangeAddress(startIty-1, startIty , 1, 1);
                 sheet.addMergedRegion(regionITY);
-
-
+                AmisExcelUtils.setRegionBorders(regionITY,sheet,workbook);
 
 
                 int startOth = startIty + SPACE_SECTIONS;

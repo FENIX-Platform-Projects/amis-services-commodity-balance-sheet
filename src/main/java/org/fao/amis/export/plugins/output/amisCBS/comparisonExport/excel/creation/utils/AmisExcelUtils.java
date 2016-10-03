@@ -3,6 +3,8 @@ package org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.creati
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +22,7 @@ public class AmisExcelUtils {
     public static HSSFFont basicFont;
     private static HSSFPalette palette;
     private static HSSFWorkbook workbookInstance;
+    private static HSSFCellStyle basicCellStyle;
 
     private static Map<String, HSSFCellStyle> styles;
 
@@ -227,13 +230,11 @@ public class AmisExcelUtils {
     }
 
     public static HSSFCellStyle getBasicCellStyle() {
-        HSSFCellStyle style = styles.get("basicStyle");
-        return style;
+        return styles.get("basicStyle");
     }
 
     public static HSSFCellStyle getBasicWithBorders() {
-        HSSFCellStyle style = styles.get("borderBasicStyle");
-        return style;
+       return styles.get("borderBasicStyle");
     }
 
     public static HSSFCellStyle getBasicWithRightAlWithBorders() {
@@ -359,6 +360,18 @@ public class AmisExcelUtils {
         cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
         cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
 
+        return cellStyle;
+
+    }
+
+    public static HSSFCellStyle getBasicWithBorderCellStyle(HSSFWorkbook workbook, HSSFCellStyle cellStyle) {
+
+        if (cellStyle == null) {
+            cellStyle = workbook.createCellStyle();
+        }
+
+        setSimpleBorderStyle(cellStyle);
+        cellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
         return cellStyle;
 
     }
@@ -603,4 +616,18 @@ public class AmisExcelUtils {
         ps.setFitHeight((short)1);
         ps.setFitWidth((short)1);
     }
-}
+
+    public static void setRegionBorders(CellRangeAddress cellRangeAddress, Sheet sheet, Workbook workbook) {
+        RegionUtil.setBorderTop(HSSFCellStyle.BORDER_THIN,cellRangeAddress,sheet,workbook);
+        RegionUtil.setBorderBottom(HSSFCellStyle.BORDER_THIN,cellRangeAddress,sheet,workbook);
+        RegionUtil.setBorderLeft(HSSFCellStyle.BORDER_THIN,cellRangeAddress,sheet,workbook);
+        RegionUtil.setBorderRight(HSSFCellStyle.BORDER_THIN,cellRangeAddress,sheet,workbook);
+
+    }
+
+    public static HSSFCellStyle getBasicWithBorderStyle () {
+        if(basicCellStyle== null)
+            basicCellStyle = getBasicWithBorders();
+        return basicCellStyle;
+    }
+ }

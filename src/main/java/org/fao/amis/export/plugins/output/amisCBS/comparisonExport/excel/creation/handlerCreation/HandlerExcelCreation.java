@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -137,11 +138,12 @@ public class HandlerExcelCreation {
                 int startIty = endNmy + SPACE_SECTIONS;
                 Row rowIt = sheet.getRow(startIty - 1)== null? sheet.createRow(startIty - 1): sheet.getRow(startIty - 1);
                 Cell cellIt1 = rowIt.createCell((short) 1);
-                cellIt1.setCellValue("Thousand \n cioa");
-                Row rowItEnd = sheet.getRow(startIty );
-                Cell cellIt2 = rowItEnd.createCell((short) 1);
-                cellIt2.setCellStyle(AmisExcelUtils.getBasicWithBorders());
-                cellIt2.setCellValue("To");
+                CellStyle styleWrap = workbook.createCellStyle();
+                styleWrap.setWrapText(true);
+                styleWrap.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+
+                cellIt1.setCellStyle(styleWrap);
+                cellIt1.setCellValue(THOUSAND_TONNES_ITY);
                 CellRangeAddress regionITY = new CellRangeAddress(startIty-1, startIty , 1, 1);
                 sheet.addMergedRegion(regionITY);
                 AmisExcelUtils.setRegionBorders(regionITY,sheet,workbook);

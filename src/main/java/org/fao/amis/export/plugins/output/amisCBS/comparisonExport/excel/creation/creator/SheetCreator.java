@@ -605,11 +605,10 @@ public class SheetCreator {
             value = (!Double.isInfinite(value) && (Object) value != null && !Double.isNaN(value)) ? (value % 1 != 0) ? new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue() : Double.parseDouble(String.valueOf(value)) : -1;
 
             Cell cell = row.createCell((short) columnNumber);
-            CellStyle cellStyle;
+            CellStyle cellStyle = amisExcelUtils.getRightAlignmentWithBordersStyle();
             if (value % 1 == 0) {
                 cellStyle = mapStyles.get("a" + code).getStyleBodyElement();
             } else {
-                cellStyle = row.getSheet().getWorkbook().createCellStyle();
                 cellStyle.cloneStyleFrom(mapStyles.get("a" + code).getStyleBodyElement());
                 cellStyle.setDataFormat(row.getSheet().getWorkbook().createDataFormat().getFormat("0.00"));
             }

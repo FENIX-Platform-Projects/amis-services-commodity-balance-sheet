@@ -33,14 +33,14 @@ public class ElementStyles2 {
         this.styles.put("a10", new StylesFont(amisExcelUtils.getGreyCellStyle(),       amisExcelUtils.getBasicWithBorders()));  // Exports (NMY)
         this.styles.put("a16", new StylesFont(amisExcelUtils.getGreyCellStyle(),       amisExcelUtils.getBasicWithBorders()));  // Closing Stock
         this.styles.put("a999", new StylesFont(amisExcelUtils.getGreyBoldCellStyle(), amisExcelUtils.getNormalWithBold())); // Unbalanced
-        this.styles.put("a12", new StylesFont(amisExcelUtils.getGreyCellStyle(),      amisExcelUtils.getBasicWithBorderStyle()));      // Exports (ITY)
-        this.styles.put("a8", new StylesFont(amisExcelUtils.getGreyCellStyle(),       amisExcelUtils.getBasicWithBorderStyle()));   // Imports (ITY)
-        this.styles.put("a2", new StylesFont(amisExcelUtils.getGreyCellStyle(),       amisExcelUtils.getBasicWithBorderStyle()));   // Area HArv
-        this.styles.put("a4", new StylesFont(amisExcelUtils.getGreyCellStyle(),       amisExcelUtils.getBasicWithBorderStyle()));   // Yield
-        this.styles.put("a1", new StylesFont(amisExcelUtils.getGreyCellStyle(),       amisExcelUtils.getBasicWithBorderStyle()));   // Population
-        this.styles.put("a3", new StylesFont(amisExcelUtils.getGreyCellStyle(),       amisExcelUtils.getBasicWithBorderStyle()));   // Extraction Rate
-        this.styles.put("a37", new StylesFont(amisExcelUtils.getGreyCellStyle(),      amisExcelUtils.getBasicWithBorderStyle()));   // Area Planted
-        this.styles.put("a25", new StylesFont(amisExcelUtils.getGreyCellStyle(),      amisExcelUtils.getBasicWithBorderStyle()));   // Per capita food use
+        this.styles.put("a12", new StylesFont(amisExcelUtils.getGreyCellStyle(),      amisExcelUtils.getBasicWithBorders()));      // Exports (ITY)
+        this.styles.put("a8", new StylesFont(amisExcelUtils.getGreyCellStyle(),       amisExcelUtils.getBasicWithBorders()));   // Imports (ITY)
+        this.styles.put("a2", new StylesFont(amisExcelUtils.getGreyCellStyle(),       amisExcelUtils.getBasicWithBorders()));   // Area HArv
+        this.styles.put("a4", new StylesFont(amisExcelUtils.getGreyCellStyle(),       amisExcelUtils.getBasicWithBorders()));   // Yield
+        this.styles.put("a1", new StylesFont(amisExcelUtils.getGreyCellStyle(),       amisExcelUtils.getBasicWithBorders()));   // Population
+        this.styles.put("a3", new StylesFont(amisExcelUtils.getGreyCellStyle(),       amisExcelUtils.getBasicWithBorders()));   // Extraction Rate
+        this.styles.put("a37", new StylesFont(amisExcelUtils.getGreyCellStyle(),      amisExcelUtils.getBasicWithBorders()));   // Area Planted
+        this.styles.put("a25", new StylesFont(amisExcelUtils.getGreyCellStyle(),      amisExcelUtils.getBasicWithBorders()));   // Per capita food use
     }
 
     public HashMap<String, StylesFont> getStyles() {

@@ -2,42 +2,23 @@
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
 
-    <!-- Local environment -->
-
+<!--
+     Local environment
+-->
+   <!--    <context-param>
+           <param-name>url</param-name>
+           <param-value>jdbc:postgresql://localhost/amis-cbs-v3</param-value>
+       </context-param>
+       <context-param>
+           <param-name>usr</param-name>
+           <param-value>postgres</param-value>
+       </context-param>
+       <context-param>
+           <param-name>psw</param-name>
+           <param-value>postgres</param-value>
+       </context-param>
+-->
     <context-param>
-        <param-name>url</param-name>
-        <param-value>jdbc:postgresql://localhost/amis-cbs-v3</param-value>
-    </context-param>
-    <context-param>
-        <param-name>usr</param-name>
-        <param-value>postgres</param-value>
-    </context-param>
-    <context-param>
-        <param-name>psw</param-name>
-        <param-value>postgres</param-value>
-    </context-param>
-
-
-    <env-entry>
-        <env-entry-name>usr_n</env-entry-name>
-        <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>postgres</env-entry-value>
-    </env-entry>
-    <env-entry>
-        <env-entry-name>url_n</env-entry-name>
-        <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>jdbc:postgresql://localhost/amis-cbs-v3</env-entry-value>
-    </env-entry>
-    <env-entry>
-        <env-entry-name>psw_n</env-entry-name>
-        <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>postgres</env-entry-value>
-    </env-entry>
-
-
-<!--   AMIS ENVIRONMENT
-   *********************************&ndash;&gt;-->
- <!--   <context-param>
         <param-name>url</param-name>
         <param-value>jdbc:postgresql://127.0.0.1/fenix</param-value>
     </context-param>
@@ -50,38 +31,6 @@
         <param-value>Qwaszx</param-value>
     </context-param>
 
-
-    <env-entry>
-        <env-entry-name>url_n</env-entry-name>
-        <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>jdbc:postgresql://127.0.0.1/fenix</env-entry-value>
-    </env-entry>
-    <env-entry>
-        <env-entry-name>usr_n</env-entry-name>
-        <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>fenix</env-entry-value>
-    </env-entry>
-    <env-entry>
-        <env-entry-name>psw_n</env-entry-name>
-        <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>Qwaszx</env-entry-value>
-    </env-entry>
--->
-<!--
- FAOSTAT ENVIRONMENT
-   *********************************&ndash;&gt;
-    <context-param>
-        <param-name>url</param-name>
-        <param-value>jdbc:postgresql://exlprfaostat1.ext.fao.org/amis-cbs-v3</param-value>
-    </context-param>
-    <context-param>
-        <param-name>usr</param-name>
-        <param-value>fenix</param-value>
-    </context-param>
-    <context-param>
-        <param-name>psw</param-name>
-        <param-value>Qwaszx</param-value>
-    </context-param>-->
 
     <!-- Temporary folder for file downloaded from export-->
     <context-param>

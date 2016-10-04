@@ -625,9 +625,4 @@ public class AmisExcelUtils {
 
     }
 
-    public static HSSFCellStyle getBasicWithBorderStyle () {
-        if(basicCellStyle== null)
-            basicCellStyle = getBasicWithBorders();
-        return basicCellStyle;
-    }
  }

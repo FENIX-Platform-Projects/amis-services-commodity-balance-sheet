@@ -612,7 +612,9 @@ public class SheetCreator {
                 cellStyle.cloneStyleFrom(mapStyles.get("a" + code).getStyleBodyElement());
                 cellStyle.setDataFormat(row.getSheet().getWorkbook().createDataFormat().getFormat("0.00"));
             }
+            Font font = discoverFont(code, (HSSFCellStyle) cellStyle);
 
+            cellStyle.setFont(font);
             cell.setCellStyle(cellStyle);
             if (value == -1) {
 
@@ -814,7 +816,7 @@ public class SheetCreator {
                 amisExcelUtils.putBoldFont(result);
             }
         } else {
-            result = (isFlag) ? amisExcelUtils.getRightAlignmentWithBordersStyle() : amisExcelUtils.getBasicWithBorders();
+            result = (isFlag) ? amisExcelUtils.getBasicWithRightAlWithBorders() : amisExcelUtils.getBasicWithBorders();
         }
         return result;
     }

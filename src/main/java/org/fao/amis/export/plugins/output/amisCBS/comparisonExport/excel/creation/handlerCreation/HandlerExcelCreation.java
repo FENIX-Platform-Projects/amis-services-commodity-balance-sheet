@@ -36,7 +36,7 @@ public class HandlerExcelCreation {
     private final String THOUSAND_TONNES_REGION = "                 Thousand tonnes";
 
     private final static int NMY_START_ROW = 9;
-    private final static int SPACE_SECTIONS = 6;
+    private final static int SPACE_SECTIONS = 5;
     private final String NATIONAL = "foodBalance";
     private final String INTERNATIONAL = "international";
     private final String OTHERS = "others";
@@ -117,7 +117,6 @@ public class HandlerExcelCreation {
 
                 sheet.addMergedRegion(region);
 
-                rowCounter++;
                 rowCounter = this.sheetCreator.createFooterMarketingYear(rowCounter, sheet, workbook, marketingYearMap.get(commodityString), "national", this.mapColumnsToView);
                 rowCounter++;
 
@@ -151,7 +150,6 @@ public class HandlerExcelCreation {
 
                 int startOth = startIty + SPACE_SECTIONS;
 
-                rowCounter++;
                 rowCounter = this.sheetCreator.createFooterMarketingYear(rowCounter, sheet, workbook, marketingYearMap.get(commodityString), "ity", this.mapColumnsToView);
                 rowCounter++;
               /*

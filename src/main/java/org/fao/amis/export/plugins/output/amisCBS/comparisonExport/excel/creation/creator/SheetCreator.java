@@ -15,6 +15,8 @@ import org.fao.amis.export.plugins.output.amisCBS.comparisonExport.excel.formula
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class SheetCreator {
@@ -38,6 +40,8 @@ public class SheetCreator {
     private URLGetter urlGetter;
     private ElementStyles2 elementStyles2;
     private ArrayList<Integer> firstYearSeason;
+    private SimpleDateFormat dateFormatInput = new SimpleDateFormat("yyyy-MM-dd"); // Set your date format
+    private SimpleDateFormat dateFormatOutput = new SimpleDateFormat("dd/MM/yyyy");
     private static final HashMap<Integer, Integer> SPACE_ELEMENT = new HashMap<Integer, Integer>() {
         {
             put(13, 1);
@@ -85,11 +89,20 @@ public class SheetCreator {
         HashMap<String, String> mapProductDate = dataCreator.getMapProductDate();
         sheet.setColumnWidth(1, 3000);
 
+        // Set your date format
+        String dateLAstUpdated = null; // Get Date String according to date format
+        try {
+            dateLAstUpdated = (mapProductDate.get(commodity)!= null)? dateFormatOutput.format(dateFormatInput.parse(mapProductDate.get(commodity))): mapProductDate.get(commodity);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "COUNTRY: ", country);
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "COMMODITY: ", commodity);
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "LAST SEASON: ", lastSeason);
         rowCounter = createLegendRow(rowCounter, sheet, workbook, "DATASOURCE: ", dataSource);
-        rowCounter = createLegendRow(rowCounter, sheet, workbook, "Data Last Updated on: ", mapProductDate.get(commodity));
+        rowCounter = createLegendRow(rowCounter, sheet, workbook, "Data Last Updated on: ",dateLAstUpdated );
 
         rowCounter = amisExcelUtils.createEmptyRow(rowCounter, sheet, workbook);
 
